@@ -40,33 +40,6 @@ inline constexpr LayoutChange transfer_destination_to_present{
     VK_ACCESS_2_NONE,
 };
 
-inline constexpr LayoutChange undefined_to_color_attachment{
-    VK_IMAGE_LAYOUT_UNDEFINED,
-    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-    VK_PIPELINE_STAGE_2_NONE,
-    VK_ACCESS_2_NONE,
-    VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
-    VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT,
-};
-
-inline constexpr LayoutChange undefined_to_depth_attachment{
-    VK_IMAGE_LAYOUT_UNDEFINED,
-    VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-    VK_PIPELINE_STAGE_2_NONE,
-    VK_ACCESS_2_NONE,
-    VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT,
-    VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
-};
-
-inline constexpr LayoutChange color_attachment_to_transfer_source{
-    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
-    VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-    VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT,
-    VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT,
-    VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT,
-    VK_ACCESS_2_TRANSFER_READ_BIT,
-};
-
 void change_layout(VkCommandBuffer commands, VkImage image, VkImageAspectFlags aspect, const LayoutChange& change);
 
 }

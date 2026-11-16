@@ -2,10 +2,13 @@
 
 #include <array>
 #include <cstdint>
+#include <optional>
 #include <span>
+#include <utility>
 
 #include "device/vulkan_error.hpp"
-#include "resources/image_layout.hpp"
+#include "graph/image_use.hpp"
+#include "graph/render_graph.hpp"
 #include "scene/checker_texture.hpp"
 #include "scene/proof_geometry.hpp"
 #include "scene/proof_pipeline.hpp"
@@ -114,11 +117,20 @@ renderer::Buffer create_vertex_buffer(const renderer::Device& device) {
     return vertices;
 }
 
-void begin_rendering(VkCommandBuffer commands, const renderer::FrameTargets& targets) {
+renderer::ImportedImage import_image(
+    const renderer::Image& image,
+    VkImageAspectFlags aspect,
+    const renderer::ImageUse& entry,
+    const std::optional<renderer::ImageUse>& exit) {
+    return renderer::ImportedImage{image.get(), image.view(), image.extent(), aspect, entry, exit};
+}
+
+void begin_rendering(
+    VkCommandBuffer commands, const renderer::BoundImage& color_target, const renderer::BoundImage& depth_target) {
     const std::array<float, 4> clear_color = unit_color(proof_clear_color);
     const VkRenderingAttachmentInfo color{
         .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
-        .imageView = targets.color().view(),
+        .imageView = color_target.view,
         .imageLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
@@ -126,7 +138,7 @@ void begin_rendering(VkCommandBuffer commands, const renderer::FrameTargets& tar
     };
     const VkRenderingAttachmentInfo depth{
         .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
-        .imageView = targets.depth().view(),
+        .imageView = depth_target.view,
         .imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
         .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
@@ -134,7 +146,7 @@ void begin_rendering(VkCommandBuffer commands, const renderer::FrameTargets& tar
     };
     const VkRenderingInfo rendering{
         .sType = VK_STRUCTURE_TYPE_RENDERING_INFO,
-        .renderArea = {{0, 0}, targets.extent()},
+        .renderArea = {{0, 0}, color_target.extent},
         .layerCount = 1,
         .colorAttachmentCount = 1,
         .pColorAttachments = &color,
@@ -156,33 +168,52 @@ ProofScene::ProofScene(const renderer::Device& device)
       pipeline_(create_proof_pipeline(device, pipeline_layout_.get())),
       vertices_(create_vertex_buffer(device)) {}
 
-void ProofScene::draw(const renderer::Device& device, const renderer::FrameTargets& targets) const {
-    device.submit([&](VkCommandBuffer commands) {
-        const VkImage color = targets.color().get();
-        renderer::change_layout(commands, color, VK_IMAGE_ASPECT_COLOR_BIT, renderer::undefined_to_color_attachment);
-        renderer::change_layout(
-            commands, targets.depth().get(), VK_IMAGE_ASPECT_DEPTH_BIT, renderer::undefined_to_depth_attachment);
-        begin_rendering(commands, targets);
+renderer::PlannedFrame ProofScene::plan_frame(
+    const renderer::Device& device, const renderer::FrameTargets& targets) const {
+    renderer::RenderGraph graph;
+    const renderer::ImageId color = graph.import_image(
+        "frame color",
+        import_image(
+            targets.color(), VK_IMAGE_ASPECT_COLOR_BIT, renderer::uses::untouched, renderer::uses::transfer_source));
+    const renderer::ImageId depth = graph.import_image(
+        "frame depth", import_image(targets.depth(), VK_IMAGE_ASPECT_DEPTH_BIT, renderer::uses::untouched, std::nullopt));
+    const renderer::ImageId texture = graph.import_image(
+        "checker texture",
+        import_image(texture_, VK_IMAGE_ASPECT_COLOR_BIT, renderer::uses::sampled_by_fragment_shader, std::nullopt));
 
-        const VkExtent2D extent = targets.extent();
-        const VkViewport viewport{
-            0.0f, 0.0f, static_cast<float>(extent.width), static_cast<float>(extent.height), 0.0f, farthest_depth};
-        const VkRect2D scissor{{0, 0}, extent};
-        vkCmdSetViewport(commands, 0, 1, &viewport);
-        vkCmdSetScissor(commands, 0, 1, &scissor);
+    graph.add_pass(
+        "proof scene",
+        {
+            {color, renderer::uses::color_attachment},
+            {depth, renderer::uses::depth_attachment},
+            {texture, renderer::uses::sampled_by_fragment_shader},
+        },
+        [this, color, depth](VkCommandBuffer commands, const renderer::GraphImages& images) {
+            record(commands, images.at(color), images.at(depth));
+        });
+    return renderer::PlannedFrame(device, std::move(graph));
+}
 
-        vkCmdBindPipeline(commands, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_.get());
-        vkCmdBindDescriptorSets(
-            commands, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_layout_.get(), 0, 1, &texture_binding_, 0, nullptr);
-        const VkBuffer vertex_buffer = vertices_.get();
-        const VkDeviceSize first_byte = 0;
-        vkCmdBindVertexBuffers(commands, 0, 1, &vertex_buffer, &first_byte);
-        vkCmdDraw(commands, static_cast<std::uint32_t>(proof_vertices.size()), 1, 0, 0);
+void ProofScene::record(
+    VkCommandBuffer commands, const renderer::BoundImage& color, const renderer::BoundImage& depth) const {
+    begin_rendering(commands, color, depth);
 
-        vkCmdEndRendering(commands);
-        renderer::change_layout(
-            commands, color, VK_IMAGE_ASPECT_COLOR_BIT, renderer::color_attachment_to_transfer_source);
-    });
+    const VkExtent2D extent = color.extent;
+    const VkViewport viewport{
+        0.0f, 0.0f, static_cast<float>(extent.width), static_cast<float>(extent.height), 0.0f, farthest_depth};
+    const VkRect2D scissor{{0, 0}, extent};
+    vkCmdSetViewport(commands, 0, 1, &viewport);
+    vkCmdSetScissor(commands, 0, 1, &scissor);
+
+    vkCmdBindPipeline(commands, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_.get());
+    vkCmdBindDescriptorSets(
+        commands, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_layout_.get(), 0, 1, &texture_binding_, 0, nullptr);
+    const VkBuffer vertex_buffer = vertices_.get();
+    const VkDeviceSize first_byte = 0;
+    vkCmdBindVertexBuffers(commands, 0, 1, &vertex_buffer, &first_byte);
+    vkCmdDraw(commands, static_cast<std::uint32_t>(proof_vertices.size()), 1, 0, 0);
+
+    vkCmdEndRendering(commands);
 }
 
 }

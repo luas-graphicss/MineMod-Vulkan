@@ -5,6 +5,7 @@
 
 #include "device/device.hpp"
 #include "frame/frame_targets.hpp"
+#include "graph/planned_frame.hpp"
 #include "presentation/headless_surface.hpp"
 #include "presentation/swapchain.hpp"
 #include "scene/proof_scene.hpp"
@@ -28,12 +29,16 @@ RenderedFrames render_and_present(const renderer::Instance& instance, const Harn
     const renderer::Device device(selected, device_extensions);
     const renderer::FrameTargets targets(device, options.extent);
     const ProofScene scene(device);
+    const renderer::PlannedFrame scene_frame = scene.plan_frame(device, targets);
     renderer::Swapchain swapchain(device, surface.get(), options.extent);
+    const auto draw_scene = [&] {
+        device.submit([&](VkCommandBuffer commands) { scene_frame.record(commands); });
+    };
 
-    scene.draw(device, targets);
+    draw_scene();
     renderer::FramePixels frame = renderer::read_back_color(device, targets.color());
     for (std::uint32_t presented = 0; presented < options.presented_frames; ++presented) {
-        scene.draw(device, targets);
+        draw_scene();
         swapchain.present(device, targets.color());
     }
     return RenderedFrames{selected.description, swapchain.format(), std::move(frame)};
