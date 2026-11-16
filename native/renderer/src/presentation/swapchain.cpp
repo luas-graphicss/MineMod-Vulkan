@@ -4,9 +4,10 @@
 #include <array>
 #include <cstdint>
 #include <string>
+#include <utility>
 
 #include "device/vulkan_error.hpp"
-#include "resources/image_layout.hpp"
+#include "presentation/binary_semaphore.hpp"
 
 namespace minemod::renderer {
 
@@ -29,6 +30,16 @@ VkSurfaceFormatKHR choose_surface_format(VkPhysicalDevice device, VkSurfaceKHR s
         return candidate.format == VK_FORMAT_B8G8R8A8_UNORM || candidate.format == VK_FORMAT_R8G8B8A8_UNORM;
     });
     return unorm == formats.end() ? formats.front() : *unorm;
+}
+
+std::vector<VkPresentModeKHR> list_present_modes(VkPhysicalDevice device, VkSurfaceKHR surface) {
+    std::uint32_t count = 0;
+    require_success(
+        vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &count, nullptr), "counting the present modes");
+    std::vector<VkPresentModeKHR> modes(count);
+    require_success(
+        vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &count, modes.data()), "listing the present modes");
+    return modes;
 }
 
 void require_blit_target(VkPhysicalDevice device, VkFormat format, const VkSurfaceCapabilitiesKHR& capabilities) {
@@ -74,51 +85,28 @@ VkCompositeAlphaFlagBitsKHR choose_composite_alpha(const VkSurfaceCapabilitiesKH
     return *supported;
 }
 
-void blit_frame(VkCommandBuffer commands, const Image& source, VkImage target, VkExtent2D target_extent) {
-    const VkExtent2D source_extent = source.extent();
-    const VkImageBlit2 region{
-        .sType = VK_STRUCTURE_TYPE_IMAGE_BLIT_2,
-        .srcSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1},
-        .srcOffsets = {
-            VkOffset3D{0, 0, 0},
-            VkOffset3D{static_cast<std::int32_t>(source_extent.width), static_cast<std::int32_t>(source_extent.height), 1},
-        },
-        .dstSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1},
-        .dstOffsets = {
-            VkOffset3D{0, 0, 0},
-            VkOffset3D{static_cast<std::int32_t>(target_extent.width), static_cast<std::int32_t>(target_extent.height), 1},
-        },
-    };
-    const VkBlitImageInfo2 blit{
-        .sType = VK_STRUCTURE_TYPE_BLIT_IMAGE_INFO_2,
-        .srcImage = source.get(),
-        .srcImageLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-        .dstImage = target,
-        .dstImageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-        .regionCount = 1,
-        .pRegions = &region,
-        .filter = VK_FILTER_NEAREST,
-    };
-    vkCmdBlitImage2(commands, &blit);
-}
-
-DeviceHandle<VkSemaphore> create_semaphore(VkDevice device) {
-    const VkSemaphoreCreateInfo create_info{.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO};
-    return create_device_handle<VkSemaphore>(
-        device, create_info, vkCreateSemaphore, vkDestroySemaphore, "creating a presentation semaphore");
+bool has_area(VkExtent2D extent) noexcept {
+    return extent.width != 0 && extent.height != 0;
 }
 
 }
 
-Swapchain::Swapchain(const Device& device, VkSurfaceKHR surface, VkExtent2D desired_extent) : device_(device.get()) {
+std::unique_ptr<Swapchain> Swapchain::create(
+    const Device& device,
+    VkSurfaceKHR surface,
+    VkExtent2D desired_extent,
+    PresentPacing pacing,
+    std::unique_ptr<Swapchain> replaced) {
     VkSurfaceCapabilitiesKHR capabilities{};
     require_success(
         vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device.physical(), surface, &capabilities),
         "querying the surface capabilities");
+    const VkExtent2D extent = choose_extent(capabilities, desired_extent);
+    if (!has_area(extent)) {
+        return nullptr;
+    }
     const VkSurfaceFormatKHR surface_format = choose_surface_format(device.physical(), surface);
     require_blit_target(device.physical(), surface_format.format, capabilities);
-    format_ = surface_format.format;
-    extent_ = choose_extent(capabilities, desired_extent);
 
     const VkSwapchainCreateInfoKHR create_info{
         .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
@@ -126,57 +114,50 @@ Swapchain::Swapchain(const Device& device, VkSurfaceKHR surface, VkExtent2D desi
         .minImageCount = choose_image_count(capabilities),
         .imageFormat = surface_format.format,
         .imageColorSpace = surface_format.colorSpace,
-        .imageExtent = extent_,
+        .imageExtent = extent,
         .imageArrayLayers = 1,
         .imageUsage = VK_IMAGE_USAGE_TRANSFER_DST_BIT,
         .imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
         .preTransform = capabilities.currentTransform,
         .compositeAlpha = choose_composite_alpha(capabilities),
-        .presentMode = VK_PRESENT_MODE_FIFO_KHR,
+        .presentMode = choose_present_mode(list_present_modes(device.physical(), surface), pacing),
         .clipped = VK_TRUE,
+        .oldSwapchain = replaced ? replaced->swapchain_.get() : VK_NULL_HANDLE,
     };
+    return std::unique_ptr<Swapchain>(new Swapchain(device.get(), create_info));
+}
+
+Swapchain::Swapchain(VkDevice device, const VkSwapchainCreateInfoKHR& create_info)
+    : device_(device), format_(create_info.imageFormat), extent_(create_info.imageExtent) {
     swapchain_ = create_device_handle<VkSwapchainKHR>(
-        device.get(), create_info, vkCreateSwapchainKHR, vkDestroySwapchainKHR, "creating the swapchain");
+        device, create_info, vkCreateSwapchainKHR, vkDestroySwapchainKHR, "creating the swapchain");
 
     std::uint32_t image_count = 0;
     require_success(
-        vkGetSwapchainImagesKHR(device.get(), swapchain_.get(), &image_count, nullptr), "counting the swapchain images");
+        vkGetSwapchainImagesKHR(device, swapchain_.get(), &image_count, nullptr), "counting the swapchain images");
     images_.resize(image_count);
     require_success(
-        vkGetSwapchainImagesKHR(device.get(), swapchain_.get(), &image_count, images_.data()),
+        vkGetSwapchainImagesKHR(device, swapchain_.get(), &image_count, images_.data()),
         "listing the swapchain images");
 
-    image_acquired_ = create_semaphore(device.get());
-    frame_copied_ = create_semaphore(device.get());
+    copied_.reserve(image_count);
+    for (std::uint32_t image = 0; image < image_count; ++image) {
+        copied_.push_back(create_binary_semaphore(device));
+    }
 }
 
 Swapchain::~Swapchain() {
     vkDeviceWaitIdle(device_);
 }
 
-void Swapchain::present(const Device& device, const Image& transfer_source) {
-    std::uint32_t image_index = 0;
-    const VkResult acquired = vkAcquireNextImageKHR(
-        device.get(), swapchain_.get(), UINT64_MAX, image_acquired_.get(), VK_NULL_HANDLE, &image_index);
-    if (acquired != VK_SUBOPTIMAL_KHR) {
-        require_success(acquired, "acquiring a swapchain image");
-    }
+VkResult Swapchain::acquire(VkSemaphore signaled_on_acquisition, std::uint32_t& image_index) const {
+    return vkAcquireNextImageKHR(
+        device_, swapchain_.get(), UINT64_MAX, signaled_on_acquisition, VK_NULL_HANDLE, &image_index);
+}
 
-    const VkImage target = images_[image_index];
-    device.submit(
-        [&](VkCommandBuffer commands) {
-            change_layout(commands, target, VK_IMAGE_ASPECT_COLOR_BIT, undefined_to_transfer_destination);
-            blit_frame(commands, transfer_source, target, extent_);
-            change_layout(commands, target, VK_IMAGE_ASPECT_COLOR_BIT, transfer_destination_to_present);
-        },
-        SubmitSemaphores{
-            .wait = image_acquired_.get(),
-            .wait_stage = VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT,
-            .signal = frame_copied_.get(),
-        });
-
-    const VkSemaphore copied = frame_copied_.get();
+VkResult Swapchain::present(VkQueue queue, std::uint32_t image_index) const {
     const VkSwapchainKHR swapchain = swapchain_.get();
+    const VkSemaphore copied = copied_semaphore(image_index);
     const VkPresentInfoKHR presentation{
         .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
         .waitSemaphoreCount = 1,
@@ -185,10 +166,7 @@ void Swapchain::present(const Device& device, const Image& transfer_source) {
         .pSwapchains = &swapchain,
         .pImageIndices = &image_index,
     };
-    const VkResult presented = vkQueuePresentKHR(device.queue(), &presentation);
-    if (presented != VK_SUBOPTIMAL_KHR) {
-        require_success(presented, "presenting a swapchain image");
-    }
+    return vkQueuePresentKHR(queue, &presentation);
 }
 
 }

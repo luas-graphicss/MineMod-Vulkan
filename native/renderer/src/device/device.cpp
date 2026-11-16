@@ -45,7 +45,8 @@ Device::LogicalDevice::~LogicalDevice() {
     }
 }
 
-Device::Device(const SelectedDevice& selected, std::span<const char* const> extensions) : physical_(selected.handle) {
+Device::Device(const SelectedDevice& selected, std::span<const char* const> extensions)
+    : physical_(selected.handle), queue_family_(selected.queue_family) {
     const float queue_priority = 1.0f;
     const VkDeviceQueueCreateInfo queue_info{
         .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
@@ -94,6 +95,13 @@ void Device::submit(const std::function<void(VkCommandBuffer)>& record, const Su
     const auto completed = create_device_handle<VkFence>(
         device, fence_info, vkCreateFence, vkDestroyFence, "creating a submission fence");
 
+    enqueue(commands.get(), semaphores, completed.get());
+
+    const VkFence fence = completed.get();
+    require_success(vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX), "waiting for the submitted commands");
+}
+
+void Device::enqueue(VkCommandBuffer commands, const SubmitSemaphores& semaphores, VkFence completed) const {
     const VkSemaphoreSubmitInfo wait{
         .sType = VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO,
         .semaphore = semaphores.wait,
@@ -106,7 +114,7 @@ void Device::submit(const std::function<void(VkCommandBuffer)>& record, const Su
     };
     const VkCommandBufferSubmitInfo command_info{
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO,
-        .commandBuffer = commands.get(),
+        .commandBuffer = commands,
     };
     const VkSubmitInfo2 submission{
         .sType = VK_STRUCTURE_TYPE_SUBMIT_INFO_2,
@@ -117,10 +125,7 @@ void Device::submit(const std::function<void(VkCommandBuffer)>& record, const Su
         .signalSemaphoreInfoCount = semaphores.signal == VK_NULL_HANDLE ? 0u : 1u,
         .pSignalSemaphoreInfos = &signal,
     };
-    require_success(vkQueueSubmit2(queue_, 1, &submission, completed.get()), "submitting commands");
-
-    const VkFence fence = completed.get();
-    require_success(vkWaitForFences(device, 1, &fence, VK_TRUE, UINT64_MAX), "waiting for the submitted commands");
+    require_success(vkQueueSubmit2(queue_, 1, &submission, completed), "submitting commands");
 }
 
 }

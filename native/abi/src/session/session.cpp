@@ -85,4 +85,8 @@ minemod_result Session::destroy_buffer(const DestroyBufferCommand& command) {
     return buffers_.destroy(command.handle);
 }
 
+minemod_result Session::scene_command(const SceneCommand&) {
+    return MINEMOD_RESULT_UNSUPPORTED_CAPABILITY;
+}
+
 }

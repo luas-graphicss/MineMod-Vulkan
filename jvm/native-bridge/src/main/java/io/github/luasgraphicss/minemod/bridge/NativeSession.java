@@ -1,7 +1,5 @@
 package io.github.luasgraphicss.minemod.bridge;
 
-import io.github.luasgraphicss.minemod.contract.abi.AbiException;
-import io.github.luasgraphicss.minemod.contract.abi.AbiResult;
 import io.github.luasgraphicss.minemod.contract.abi.AbiVersion;
 import io.github.luasgraphicss.minemod.contract.handle.ResourceHandle;
 import io.github.luasgraphicss.minemod.contract.session.SessionCounters;
@@ -27,7 +25,7 @@ public final class NativeSession implements AutoCloseable {
                 limits.maxBuffers(),
                 limits.maxBufferBytes(),
                 address);
-        requireOk(resultCode, "opening a session for ABI " + abiVersion + " with " + limits);
+        NativeResults.requireOk(resultCode, "opening a session for ABI " + abiVersion + " with " + limits);
         return new NativeSession(address[0]);
     }
 
@@ -45,12 +43,12 @@ public final class NativeSession implements AutoCloseable {
         }
         int resultCode = nativeReadBuffer(
                 openAddress(), buffer.bits(), offset, destination, destination.position(), destination.remaining());
-        requireOk(resultCode, "reading " + destination.remaining() + " byte(s) of " + buffer + " at offset " + offset);
+        NativeResults.requireOk(resultCode, "reading " + destination.remaining() + " byte(s) of " + buffer + " at offset " + offset);
     }
 
     public synchronized SessionCounters counters() {
         long[] fields = new long[SessionCounterFields.COUNT];
-        requireOk(nativeReadCounters(openAddress(), fields), "reading the session counters");
+        NativeResults.requireOk(nativeReadCounters(openAddress(), fields), "reading the session counters");
         return SessionCounterFields.decode(fields);
     }
 
@@ -68,13 +66,6 @@ public final class NativeSession implements AutoCloseable {
             throw new IllegalStateException("the native session is closed");
         }
         return address;
-    }
-
-    private static void requireOk(int resultCode, String operation) {
-        AbiResult result = AbiResult.fromCode(resultCode);
-        if (result != AbiResult.OK) {
-            throw new AbiException(result, operation);
-        }
     }
 
     private static native int nativeCreate(

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "minemod-vulkan",
+  "version": "${version}",
+  "name": "MineMod Vulkan",
+  "description": "Presents Minecraft through a native Vulkan renderer.",
+  "license": "GPL-3.0-only",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["io.github.luasgraphicss.minemod.adapters.fabric.v1_21_1.MineModClient"]
+  },
+  "mixins": ["minemod-minecraft-1.21.1.mixins.json"],
+  "depends": {
+    "fabricloader": ">=${loaderVersion}",
+    "minecraft": "${minecraftVersion}",
+    "java": ">=21"
+  }
+}

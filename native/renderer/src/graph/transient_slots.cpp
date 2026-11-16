@@ -49,7 +49,8 @@ std::vector<std::uint32_t> transient_images_by_first_use(const RenderGraph& grap
 
 bool is_same_description(const ImageDescription& left, const ImageDescription& right) {
     return left.extent.width == right.extent.width && left.extent.height == right.extent.height
-        && left.format == right.format && left.usage == right.usage && left.aspect == right.aspect;
+        && left.format == right.format && left.usage == right.usage && left.aspect == right.aspect
+        && left.mip_levels == right.mip_levels;
 }
 
 class SlotClaims {

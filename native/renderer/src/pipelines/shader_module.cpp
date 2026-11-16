@@ -2,11 +2,11 @@
 
 namespace minemod::renderer {
 
-DeviceHandle<VkShaderModule> create_shader_module(const Device& device, std::span<const std::uint32_t> code) {
+DeviceHandle<VkShaderModule> create_shader_module(const Device& device, const SpirvModule& module) {
     const VkShaderModuleCreateInfo create_info{
         .sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-        .codeSize = code.size_bytes(),
-        .pCode = code.data(),
+        .codeSize = module.words().size_bytes(),
+        .pCode = module.words().data(),
     };
     return create_device_handle<VkShaderModule>(
         device.get(), create_info, vkCreateShaderModule, vkDestroyShaderModule, "creating a shader module");

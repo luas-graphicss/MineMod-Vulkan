@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <span>
 #include <vector>
 
 #include <vulkan/vulkan.h>
@@ -26,6 +27,10 @@ public:
 
     VkExtent2D extent() const noexcept {
         return extent_;
+    }
+
+    std::span<const std::byte> rgba() const noexcept {
+        return rgba_;
     }
 
     Pixel at(std::uint32_t x, std::uint32_t y) const;

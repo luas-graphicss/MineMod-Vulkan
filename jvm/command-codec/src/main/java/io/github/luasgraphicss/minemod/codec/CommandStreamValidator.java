@@ -1,10 +1,12 @@
 package io.github.luasgraphicss.minemod.codec;
 
+import io.github.luasgraphicss.minemod.codec.scene.SceneOpcode;
 import io.github.luasgraphicss.minemod.contract.abi.AbiResult;
 import io.github.luasgraphicss.minemod.contract.abi.AbiVersion;
 import io.github.luasgraphicss.minemod.contract.stream.StreamReport;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Optional;
 
 public final class CommandStreamValidator {
     private static final int UNSIGNED_SHORT_MASK = 0xFFFF;
@@ -96,8 +98,30 @@ public final class CommandStreamValidator {
                         ? AbiResult.OK
                         : AbiResult.LENGTH_OUT_OF_BOUNDS;
             default:
-                return AbiResult.UNKNOWN_OPCODE;
+                return checkSceneRecord(stream, record, recordBytes);
         }
+    }
+
+    private static AbiResult checkSceneRecord(ByteBuffer stream, int record, int recordBytes) {
+        short code = stream.getShort(record + CommandStreamFormat.COMMAND_OPCODE_OFFSET);
+        Optional<SceneOpcode> opcode = SceneOpcode.find(code);
+        if (!opcode.isPresent()) {
+            return AbiResult.UNKNOWN_OPCODE;
+        }
+        int fixedEnd = CommandStreamFormat.COMMAND_HEADER_BYTES + opcode.get().fixedBytes();
+        if (!opcode.get().carriesBlob()) {
+            return recordBytes == fixedEnd ? AbiResult.OK : AbiResult.LENGTH_OUT_OF_BOUNDS;
+        }
+        if (recordBytes < fixedEnd) {
+            return AbiResult.LENGTH_OUT_OF_BOUNDS;
+        }
+        long blobBytes = stream.getLong(record + fixedEnd - Long.BYTES);
+        long blobCapacity = recordBytes - fixedEnd;
+        boolean fitsRecord = Long.compareUnsigned(blobBytes, blobCapacity) <= 0;
+        if (!fitsRecord || blobCapacity - blobBytes >= CommandStreamFormat.COMMAND_ALIGNMENT) {
+            return AbiResult.LENGTH_OUT_OF_BOUNDS;
+        }
+        return blobBytes == 0 ? AbiResult.MALFORMED_STREAM : AbiResult.OK;
     }
 
     private static AbiResult checkCreateBuffer(ByteBuffer stream, int payload, int recordBytes) {

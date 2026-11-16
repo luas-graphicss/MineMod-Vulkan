@@ -30,13 +30,13 @@ Buffer::Buffer(const Device& device, VkDeviceSize size_bytes, VkBufferUsageFlags
     require_success(vkBindBufferMemory(device_, buffer_.get(), memory_.get(), 0), "binding buffer memory");
 }
 
-void Buffer::write(std::span<const std::byte> bytes) const {
-    if (bytes.size() > size_bytes_) {
+void Buffer::write(std::span<const std::byte> bytes, VkDeviceSize offset) const {
+    if (offset > size_bytes_ || bytes.size() > size_bytes_ - offset) {
         throw std::length_error("the bytes do not fit the buffer");
     }
     void* mapped = nullptr;
     require_success(vkMapMemory(device_, memory_.get(), 0, size_bytes_, 0, &mapped), "mapping buffer memory");
-    std::memcpy(mapped, bytes.data(), bytes.size());
+    std::memcpy(static_cast<std::byte*>(mapped) + offset, bytes.data(), bytes.size());
     vkUnmapMemory(device_, memory_.get());
 }
 

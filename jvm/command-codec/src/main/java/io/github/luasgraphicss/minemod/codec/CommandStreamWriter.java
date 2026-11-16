@@ -70,6 +70,25 @@ public final class CommandStreamWriter {
         return this;
     }
 
+    public ByteBuffer appendRecord(short opcode, int payloadBytes) {
+        if (payloadBytes < 0) {
+            throw new IllegalArgumentException("a record payload cannot be negative: " + payloadBytes);
+        }
+        if (payloadBytes > CommandStreamFormat.MAX_STREAM_BYTES) {
+            throw new BufferOverflowException();
+        }
+        int paddedBytes = CommandStreamFormat.aligned(payloadBytes);
+        beginCommand(opcode, CommandStreamFormat.COMMAND_HEADER_BYTES + paddedBytes);
+        ByteBuffer payload = stream.duplicate();
+        payload.limit(payload.position() + paddedBytes);
+        payload = payload.slice().order(ByteOrder.LITTLE_ENDIAN);
+        for (int index = 0; index < paddedBytes; index++) {
+            payload.put(index, (byte) 0);
+        }
+        stream.position(stream.position() + paddedBytes);
+        return payload;
+    }
+
     public ByteBuffer finish() {
         requireOpen();
         finished = true;

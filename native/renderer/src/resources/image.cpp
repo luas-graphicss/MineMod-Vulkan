@@ -31,7 +31,7 @@ Image::Image(const Device& device, const ImageDescription& description) : descri
         .imageType = VK_IMAGE_TYPE_2D,
         .format = description.format,
         .extent = {description.extent.width, description.extent.height, 1},
-        .mipLevels = 1,
+        .mipLevels = description.mip_levels,
         .arrayLayers = 1,
         .samples = VK_SAMPLE_COUNT_1_BIT,
         .tiling = VK_IMAGE_TILING_OPTIMAL,
@@ -58,7 +58,7 @@ Image::Image(const Device& device, const ImageDescription& description) : descri
         .image = image_.get(),
         .viewType = VK_IMAGE_VIEW_TYPE_2D,
         .format = description.format,
-        .subresourceRange = {description.aspect, 0, 1, 0, 1},
+        .subresourceRange = {description.aspect, 0, description.mip_levels, 0, 1},
     };
     view_ = create_device_handle<VkImageView>(
         device.get(), view_info, vkCreateImageView, vkDestroyImageView, "creating an image view");

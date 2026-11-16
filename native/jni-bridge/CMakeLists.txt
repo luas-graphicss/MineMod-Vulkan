@@ -8,6 +8,15 @@ add_library(minemod_jni SHARED
 
 target_include_directories(minemod_jni PRIVATE src)
 target_link_libraries(minemod_jni PRIVATE minemod::abi minemod_jni_headers)
+if(TARGET minemod::scene_session)
+    target_sources(minemod_jni PRIVATE
+        src/scene/scene_calls.cpp
+        src/scene/scene_host_calls.cpp
+        src/scene/scene_session_calls.cpp)
+    target_link_libraries(minemod_jni PRIVATE minemod::scene_session)
+else()
+    target_sources(minemod_jni PRIVATE src/scene/no_scene_calls.cpp)
+endif()
 minemod_configure_target(minemod_jni)
 
 set(minemod_jni_output "$<1:${CMAKE_BINARY_DIR}/jni>")

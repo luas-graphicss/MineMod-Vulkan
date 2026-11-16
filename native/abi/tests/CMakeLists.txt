@@ -10,6 +10,7 @@ add_executable(minemod_abi_tests
     command_stream_corpus_test.cpp
     command_stream_validation_test.cpp
     negotiation_test.cpp
+    scene_record_validation_test.cpp
     session_test.cpp
     stream_mutation_test.cpp)
 target_compile_definitions(minemod_abi_tests PRIVATE

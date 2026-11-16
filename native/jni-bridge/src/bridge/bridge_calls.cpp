@@ -8,6 +8,7 @@
 #include "library/native_registration.hpp"
 #include "minemod/abi/command_stream.h"
 #include "minemod/abi/negotiation.h"
+#include "scene/scene_calls.hpp"
 #include "stream/stream_report_fields.hpp"
 
 namespace minemod::jni {
@@ -48,12 +49,17 @@ jint JNICALL validate_stream(JNIEnv* env, jclass, jobject stream, jint offset, j
     return store_fields(*env, fields, stream_report_fields(report)) ? result : MINEMOD_RESULT_INVALID_ARGUMENT;
 }
 
+jboolean JNICALL library_draws_scenes(JNIEnv*, jclass) {
+    return draws_scenes() ? JNI_TRUE : JNI_FALSE;
+}
+
 }
 
 bool register_bridge_calls(JNIEnv& env) noexcept {
     const std::array methods{
         native_method("nativeNegotiate", "(IIJ[J)I", &negotiate),
         native_method("nativeValidateStream", "(Ljava/nio/ByteBuffer;II[J)I", &validate_stream),
+        native_method("nativeDrawsScenes", "()Z", &library_draws_scenes),
     };
     return register_natives(env, "io/github/luasgraphicss/minemod/bridge/NativeBridge", methods);
 }

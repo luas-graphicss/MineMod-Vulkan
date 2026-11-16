@@ -9,6 +9,7 @@ import io.github.luasgraphicss.minemod.contract.session.SessionLimits;
 import io.github.luasgraphicss.minemod.contract.stream.StreamReport;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Set;
 
 public final class NativeBridge {
@@ -65,8 +66,22 @@ public final class NativeBridge {
         return NativeSession.open(AbiVersion.CURRENT, requiredCapabilities, limits);
     }
 
+    public boolean drawsScenes() {
+        return nativeDrawsScenes();
+    }
+
+    public NativeSceneHost openSceneHost(boolean validates, List<String> windowSystemExtensions) {
+        if (!drawsScenes()) {
+            throw new AbiException(
+                    AbiResult.UNSUPPORTED_CAPABILITY, "opening a scene host in a library built without the renderer");
+        }
+        return NativeSceneHost.open(AbiVersion.CURRENT, validates, windowSystemExtensions);
+    }
+
     private static native int nativeNegotiate(
             int clientMajor, int clientMinor, long requiredCapabilities, long[] negotiationFields);
 
     private static native int nativeValidateStream(ByteBuffer stream, int offset, int length, long[] reportFields);
+
+    private static native boolean nativeDrawsScenes();
 }

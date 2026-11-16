@@ -1,0 +1,28 @@
+GL_ARB_multitexture gl{ActiveTexture,ClientActiveTexture}ARB glMultiTexCoord{1,2,3,4}{d,f,i,s}{,v}ARB
+GL_ARB_vertex_buffer_object gl{BindBuffer,DeleteBuffers,GenBuffers,IsBuffer,BufferData,BufferSubData,GetBufferSubData,MapBuffer,UnmapBuffer,GetBufferParameteriv,GetBufferPointerv}ARB
+GL_ARB_framebuffer_object gl{Is,Bind}Renderbuffer gl{Delete,Gen}Renderbuffers glRenderbufferStorage{,Multisample} glGetRenderbufferParameteriv gl{Is,Bind}Framebuffer gl{Delete,Gen}Framebuffers glCheckFramebufferStatus glFramebufferTexture{1D,2D,3D,Layer} glFramebufferRenderbuffer glGetFramebufferAttachmentParameteriv glBlitFramebuffer glGenerateMipmap
+GL_EXT_framebuffer_object gl{Is,Bind}RenderbufferEXT gl{Delete,Gen}RenderbuffersEXT glRenderbufferStorageEXT glGetRenderbufferParameterivEXT gl{Is,Bind}FramebufferEXT gl{Delete,Gen}FramebuffersEXT glCheckFramebufferStatusEXT glFramebufferTexture{1D,2D,3D}EXT glFramebufferRenderbufferEXT glGetFramebufferAttachmentParameterivEXT glGenerateMipmapEXT
+GL_EXT_framebuffer_blit glBlitFramebufferEXT
+GL_EXT_framebuffer_multisample glRenderbufferStorageMultisampleEXT
+GL_EXT_blend_func_separate glBlendFuncSeparateEXT
+GL_ARB_vertex_array_object glBindVertexArray gl{Delete,Gen}VertexArrays glIsVertexArray
+GL_ARB_sampler_objects gl{Gen,Delete}Samplers glIsSampler glBindSampler glSamplerParameter{f,i}{,v} glSamplerParameterI{iv,uiv} glGetSamplerParameter{f,i}v glGetSamplerParameterI{iv,uiv}
+GL_ARB_sync gl{FenceSync,IsSync,DeleteSync,ClientWaitSync,WaitSync,GetInteger64v,GetSynciv}
+GL_ARB_occlusion_query gl{GenQueries,DeleteQueries,IsQuery,BeginQuery,EndQuery,GetQueryiv,GetQueryObjectiv,GetQueryObjectuiv}ARB
+GL_ARB_timer_query glQueryCounter glGetQueryObject{i64v,ui64v}
+GL_ARB_draw_instanced glDraw{Arrays,Elements}InstancedARB
+GL_ARB_instanced_arrays glVertexAttribDivisorARB
+GL_ARB_map_buffer_range glMapBufferRange glFlushMappedBufferRange
+GL_ARB_copy_buffer glCopyBufferSubData
+GL_ARB_uniform_buffer_object glGetUniformIndices glGetActiveUniform{siv,Name,Blockiv,BlockName} glGetUniformBlockIndex glBindBuffer{Range,Base} glGetIntegeri_v glUniformBlockBinding
+GL_ARB_texture_storage glTexStorage{1D,2D,3D}
+GL_ARB_shader_objects gl{DeleteObject,GetHandle,DetachObject,CreateShaderObject,ShaderSource,CompileShader,CreateProgramObject,AttachObject,LinkProgram,UseProgramObject,ValidateProgram}ARB glUniform{1,2,3,4}{f,i}{,v}ARB glUniformMatrix{2,3,4}fvARB glGetObjectParameter{f,i}vARB gl{GetInfoLog,GetAttachedObjects,GetUniformLocation,GetActiveUniform,GetShaderSource}ARB glGetUniform{f,i}vARB
+GL_ARB_vertex_shader gl{BindAttribLocation,GetActiveAttrib,GetAttribLocation}ARB glVertexAttrib{1,2,3,4}{d,f,s}{,v}ARB glVertexAttrib4N{b,i,s,ub,ui,us}vARB glVertexAttrib4NubARB glVertexAttrib4{b,i,ub,ui,us}vARB glVertexAttribPointerARB gl{Enable,Disable}VertexAttribArrayARB glGetVertexAttrib{d,f,i}vARB glGetVertexAttribPointervARB
+GL_ARB_fragment_shader
+GL_ARB_texture_non_power_of_two
+GL_ARB_depth_texture
+GL_ARB_texture_float
+GL_ARB_texture_rectangle
+GL_ARB_pixel_buffer_object
+GL_EXT_packed_depth_stencil
+GL_EXT_texture_filter_anisotropic

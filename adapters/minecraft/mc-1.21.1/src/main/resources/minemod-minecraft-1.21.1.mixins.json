@@ -1,0 +1,24 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "draw.BufferUploaderMixin",
+    "draw.GlStateManagerMixin",
+    "draw.RenderSystemAccessor",
+    "draw.RenderTargetMixin",
+    "frame.GameRendererMixin",
+    "frame.LevelStagesMixin",
+    "lightmap.LightTextureMixin",
+    "presentation.RenderSystemMixin",
+    "terrain.CompileTaskAccessor",
+    "terrain.LevelRendererMixin",
+    "terrain.RebuildTaskMixin",
+    "terrain.RenderSectionMixin",
+    "window.WindowMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,7 +1,8 @@
 package io.github.luasgraphicss.minemod.contract.handle;
 
 public enum ResourceKind {
-    BUFFER(1);
+    BUFFER(1),
+    TEXTURE(2);
 
     private final int code;
 

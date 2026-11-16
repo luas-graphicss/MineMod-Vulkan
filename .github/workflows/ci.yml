@@ -83,3 +83,6 @@ jobs:
 
       - name: Verify the target matrix
         run: sh ./gradlew :tools:verification:run --args="check --profile foundation"
+
+      - name: Verify the compatibility layer
+        run: sh ./gradlew :tools:verification:run --args="check --profile compatibility"

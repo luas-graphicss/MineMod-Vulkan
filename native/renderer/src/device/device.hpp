@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <functional>
 #include <span>
 
@@ -32,7 +33,12 @@ public:
         return queue_;
     }
 
+    std::uint32_t queue_family() const noexcept {
+        return queue_family_;
+    }
+
     void submit(const std::function<void(VkCommandBuffer)>& record, const SubmitSemaphores& semaphores = {}) const;
+    void enqueue(VkCommandBuffer commands, const SubmitSemaphores& semaphores, VkFence completed) const;
 
 private:
     struct LogicalDevice {
@@ -45,6 +51,7 @@ private:
     };
 
     VkPhysicalDevice physical_;
+    std::uint32_t queue_family_;
     LogicalDevice logical_;
     VkQueue queue_ = VK_NULL_HANDLE;
     DeviceHandle<VkCommandPool> command_pool_;
