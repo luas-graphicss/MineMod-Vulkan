@@ -14,3 +14,4 @@ glSignalSemaphoreEXT
 glGetUnsignedBytevEXT
 glGetUnsignedBytei_vEXT
 glBufferStorageMemEXT
+glFramebufferParameteri
