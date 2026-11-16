@@ -30,11 +30,27 @@ public final class TextureBindings implements CallObserver {
         return name == null ? NOT_BOUND : name;
     }
 
+    public int activeUnit() {
+        return activeUnit;
+    }
+
+    public void forEachBindingOf(int name, BindingVisitor visitor) {
+        for (Map.Entry<Long, Integer> binding : namesByUnitAndTarget.entrySet()) {
+            if (binding.getValue() == name) {
+                visitor.visit((int) (binding.getKey() >>> Integer.SIZE), binding.getKey().intValue());
+            }
+        }
+    }
+
     public static int bindingTargetOf(int target) {
         return target >= GL_CUBE_MAP_FIRST_FACE && target <= GL_CUBE_MAP_LAST_FACE ? GL_TEXTURE_CUBE_MAP : target;
     }
 
     private static long key(int unit, int target) {
         return ((long) unit << Integer.SIZE) | (target & 0xFFFFFFFFL);
+    }
+
+    public interface BindingVisitor {
+        void visit(int unit, int target);
     }
 }
