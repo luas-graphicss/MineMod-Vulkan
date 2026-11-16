@@ -4,10 +4,12 @@
   "package": "io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "diagnostics.MinecraftMixin",
     "draw.BufferUploaderMixin",
     "draw.GlStateManagerMixin",
     "draw.RenderSystemAccessor",
     "draw.RenderTargetMixin",
+    "draw.VertexBufferMixin",
     "frame.GameRendererMixin",
     "frame.LevelStagesMixin",
     "lightmap.LightTextureMixin",
