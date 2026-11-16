@@ -1,0 +1,182 @@
+glBegin IMMEDIATE_MODE TRANSLATE DRAW
+glEnd IMMEDIATE_MODE TRANSLATE NONE
+glVertex{2,3,4}{d,f,i,s}{,v} IMMEDIATE_MODE FORWARD NONE
+glColor{3,4}{b,d,f,i,s,ub,ui,us}{,v} IMMEDIATE_MODE FORWARD NONE
+glNormal3{b,d,f,i,s}{,v} IMMEDIATE_MODE FORWARD NONE
+glTexCoord{1,2,3,4}{d,f,i,s}{,v} IMMEDIATE_MODE FORWARD NONE
+glMultiTexCoord{1,2,3,4}{d,f,i,s}{,v} IMMEDIATE_MODE FORWARD NONE
+glSecondaryColor3{b,d,f,i,s,ub,ui,us}{,v} IMMEDIATE_MODE FORWARD NONE
+glFogCoord{d,f}{,v} IMMEDIATE_MODE FORWARD NONE
+glEdgeFlag{,v} IMMEDIATE_MODE FORWARD NONE
+glRect{d,f,i,s}{,v} IMMEDIATE_MODE TRANSLATE DRAW
+
+glMatrixMode MATRIX_STACK TRANSLATE NONE
+gl{Push,Pop}Matrix MATRIX_STACK TRANSLATE NONE
+glLoadIdentity MATRIX_STACK FORWARD NONE
+gl{Load,Mult}Matrix{d,f} MATRIX_STACK FORWARD NONE
+gl{Load,Mult}TransposeMatrix{d,f} MATRIX_STACK FORWARD NONE
+gl{Rotate,Scale,Translate}{d,f} MATRIX_STACK FORWARD NONE
+gl{Ortho,Frustum} MATRIX_STACK FORWARD NONE
+
+gl{Gen,Delete}Lists DISPLAY_LIST OBJECTS NONE
+glIsList DISPLAY_LIST OBJECTS NONE
+glListBase DISPLAY_LIST OBJECTS NONE
+glCallLists DISPLAY_LIST OBJECTS DRAW
+glNewList DISPLAY_LIST TRANSLATE NONE 0:DISPLAY_LIST
+glEndList DISPLAY_LIST TRANSLATE NONE
+glCallList DISPLAY_LIST TRANSLATE DRAW 0:DISPLAY_LIST
+
+gl{ShadeModel,AlphaFunc,ColorMaterial} FIXED_FUNCTION TRANSLATE NONE
+glFog{f,i}{,v} FIXED_FUNCTION TRANSLATE NONE
+glTexGen{d,f,i}{,v} FIXED_FUNCTION TRANSLATE NONE
+gl{Push,Pop}Attrib FIXED_FUNCTION TRANSLATE NONE
+glLight{f,i}{,v} FIXED_FUNCTION FORWARD NONE
+glLightModel{f,i}{,v} FIXED_FUNCTION FORWARD NONE
+glMaterial{f,i}{,v} FIXED_FUNCTION FORWARD NONE
+glTexEnv{f,i}{,v} FIXED_FUNCTION FORWARD NONE
+gl{ClipPlane,LineStipple,PolygonStipple,PixelZoom} FIXED_FUNCTION FORWARD NONE
+glPixelTransfer{f,i} FIXED_FUNCTION FORWARD NONE
+glRasterPos{2,3,4}{d,f,i,s}{,v} FIXED_FUNCTION FORWARD NONE
+gl{DrawPixels,Bitmap,CopyPixels} FIXED_FUNCTION TRANSLATE DRAW
+
+gl{Enable,Disable}ClientState CLIENT_ARRAYS FORWARD NONE
+glClientActiveTexture CLIENT_ARRAYS FORWARD NONE
+gl{Vertex,Color,Normal,TexCoord,FogCoord,SecondaryColor,EdgeFlag,Index}Pointer CLIENT_ARRAYS FORWARD NONE
+gl{InterleavedArrays,ArrayElement} CLIENT_ARRAYS FORWARD NONE
+gl{Push,Pop}ClientAttrib CLIENT_ARRAYS FORWARD NONE
+
+gl{Enable,Disable}{,i} STATE TRANSLATE NONE
+glIsEnabled{,i} STATE FORWARD NONE
+glBlend{Func,FuncSeparate,Equation,EquationSeparate,Color} STATE TRANSLATE NONE
+glDepth{Func,Mask} STATE TRANSLATE NONE
+glColorMask{,i} STATE TRANSLATE NONE
+gl{CullFace,FrontFace,PolygonMode,PolygonOffset,LogicOp} STATE TRANSLATE NONE
+glStencil{Func,FuncSeparate,Mask,MaskSeparate,Op,OpSeparate} STATE TRANSLATE NONE
+gl{Scissor,Viewport} STATE TRANSLATE NONE
+glClear{Color,Depth,Stencil} STATE TRANSLATE NONE
+glPixelStore{f,i} STATE TRANSLATE NONE
+glActiveTexture STATE TRANSLATE NONE
+gl{DepthRange,LineWidth,PointSize,Hint,SampleCoverage,ClampColor,ProvokingVertex,PrimitiveRestartIndex} STATE FORWARD NONE
+glPointParameter{f,i}{,v} STATE FORWARD NONE
+
+glClear DRAW TRANSLATE DRAW
+glClearBuffer{iv,uiv,fv,fi} DRAW TRANSLATE DRAW
+glDraw{Arrays,Elements,RangeElements} DRAW TRANSLATE DRAW
+glMultiDraw{Arrays,Elements} DRAW TRANSLATE DRAW
+glDraw{Arrays,Elements}Instanced DRAW TRANSLATE DRAW
+glDraw{Elements,RangeElements,ElementsInstanced}BaseVertex DRAW TRANSLATE DRAW
+glMultiDrawElementsBaseVertex DRAW TRANSLATE DRAW
+
+gl{Gen,Delete}Textures TEXTURE OBJECTS NONE
+glIsTexture TEXTURE OBJECTS NONE
+glBindTexture TEXTURE TRANSLATE NONE 1:TEXTURE
+glTexImage{1D,2D,3D} TEXTURE TRANSLATE NONE
+glTexImage{2D,3D}Multisample TEXTURE TRANSLATE NONE
+glTexStorage{1D,2D,3D} TEXTURE TRANSLATE NONE
+glCompressedTexImage{1D,2D,3D} TEXTURE TRANSLATE NONE
+glCopyTexImage{1D,2D} TEXTURE TRANSLATE DRAW
+glTexSubImage{1D,2D,3D} TEXTURE TRANSLATE DRAW
+glCompressedTexSubImage{1D,2D,3D} TEXTURE TRANSLATE DRAW
+glCopyTexSubImage{1D,2D,3D} TEXTURE TRANSLATE DRAW
+glGenerateMipmap TEXTURE TRANSLATE DRAW
+glTexParameter{f,i}{,v} TEXTURE FORWARD NONE
+glTexParameterI{iv,uiv} TEXTURE FORWARD NONE
+glGetTexParameter{f,i}v TEXTURE FORWARD NONE
+glGetTexParameterI{iv,uiv} TEXTURE FORWARD NONE
+glGetTexLevelParameter{f,i}v TEXTURE FORWARD NONE
+glGet{TexImage,CompressedTexImage} TEXTURE TRANSLATE READ
+
+gl{Gen,Delete}Buffers BUFFER OBJECTS NONE
+glIsBuffer BUFFER OBJECTS NONE
+glBindBuffer BUFFER TRANSLATE NONE 1:BUFFER
+glBindBuffer{Base,Range} BUFFER TRANSLATE NONE 2:BUFFER
+glBuffer{Data,SubData} BUFFER FORWARD NONE
+glGetBuffer{SubData,Parameteriv,Pointerv} BUFFER FORWARD NONE
+glMapBuffer{,Range} BUFFER FORWARD NONE
+gl{UnmapBuffer,FlushMappedBufferRange,CopyBufferSubData} BUFFER FORWARD NONE
+
+gl{Gen,Delete}VertexArrays VERTEX_ARRAY OBJECTS NONE
+glIsVertexArray VERTEX_ARRAY OBJECTS NONE
+glBindVertexArray VERTEX_ARRAY TRANSLATE NONE 0:VERTEX_ARRAY
+gl{Enable,Disable}VertexAttribArray VERTEX_ARRAY FORWARD NONE
+glVertexAttrib{,I}Pointer VERTEX_ARRAY FORWARD NONE
+glVertexAttribDivisor VERTEX_ARRAY FORWARD NONE
+glVertexAttrib{1,2,3,4}{d,f,s}{,v} VERTEX_ARRAY FORWARD NONE
+glVertexAttrib4N{b,i,s,ub,ui,us}v VERTEX_ARRAY FORWARD NONE
+glVertexAttrib4Nub VERTEX_ARRAY FORWARD NONE
+glVertexAttrib4{b,i,ub,ui,us}v VERTEX_ARRAY FORWARD NONE
+glVertexAttribI{1,2,3,4}{i,ui}{,v} VERTEX_ARRAY FORWARD NONE
+glGetVertexAttrib{d,f,i}v VERTEX_ARRAY STATE_QUERY NONE
+glGetVertexAttribPointerv VERTEX_ARRAY FORWARD NONE
+
+glGenFramebuffers FRAMEBUFFER OBJECTS NONE
+glIsFramebuffer FRAMEBUFFER OBJECTS NONE
+glDeleteFramebuffers FRAMEBUFFER FRAMEBUFFER NONE
+glBindFramebuffer FRAMEBUFFER FRAMEBUFFER NONE 1:FRAMEBUFFER
+gl{Draw,Read}Buffer FRAMEBUFFER FRAMEBUFFER NONE
+glDrawBuffers FRAMEBUFFER FRAMEBUFFER NONE
+glFramebufferTexture{1D,2D,3D} FRAMEBUFFER FRAMEBUFFER NONE 3:TEXTURE
+glFramebufferTexture{,Layer} FRAMEBUFFER FRAMEBUFFER NONE 2:TEXTURE
+glFramebufferRenderbuffer FRAMEBUFFER FRAMEBUFFER NONE 3:RENDERBUFFER
+glGetFramebufferAttachmentParameteriv FRAMEBUFFER FRAMEBUFFER NONE
+glCheckFramebufferStatus FRAMEBUFFER FORWARD NONE
+glBlitFramebuffer FRAMEBUFFER TRANSLATE DRAW
+gl{Gen,Delete}Renderbuffers FRAMEBUFFER OBJECTS NONE
+glIsRenderbuffer FRAMEBUFFER OBJECTS NONE
+glBindRenderbuffer FRAMEBUFFER TRANSLATE NONE 1:RENDERBUFFER
+glRenderbufferStorage{,Multisample} FRAMEBUFFER FORWARD NONE
+glGetRenderbufferParameteriv FRAMEBUFFER FORWARD NONE
+
+gl{Create,Delete,Is}{Shader,Program} SHADER OBJECTS NONE
+glGetAttachedShaders SHADER OBJECTS NONE
+gl{ShaderSource,CompileShader,GetShaderiv,GetShaderInfoLog,GetShaderSource} SHADER TRANSLATE NONE 0:SHADER_OR_PROGRAM
+gl{Attach,Detach}Shader SHADER TRANSLATE NONE 0:SHADER_OR_PROGRAM 1:SHADER_OR_PROGRAM
+gl{LinkProgram,ValidateProgram,UseProgram,GetProgramiv,GetProgramInfoLog} SHADER TRANSLATE NONE 0:SHADER_OR_PROGRAM
+gl{BindAttribLocation,GetAttribLocation,BindFragDataLocation,GetFragDataLocation} SHADER TRANSLATE NONE 0:SHADER_OR_PROGRAM
+gl{GetUniformLocation,GetActiveUniform,GetActiveAttrib} SHADER TRANSLATE NONE 0:SHADER_OR_PROGRAM
+gl{GetUniformBlockIndex,UniformBlockBinding,GetUniformIndices} SHADER TRANSLATE NONE 0:SHADER_OR_PROGRAM
+glGetActiveUniform{Blockiv,BlockName,siv,Name} SHADER TRANSLATE NONE 0:SHADER_OR_PROGRAM
+glGetUniform{f,i,ui}v SHADER TRANSLATE NONE 0:SHADER_OR_PROGRAM
+glCreate{Shader,Program}ObjectARB SHADER OBJECTS NONE
+gl{DeleteObject,GetHandle,GetAttachedObjects}ARB SHADER OBJECTS NONE
+glUseProgramObjectARB SHADER TRANSLATE NONE 0:SHADER_OR_PROGRAM
+gl{Attach,Detach}ObjectARB SHADER TRANSLATE NONE 0:SHADER_OR_PROGRAM 1:SHADER_OR_PROGRAM
+glGetObjectParameter{f,i}vARB SHADER TRANSLATE NONE 0:SHADER_OR_PROGRAM
+glGetInfoLogARB SHADER TRANSLATE NONE 0:SHADER_OR_PROGRAM
+
+glUniform{1,2,3,4}{f,i,ui}{,v} UNIFORM FORWARD NONE
+glUniformMatrix{2,3,4,2x3,3x2,2x4,4x2,3x4,4x3}fv UNIFORM FORWARD NONE
+glProgramUniform{1,2,3,4}{f,i,ui}{,v} UNIFORM TRANSLATE NONE 0:SHADER_OR_PROGRAM
+glProgramUniformMatrix{2,3,4}fv UNIFORM TRANSLATE NONE 0:SHADER_OR_PROGRAM
+
+gl{Gen,Delete}Samplers SAMPLER OBJECTS NONE
+glIsSampler SAMPLER OBJECTS NONE
+glBindSampler SAMPLER TRANSLATE NONE 1:SAMPLER
+glSamplerParameter{f,i}{,v} SAMPLER TRANSLATE NONE 0:SAMPLER
+glSamplerParameterI{iv,uiv} SAMPLER TRANSLATE NONE 0:SAMPLER
+glGetSamplerParameter{f,i}v SAMPLER TRANSLATE NONE 0:SAMPLER
+glGetSamplerParameterI{iv,uiv} SAMPLER TRANSLATE NONE 0:SAMPLER
+
+gl{Gen,Delete}Queries QUERY OBJECTS NONE
+glIsQuery QUERY OBJECTS NONE
+glBeginQuery QUERY SPANS NONE 1:QUERY
+glEndQuery QUERY SPANS NONE
+glGetQueryObject{iv,uiv,i64v,ui64v} QUERY SPANS NONE 0:QUERY
+glBeginConditionalRender QUERY SPANS NONE 0:QUERY
+glEndConditionalRender QUERY FORWARD NONE
+glGetQueryiv QUERY FORWARD NONE
+glQueryCounter QUERY TRANSLATE NONE 0:QUERY
+
+gl{Begin,End}TransformFeedback TRANSFORM_FEEDBACK SPANS NONE
+gl{TransformFeedbackVaryings,GetTransformFeedbackVarying} TRANSFORM_FEEDBACK TRANSLATE NONE 0:SHADER_OR_PROGRAM
+
+gl{FenceSync,ClientWaitSync,WaitSync,DeleteSync,IsSync,GetSynciv} SYNC FORWARD NONE
+
+glRead{,n}Pixels READBACK TRANSLATE READ
+
+gl{Flush,Finish} SUBMISSION FORWARD NONE
+
+glGetError CONTEXT_QUERY ERRORS NONE
+glGetString{,i} CONTEXT_QUERY CAPABILITIES NONE
+glGetInteger{v,i_v} CONTEXT_QUERY STATE_QUERY NONE
+glGet{Float,Double,Boolean,Integer64}v CONTEXT_QUERY FORWARD NONE
