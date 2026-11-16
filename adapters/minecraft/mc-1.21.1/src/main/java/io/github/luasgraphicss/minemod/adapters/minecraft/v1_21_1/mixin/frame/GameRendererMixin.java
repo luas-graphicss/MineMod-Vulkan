@@ -4,6 +4,7 @@ import io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.frame.GameFram
 import io.github.luasgraphicss.minemod.codec.scene.BatchSlot;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,6 +18,14 @@ abstract class GameRendererMixin {
     private void minemod$drawTheHandOverTheWorld(
             Camera camera, float partialTick, Matrix4f projection, CallbackInfo callback) {
         GameFrame.enter(BatchSlot.HAND);
+    }
+
+    @Inject(method = "processBlurEffect", at = @At("HEAD"), cancellable = true)
+    private void minemod$blurTheFrameInTheScene(float partialTick, CallbackInfo callback) {
+        if (GameFrame.isRecording()) {
+            GameFrame.blur(Minecraft.getInstance().options.getMenuBackgroundBlurriness());
+            callback.cancel();
+        }
     }
 
     @Inject(method = "renderLevel", at = @At("RETURN"))
