@@ -1,4 +1,5 @@
 add_library(minemod_renderer_test_support STATIC
+    support/batch_stage.cpp
     support/graph_passes.cpp
     support/pixel_colors.cpp
     support/presenting_device.cpp
@@ -94,6 +95,7 @@ minemod_configure_vulkan_target(minemod_world_geometry_device_tests)
 add_executable(minemod_scene_drawing_tests
     draw/material_test.cpp
     draw/primitive_mode_test.cpp
+    draw/quad_order_test.cpp
     draw/vertex_format_test.cpp
     pipelines/blending_test.cpp
     shaders/scene_shader_contract_test.cpp)
@@ -104,6 +106,7 @@ minemod_configure_vulkan_target(minemod_scene_drawing_tests)
 add_executable(minemod_scene_drawing_device_tests
     draw/batch_geometry_test.cpp
     draw/batch_scene_test.cpp
+    draw/quad_order_scene_test.cpp
     scene/scene_composition_test.cpp
     scene/scene_frames_test.cpp)
 target_link_libraries(minemod_scene_drawing_device_tests PRIVATE minemod_renderer_test_support minemod_doctest_main)

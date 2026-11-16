@@ -9,6 +9,7 @@
 #include <vulkan/vulkan.h>
 
 #include "draw/primitive_mode.hpp"
+#include "draw/quad_order.hpp"
 #include "draw/vertex_format.hpp"
 #include "upload/arena_layout.hpp"
 #include "upload/upload_arena.hpp"
@@ -39,7 +40,7 @@ class BatchStager {
 public:
     explicit BatchStager(UploadArena& geometry_arena) noexcept : arena_(geometry_arena) {}
 
-    std::optional<BatchGeometry> stage(const BatchVertices& vertices);
+    std::optional<BatchGeometry> stage(const BatchVertices& vertices, QuadOrder order = QuadOrder::submitted);
 
 private:
     UploadArena& arena_;
