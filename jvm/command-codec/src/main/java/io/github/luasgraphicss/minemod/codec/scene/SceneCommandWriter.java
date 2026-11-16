@@ -57,6 +57,12 @@ public final class SceneCommandWriter {
         return this;
     }
 
+    public SceneCommandWriter connectSectionFaces(int x, int y, int z, int world, FaceConnections connections) {
+        ByteBuffer payload = begin(SceneOpcode.CONNECT_SECTION_FACES);
+        payload.putInt(x).putInt(y).putInt(z).putInt(world).putLong(connections.pairs());
+        return this;
+    }
+
     public SceneCommandWriter changeWorld() {
         begin(SceneOpcode.CHANGE_WORLD);
         return this;
