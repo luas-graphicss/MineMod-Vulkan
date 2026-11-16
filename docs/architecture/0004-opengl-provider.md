@@ -1,6 +1,6 @@
 # 4. Mesa/Zink as the OpenGL provider for mods
 
-Status: proposed. No code or measurement backs it yet.
+Status: proposed. `compatibility/provider` and `compatibility/dispatch` implement the pin, the identity check and the dispatch table and are tested against a simulated provider. No Mesa/Zink build has been loaded or measured.
 
 ## Context
 

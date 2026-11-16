@@ -1,6 +1,6 @@
 # 5. Sharing images between the renderer and the OpenGL provider
 
-Status: proposed. The round trip has not been run.
+Status: proposed. `compatibility/interop` implements the negotiation, the handle ownership and the semaphore order and is tested against a recording backend. The round trip has not been run on a GPU.
 
 ## Context
 
