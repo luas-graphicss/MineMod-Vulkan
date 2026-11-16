@@ -31,13 +31,16 @@ minemod_add_shader_library(minemod_sprite_shaders sprite.vert sprite.frag)
 
 add_executable(minemod_renderer_resource_tests
     lifetime/retirement_queue_test.cpp
+    reload/resource_generations_test.cpp
     shaders/core_shader_contract_test.cpp
     shaders/shader_interface_test.cpp
     shaders/spirv_module_test.cpp
     textures/atlas_layout_test.cpp
     textures/mip_chain_test.cpp
     textures/sprite_animation_test.cpp
-    upload/arena_layout_test.cpp)
+    upload/arena_layout_test.cpp
+    work/bounded_queue_test.cpp
+    work/job_epochs_test.cpp)
 target_include_directories(minemod_renderer_resource_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(minemod_renderer_resource_tests
     PRIVATE minemod::renderer minemod_doctest_main minemod_sprite_shaders)

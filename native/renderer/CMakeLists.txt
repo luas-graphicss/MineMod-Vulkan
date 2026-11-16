@@ -69,7 +69,8 @@ add_library(minemod_renderer STATIC
     src/textures/sprite_animation.cpp
     src/textures/texture.cpp
     src/upload/arena_layout.cpp
-    src/upload/upload_arena.cpp)
+    src/upload/upload_arena.cpp
+    src/work/job_epochs.cpp)
 add_library(minemod::renderer ALIAS minemod_renderer)
 
 target_include_directories(minemod_renderer PUBLIC src)
