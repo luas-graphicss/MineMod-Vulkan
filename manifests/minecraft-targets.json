@@ -1,0 +1,2839 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json",
+    "https://files.minecraftforge.net/net/minecraftforge/forge/maven-metadata.json",
+    "https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json",
+    "https://meta.fabricmc.net/v2/versions/game",
+    "https://meta.fabricmc.net/v2/versions/loader",
+    "https://meta.fabricmc.net/v2/versions/intermediary",
+    "https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/neoforge",
+    "https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/forge"
+  ],
+  "releases": [
+    {
+      "id": "1.12.2",
+      "family": "1.12",
+      "releaseTime": "2017-09-18T08:39:46+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/832d95b9f40699d4961394dcf6cf549e65f15dc5/1.12.2.json",
+        "sha1": "832d95b9f40699d4961394dcf6cf549e65f15dc5"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/0f275bc1547d01fa5f56ba34bdc87d981ee12daf/client.jar",
+        "sha1": "0f275bc1547d01fa5f56ba34bdc87d981ee12daf",
+        "size": 10180113
+      },
+      "clientMappings": null,
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": []
+      },
+      "runtime": {
+        "component": "jre-legacy",
+        "majorVersion": 8
+      },
+      "lwjgl": {
+        "generation": 2,
+        "version": "2.9.4-nightly-20150209"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.12.2-14.23.5.2859",
+          "channel": "recommended",
+          "bootstrap": "launchwrapper",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        }
+      ]
+    },
+    {
+      "id": "1.13",
+      "family": "1.13",
+      "releaseTime": "2018-07-18T15:11:46+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/c24c2fd37c8ca2e1c18721e2c77caf4d24c87f92/1.13.json",
+        "sha1": "c24c2fd37c8ca2e1c18721e2c77caf4d24c87f92"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/c0b970952cdd279912da384cdbfc0c26e6c6090b/client.jar",
+        "sha1": "c0b970952cdd279912da384cdbfc0c26e6c6090b",
+        "size": 16033625
+      },
+      "clientMappings": null,
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "jre-legacy",
+        "majorVersion": 8
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.1.6"
+      },
+      "loaders": [
+        {
+          "loader": "client-bootstrap",
+          "artifact": null,
+          "channel": null,
+          "bootstrap": "client-bootstrap",
+          "mappings": null,
+          "toolchain": "client-bootstrap"
+        }
+      ]
+    },
+    {
+      "id": "1.13.1",
+      "family": "1.13",
+      "releaseTime": "2018-08-22T14:03:42+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/f37fe6f0912ddb7ac3e7d5201a73d56ce170a57f/1.13.1.json",
+        "sha1": "f37fe6f0912ddb7ac3e7d5201a73d56ce170a57f"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/8de235e5ec3a7fce168056ea395d21cbdec18d7c/client.jar",
+        "sha1": "8de235e5ec3a7fce168056ea395d21cbdec18d7c",
+        "size": 16088559
+      },
+      "clientMappings": null,
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "jre-legacy",
+        "majorVersion": 8
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.1.6"
+      },
+      "loaders": [
+        {
+          "loader": "client-bootstrap",
+          "artifact": null,
+          "channel": null,
+          "bootstrap": "client-bootstrap",
+          "mappings": null,
+          "toolchain": "client-bootstrap"
+        }
+      ]
+    },
+    {
+      "id": "1.13.2",
+      "family": "1.13",
+      "releaseTime": "2018-10-22T11:41:07+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/fa3ddc22146c46bfeb0e9d322c6f83b937e25005/1.13.2.json",
+        "sha1": "fa3ddc22146c46bfeb0e9d322c6f83b937e25005"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/30bfe37a8db404db11c7edf02cb5165817afb4d9/client.jar",
+        "sha1": "30bfe37a8db404db11c7edf02cb5165817afb4d9",
+        "size": 16089640
+      },
+      "clientMappings": null,
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "jre-legacy",
+        "majorVersion": 8
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.1.6"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.13.2-25.0.223",
+          "channel": "latest",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        }
+      ]
+    },
+    {
+      "id": "1.14",
+      "family": "1.14",
+      "releaseTime": "2019-04-23T14:52:44+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/0fd01dd81eaa451d3130b1cf025a10f129585b10/1.14.json",
+        "sha1": "0fd01dd81eaa451d3130b1cf025a10f129585b10"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/7a762a59345c13af7d87111207a93f5a8607f6c0/client.jar",
+        "sha1": "7a762a59345c13af7d87111207a93f5a8607f6c0",
+        "size": 18796546
+      },
+      "clientMappings": null,
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "jre-legacy",
+        "majorVersion": 8
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.2.1"
+      },
+      "loaders": [
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.14",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.14.1",
+      "family": "1.14",
+      "releaseTime": "2019-05-13T11:10:12+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/183e49ba0fabb5ef8a304f8f5907fa887f40c466/1.14.1.json",
+        "sha1": "183e49ba0fabb5ef8a304f8f5907fa887f40c466"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/55ba86ddcbc3579397f41910463ffd4056e1e523/client.jar",
+        "sha1": "55ba86ddcbc3579397f41910463ffd4056e1e523",
+        "size": 18814947
+      },
+      "clientMappings": null,
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "jre-legacy",
+        "majorVersion": 8
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.2.1"
+      },
+      "loaders": [
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.14.1",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.14.2",
+      "family": "1.14",
+      "releaseTime": "2019-05-27T11:48:25+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/83299b3bf3139ebd9ae5547b3144dcf68d4cb1fd/1.14.2.json",
+        "sha1": "83299b3bf3139ebd9ae5547b3144dcf68d4cb1fd"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/ca6c5a139045967229975c0c0b7f93e78b4314c2/client.jar",
+        "sha1": "ca6c5a139045967229975c0c0b7f93e78b4314c2",
+        "size": 18794327
+      },
+      "clientMappings": null,
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "jre-legacy",
+        "majorVersion": 8
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.2.1"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.14.2-26.0.63",
+          "channel": "latest",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.14.2",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.14.3",
+      "family": "1.14",
+      "releaseTime": "2019-06-24T12:52:52+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/e21618620e02be5a14543d1d17ffdba941d09aa8/1.14.3.json",
+        "sha1": "e21618620e02be5a14543d1d17ffdba941d09aa8"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/af100b34ec7ef2b8b9cf7775b544d21d690dddec/client.jar",
+        "sha1": "af100b34ec7ef2b8b9cf7775b544d21d690dddec",
+        "size": 18813147
+      },
+      "clientMappings": null,
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "jre-legacy",
+        "majorVersion": 8
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.2.2"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.14.3-27.0.60",
+          "channel": "latest",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.14.3",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.14.4",
+      "family": "1.14",
+      "releaseTime": "2019-07-19T09:25:47+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/be146d5f66a3627ed0a87c234c4d8dde8ab35098/1.14.4.json",
+        "sha1": "be146d5f66a3627ed0a87c234c4d8dde8ab35098"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/8c325a0c5bd674dd747d6ebaa4c791fd363ad8a9/client.jar",
+        "sha1": "8c325a0c5bd674dd747d6ebaa4c791fd363ad8a9",
+        "size": 25191691
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/6073e4ba6949217eb708c4512be2ccc1850a603f/client.txt",
+        "sha1": "6073e4ba6949217eb708c4512be2ccc1850a603f",
+        "size": 4709268
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "jre-legacy",
+        "majorVersion": 8
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.2.2"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.14.4-28.2.26",
+          "channel": "recommended",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.14.4",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.15",
+      "family": "1.15",
+      "releaseTime": "2019-12-09T13:13:38+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/833322370ab320e77717097082effe1d124d48bd/1.15.json",
+        "sha1": "833322370ab320e77717097082effe1d124d48bd"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/7b07fd09d1e3aae1bc7a1304fedc73bfe5d81800/client.jar",
+        "sha1": "7b07fd09d1e3aae1bc7a1304fedc73bfe5d81800",
+        "size": 15517346
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/580c412cfa5869318a3a02d6b018a83781bf3ae7/client.txt",
+        "sha1": "580c412cfa5869318a3a02d6b018a83781bf3ae7",
+        "size": 4963019
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "jre-legacy",
+        "majorVersion": 8
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.2.2"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.15-29.0.4",
+          "channel": "latest",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.15",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.15.1",
+      "family": "1.15",
+      "releaseTime": "2019-12-16T10:29:47+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/18c3063de87ae126b4e017121219ba802be0755b/1.15.1.json",
+        "sha1": "18c3063de87ae126b4e017121219ba802be0755b"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/8b11614bea9293592a947ea8f4fd72981ea66677/client.jar",
+        "sha1": "8b11614bea9293592a947ea8f4fd72981ea66677",
+        "size": 15518397
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/054ee5085ec49b6d037d10d43c04fd4c9c3b9f4b/client.txt",
+        "sha1": "054ee5085ec49b6d037d10d43c04fd4c9c3b9f4b",
+        "size": 4963044
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "jre-legacy",
+        "majorVersion": 8
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.2.2"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.15.1-30.0.51",
+          "channel": "latest",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.15.1",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.15.2",
+      "family": "1.15",
+      "releaseTime": "2020-01-17T10:03:52+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/e9d0adb8f642abe422909ede50f651b2b58a3573/1.15.2.json",
+        "sha1": "e9d0adb8f642abe422909ede50f651b2b58a3573"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/e3f78cd16f9eb9a52307ed96ebec64241cc5b32d/client.jar",
+        "sha1": "e3f78cd16f9eb9a52307ed96ebec64241cc5b32d",
+        "size": 15531492
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/1fbf9f0bc9c326af859b3ccf71c2a8f5edc47ef8/client.txt",
+        "sha1": "1fbf9f0bc9c326af859b3ccf71c2a8f5edc47ef8",
+        "size": 4972120
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "jre-legacy",
+        "majorVersion": 8
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.2.2"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.15.2-31.2.57",
+          "channel": "recommended",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.15.2",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.16",
+      "family": "1.16",
+      "releaseTime": "2020-06-23T16:20:52+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/e9d21d375f9c961f0e9731d4e463306d76e77c48/1.16.json",
+        "sha1": "e9d21d375f9c961f0e9731d4e463306d76e77c48"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/228fdf45541c4c2fe8aec4f20e880cb8fcd46621/client.jar",
+        "sha1": "228fdf45541c4c2fe8aec4f20e880cb8fcd46621",
+        "size": 17492200
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/9539840a7dbea682b305858fe138bd03ee7823cf/client.txt",
+        "sha1": "9539840a7dbea682b305858fe138bd03ee7823cf",
+        "size": 5632455
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "jre-legacy",
+        "majorVersion": 8
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.2.2"
+      },
+      "loaders": [
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.16",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.16.1",
+      "family": "1.16",
+      "releaseTime": "2020-06-24T10:31:40+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/54fa3af57d041d2771e66d390197b2c0288e697c/1.16.1.json",
+        "sha1": "54fa3af57d041d2771e66d390197b2c0288e697c"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/c9abbe8ee4fa490751ca70635340b7cf00db83ff/client.jar",
+        "sha1": "c9abbe8ee4fa490751ca70635340b7cf00db83ff",
+        "size": 17492432
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/ddf517a4f6750f4c15189de4e03246ae1f916cf5/client.txt",
+        "sha1": "ddf517a4f6750f4c15189de4e03246ae1f916cf5",
+        "size": 5632455
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "jre-legacy",
+        "majorVersion": 8
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.2.2"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.16.1-32.0.108",
+          "channel": "latest",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.16.1",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.16.2",
+      "family": "1.16",
+      "releaseTime": "2020-08-11T10:13:46+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/998d9ef5770d05c20d760dc16cf85151f35009f2/1.16.2.json",
+        "sha1": "998d9ef5770d05c20d760dc16cf85151f35009f2"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/653e97a2d1d76f87653f02242d243cdee48a5144/client.jar",
+        "sha1": "653e97a2d1d76f87653f02242d243cdee48a5144",
+        "size": 17505439
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/16d12d67cd5341bfc848340f61f3ff6b957537fe/client.txt",
+        "sha1": "16d12d67cd5341bfc848340f61f3ff6b957537fe",
+        "size": 5722352
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "jre-legacy",
+        "majorVersion": 8
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.2.2"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.16.2-33.0.61",
+          "channel": "latest",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.16.2",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.16.3",
+      "family": "1.16",
+      "releaseTime": "2020-09-10T13:42:37+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/6485dd131ef68c968041a9f6fd73094b027e42e1/1.16.3.json",
+        "sha1": "6485dd131ef68c968041a9f6fd73094b027e42e1"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/1321521b2caf934f7fc9665aab7e059a7b2bfcdf/client.jar",
+        "sha1": "1321521b2caf934f7fc9665aab7e059a7b2bfcdf",
+        "size": 17505781
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/faac5028fbca3859db970cc4ca041aeec55f6d9d/client.txt",
+        "sha1": "faac5028fbca3859db970cc4ca041aeec55f6d9d",
+        "size": 5722449
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "jre-legacy",
+        "majorVersion": 8
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.2.2"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.16.3-34.1.0",
+          "channel": "recommended",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.16.3",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.16.4",
+      "family": "1.16",
+      "releaseTime": "2020-10-29T15:49:37+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/596ad61fda7612d9edf8881cf81869276bdb7f82/1.16.4.json",
+        "sha1": "596ad61fda7612d9edf8881cf81869276bdb7f82"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/1952d94a0784e7abda230aae6a1e8fc0522dba99/client.jar",
+        "sha1": "1952d94a0784e7abda230aae6a1e8fc0522dba99",
+        "size": 17546582
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/0837de813d1a6b67e23da3c520a84e872c8d2f0e/client.txt",
+        "sha1": "0837de813d1a6b67e23da3c520a84e872c8d2f0e",
+        "size": 5746047
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "jre-legacy",
+        "majorVersion": 8
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.2.2"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.16.4-35.1.4",
+          "channel": "recommended",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.16.4",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.16.5",
+      "family": "1.16",
+      "releaseTime": "2021-01-14T16:05:32+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/fba9f7833e858a1257d810d21a3a9e3c967f9077/1.16.5.json",
+        "sha1": "fba9f7833e858a1257d810d21a3a9e3c967f9077"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/37fd3c903861eeff3bc24b71eed48f828b5269c8/client.jar",
+        "sha1": "37fd3c903861eeff3bc24b71eed48f828b5269c8",
+        "size": 17547153
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/374c6b789574afbdc901371207155661e0509e17/client.txt",
+        "sha1": "374c6b789574afbdc901371207155661e0509e17",
+        "size": 5746047
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "jre-legacy",
+        "majorVersion": 8
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.2.2"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.16.5-36.2.34",
+          "channel": "recommended",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.16.5",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.17",
+      "family": "1.17",
+      "releaseTime": "2021-06-08T11:00:40+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/0d9ace8a2ecfd1f4c782786f4b985a499240ff12/1.17.json",
+        "sha1": "0d9ace8a2ecfd1f4c782786f4b985a499240ff12"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/1cf89c77ed5e72401b869f66410934804f3d6f52/client.jar",
+        "sha1": "1cf89c77ed5e72401b869f66410934804f3d6f52",
+        "size": 19536133
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/227d16f520848747a59bef6f490ae19dc290a804/client.txt",
+        "sha1": "227d16f520848747a59bef6f490ae19dc290a804",
+        "size": 6431705
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "java-runtime-alpha",
+        "majorVersion": 16
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.2.2"
+      },
+      "loaders": [
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.17",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.17.1",
+      "family": "1.17",
+      "releaseTime": "2021-07-06T12:01:34+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/e0e7ab5ed6f55bbd874ef95be3c9356d67e64b57/1.17.1.json",
+        "sha1": "e0e7ab5ed6f55bbd874ef95be3c9356d67e64b57"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/8d9b65467c7913fcf6f5b2e729d44a1e00fde150/client.jar",
+        "sha1": "8d9b65467c7913fcf6f5b2e729d44a1e00fde150",
+        "size": 19546842
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/e4d540e0cba05a6097e885dffdf363e621f87d3f/client.txt",
+        "sha1": "e4d540e0cba05a6097e885dffdf363e621f87d3f",
+        "size": 6437531
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "java-runtime-alpha",
+        "majorVersion": 16
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.2.2"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.17.1-37.1.1",
+          "channel": "recommended",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.17.1",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.18",
+      "family": "1.18",
+      "releaseTime": "2021-11-30T09:16:29+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/7367ea8b7cad7c7830192441bb2846be0d2ceeac/1.18.json",
+        "sha1": "7367ea8b7cad7c7830192441bb2846be0d2ceeac"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/d49eb6caed53d23927648c97451503442f9e26fd/client.jar",
+        "sha1": "d49eb6caed53d23927648c97451503442f9e26fd",
+        "size": 20038427
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/e824c89c612c0b9cb438ef739c44726c59bbf679/client.txt",
+        "sha1": "e824c89c612c0b9cb438ef739c44726c59bbf679",
+        "size": 6610979
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--clientId",
+          "${clientid}",
+          "--xuid",
+          "${auth_xuid}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "java-runtime-beta",
+        "majorVersion": 17
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.2.2"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.18-38.0.17",
+          "channel": "latest",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.18",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.18.1",
+      "family": "1.18",
+      "releaseTime": "2021-12-10T08:23:00+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/7ff864e988a2c29907154d5f9701e87e5d5e554a/1.18.1.json",
+        "sha1": "7ff864e988a2c29907154d5f9701e87e5d5e554a"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/7e46fb47609401970e2818989fa584fd467cd036/client.jar",
+        "sha1": "7e46fb47609401970e2818989fa584fd467cd036",
+        "size": 20042090
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/99ade839eacf69b8bed88c91bd70ca660aee47bb/client.txt",
+        "sha1": "99ade839eacf69b8bed88c91bd70ca660aee47bb",
+        "size": 6611464
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--clientId",
+          "${clientid}",
+          "--xuid",
+          "${auth_xuid}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "java-runtime-beta",
+        "majorVersion": 17
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.2.2"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.18.1-39.1.0",
+          "channel": "recommended",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.18.1",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.18.2",
+      "family": "1.18",
+      "releaseTime": "2022-02-28T10:42:45+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/334b33fcba3c9be4b7514624c965256535bd7eba/1.18.2.json",
+        "sha1": "334b33fcba3c9be4b7514624c965256535bd7eba"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/2e9a3e3107cca00d6bc9c97bf7d149cae163ef21/client.jar",
+        "sha1": "2e9a3e3107cca00d6bc9c97bf7d149cae163ef21",
+        "size": 20259661
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/a661c6a55a0600bd391bdbbd6827654c05b2109c/client.txt",
+        "sha1": "a661c6a55a0600bd391bdbbd6827654c05b2109c",
+        "size": 6716693
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--clientId",
+          "${clientid}",
+          "--xuid",
+          "${auth_xuid}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "java-runtime-beta",
+        "majorVersion": 17
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.2.2"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.18.2-40.3.0",
+          "channel": "recommended",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.18.2",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.19",
+      "family": "1.19",
+      "releaseTime": "2022-06-07T09:42:18+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/14bbfb25fb1c1c798e3c9b9482b081a78d1f3a9d/1.19.json",
+        "sha1": "14bbfb25fb1c1c798e3c9b9482b081a78d1f3a9d"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/c0898ec7c6a5a2eaa317770203a1554260699994/client.jar",
+        "sha1": "c0898ec7c6a5a2eaa317770203a1554260699994",
+        "size": 21462385
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/150346d1c0b4acec0b4eb7f58b86e3ea1aa730f3/client.txt",
+        "sha1": "150346d1c0b4acec0b4eb7f58b86e3ea1aa730f3",
+        "size": 7123832
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--clientId",
+          "${clientid}",
+          "--xuid",
+          "${auth_xuid}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "java-runtime-gamma",
+        "majorVersion": 17
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.3.1"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.19-41.1.0",
+          "channel": "recommended",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.19",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.19.1",
+      "family": "1.19",
+      "releaseTime": "2022-07-27T09:25:33+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/39d5e8925d37490c6f2abb2e02b8c6f1b35719df/1.19.1.json",
+        "sha1": "39d5e8925d37490c6f2abb2e02b8c6f1b35719df"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/90d438c3e432add8848a9f9f368ce5a52f6bc4a7/client.jar",
+        "sha1": "90d438c3e432add8848a9f9f368ce5a52f6bc4a7",
+        "size": 21643604
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/fc8e22d42c0e4eb1899e2acf7e97eae917e1cb94/client.txt",
+        "sha1": "fc8e22d42c0e4eb1899e2acf7e97eae917e1cb94",
+        "size": 7235104
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--clientId",
+          "${clientid}",
+          "--xuid",
+          "${auth_xuid}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "java-runtime-gamma",
+        "majorVersion": 17
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.3.1"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.19.1-42.0.9",
+          "channel": "latest",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.19.1",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.19.2",
+      "family": "1.19",
+      "releaseTime": "2022-08-05T11:57:05+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/ed548106acf3ac7e8205a6ee8fd2710facfa164f/1.19.2.json",
+        "sha1": "ed548106acf3ac7e8205a6ee8fd2710facfa164f"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/055b30d860ead928cba3849ba920c88b6950b654/client.jar",
+        "sha1": "055b30d860ead928cba3849ba920c88b6950b654",
+        "size": 21644740
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/8e8c9be5dc27802caba47053d4fdea328f7f89bd/client.txt",
+        "sha1": "8e8c9be5dc27802caba47053d4fdea328f7f89bd",
+        "size": 7236064
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--clientId",
+          "${clientid}",
+          "--xuid",
+          "${auth_xuid}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "java-runtime-gamma",
+        "majorVersion": 17
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.3.1"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.19.2-43.5.0",
+          "channel": "recommended",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.19.2",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.19.3",
+      "family": "1.19",
+      "releaseTime": "2022-12-07T08:17:18+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/5a447c52810ced5a8535b5f635f6bc63c94df64e/1.19.3.json",
+        "sha1": "5a447c52810ced5a8535b5f635f6bc63c94df64e"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/977727ec9ab8b4631e5c12839f064092f17663f8/client.jar",
+        "sha1": "977727ec9ab8b4631e5c12839f064092f17663f8",
+        "size": 22704188
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/42366909cc612e76208d34bf1356f05a88e08a1d/client.txt",
+        "sha1": "42366909cc612e76208d34bf1356f05a88e08a1d",
+        "size": 7574170
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--clientId",
+          "${clientid}",
+          "--xuid",
+          "${auth_xuid}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "java-runtime-gamma",
+        "majorVersion": 17
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.3.1"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.19.3-44.1.0",
+          "channel": "recommended",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.19.3",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.19.4",
+      "family": "1.19",
+      "releaseTime": "2023-03-14T12:56:18+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/509d363de59da2f2350fee270f11ace8a9412948/1.19.4.json",
+        "sha1": "509d363de59da2f2350fee270f11ace8a9412948"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/958928a560c9167687bea0cefeb7375da1e552a8/client.jar",
+        "sha1": "958928a560c9167687bea0cefeb7375da1e552a8",
+        "size": 23476620
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/f14771b764f943c154d3a6fcb47694477e328148/client.txt",
+        "sha1": "f14771b764f943c154d3a6fcb47694477e328148",
+        "size": 7844191
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--clientId",
+          "${clientid}",
+          "--xuid",
+          "${auth_xuid}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "java-runtime-gamma",
+        "majorVersion": 17
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.3.1"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.19.4-45.4.0",
+          "channel": "recommended",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.19.4",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.20",
+      "family": "1.20",
+      "releaseTime": "2023-06-02T08:36:17+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/a645b4aeda8c8d2a7b12550ecc91de5ba3a8d5e1/1.20.json",
+        "sha1": "a645b4aeda8c8d2a7b12550ecc91de5ba3a8d5e1"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/e575a48efda46cf88111ba05b624ef90c520eef1/client.jar",
+        "sha1": "e575a48efda46cf88111ba05b624ef90c520eef1",
+        "size": 23028278
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/a4cd9a97400f7ecfe4dba23e427549ebc5815d66/client.txt",
+        "sha1": "a4cd9a97400f7ecfe4dba23e427549ebc5815d66",
+        "size": 8001434
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--clientId",
+          "${clientid}",
+          "--xuid",
+          "${auth_xuid}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Djna.tmpdir=${natives_directory}",
+          "-Dorg.lwjgl.system.SharedLibraryExtractPath=${natives_directory}",
+          "-Dio.netty.native.workdir=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "java-runtime-gamma",
+        "majorVersion": 17
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.3.1"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.20-46.0.14",
+          "channel": "latest",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.20",
+          "toolchain": "fabric-loom"
+        }
+      ]
+    },
+    {
+      "id": "1.20.1",
+      "family": "1.20",
+      "releaseTime": "2023-06-12T13:25:51+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/3ecf2cab995685d345a257326ba72192b7911250/1.20.1.json",
+        "sha1": "3ecf2cab995685d345a257326ba72192b7911250"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/0c3ec587af28e5a785c0b4a7b8a30f9a8f78f838/client.jar",
+        "sha1": "0c3ec587af28e5a785c0b4a7b8a30f9a8f78f838",
+        "size": 23028853
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/6c48521eed01fe2e8ecdadbd5ae348415f3c47da/client.txt",
+        "sha1": "6c48521eed01fe2e8ecdadbd5ae348415f3c47da",
+        "size": 8001795
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--clientId",
+          "${clientid}",
+          "--xuid",
+          "${auth_xuid}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Djna.tmpdir=${natives_directory}",
+          "-Dorg.lwjgl.system.SharedLibraryExtractPath=${natives_directory}",
+          "-Dio.netty.native.workdir=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "java-runtime-gamma",
+        "majorVersion": 17
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.3.1"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.20.1-47.4.28",
+          "channel": "recommended",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.20.1",
+          "toolchain": "fabric-loom"
+        },
+        {
+          "loader": "neoforge",
+          "artifact": "net.neoforged:forge:1.20.1-47.1.106",
+          "channel": "stable",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "neogradle"
+        }
+      ]
+    },
+    {
+      "id": "1.20.2",
+      "family": "1.20",
+      "releaseTime": "2023-09-20T09:02:57+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/2b1c2be7cf1d1137b77716962b71e147b614c50c/1.20.2.json",
+        "sha1": "2b1c2be7cf1d1137b77716962b71e147b614c50c"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/82d1974e75fc984c5ed4b038e764e50958ac61a0/client.jar",
+        "sha1": "82d1974e75fc984c5ed4b038e764e50958ac61a0",
+        "size": 23186213
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/5c292ff7d3161977041116698e295083fd5ec8f5/client.txt",
+        "sha1": "5c292ff7d3161977041116698e295083fd5ec8f5",
+        "size": 8578898
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--clientId",
+          "${clientid}",
+          "--xuid",
+          "${auth_xuid}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Djna.tmpdir=${natives_directory}",
+          "-Dorg.lwjgl.system.SharedLibraryExtractPath=${natives_directory}",
+          "-Dio.netty.native.workdir=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "java-runtime-gamma",
+        "majorVersion": 17
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.3.2"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.20.2-48.1.0",
+          "channel": "recommended",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.20.2",
+          "toolchain": "fabric-loom"
+        },
+        {
+          "loader": "neoforge",
+          "artifact": "net.neoforged:neoforge:20.2.93",
+          "channel": "stable",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "neogradle"
+        }
+      ]
+    },
+    {
+      "id": "1.20.3",
+      "family": "1.20",
+      "releaseTime": "2023-12-04T12:10:32+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/b1023e33c4c35e8cb72127c7b4745236fa47b9d4/1.20.3.json",
+        "sha1": "b1023e33c4c35e8cb72127c7b4745236fa47b9d4"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/b178a327a96f2cf1c9f98a45e5588d654a3e4369/client.jar",
+        "sha1": "b178a327a96f2cf1c9f98a45e5588d654a3e4369",
+        "size": 24445920
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/be76ecc174ea25580bdc9bf335481a5192d9f3b7/client.txt",
+        "sha1": "be76ecc174ea25580bdc9bf335481a5192d9f3b7",
+        "size": 8897012
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--clientId",
+          "${clientid}",
+          "--xuid",
+          "${auth_xuid}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Djna.tmpdir=${natives_directory}",
+          "-Dorg.lwjgl.system.SharedLibraryExtractPath=${natives_directory}",
+          "-Dio.netty.native.workdir=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "java-runtime-gamma",
+        "majorVersion": 17
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.3.2"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.20.3-49.0.2",
+          "channel": "latest",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.20.3",
+          "toolchain": "fabric-loom"
+        },
+        {
+          "loader": "neoforge",
+          "artifact": "net.neoforged:neoforge:20.3.8-beta",
+          "channel": "beta",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "neogradle"
+        }
+      ]
+    },
+    {
+      "id": "1.20.4",
+      "family": "1.20",
+      "releaseTime": "2023-12-07T12:56:20+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/bd984a42a9b403c620eae6cd77a1095850ca4479/1.20.4.json",
+        "sha1": "bd984a42a9b403c620eae6cd77a1095850ca4479"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/fd19469fed4a4b4c15b2d5133985f0e3e7816a8a/client.jar",
+        "sha1": "fd19469fed4a4b4c15b2d5133985f0e3e7816a8a",
+        "size": 24445539
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/be76ecc174ea25580bdc9bf335481a5192d9f3b7/client.txt",
+        "sha1": "be76ecc174ea25580bdc9bf335481a5192d9f3b7",
+        "size": 8897012
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--clientId",
+          "${clientid}",
+          "--xuid",
+          "${auth_xuid}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Djna.tmpdir=${natives_directory}",
+          "-Dorg.lwjgl.system.SharedLibraryExtractPath=${natives_directory}",
+          "-Dio.netty.native.workdir=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "java-runtime-gamma",
+        "majorVersion": 17
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.3.2"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.20.4-49.2.13",
+          "channel": "recommended",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.20.4",
+          "toolchain": "fabric-loom"
+        },
+        {
+          "loader": "neoforge",
+          "artifact": "net.neoforged:neoforge:20.4.253",
+          "channel": "stable",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "neogradle"
+        }
+      ]
+    },
+    {
+      "id": "1.20.5",
+      "family": "1.20",
+      "releaseTime": "2024-04-23T11:54:12+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/a7f0d5d66b6a76ac710858ea7c63791326dc6a64/1.20.5.json",
+        "sha1": "a7f0d5d66b6a76ac710858ea7c63791326dc6a64"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/c6b92b2374a629f20802bb284f98a4ee790e950a/client.jar",
+        "sha1": "c6b92b2374a629f20802bb284f98a4ee790e950a",
+        "size": 26565623
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/65b1468c44fbf34382716416b5c1a16d2949217a/client.txt",
+        "sha1": "65b1468c44fbf34382716416b5c1a16d2949217a",
+        "size": 9421856
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--clientId",
+          "${clientid}",
+          "--xuid",
+          "${auth_xuid}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Djna.tmpdir=${natives_directory}",
+          "-Dorg.lwjgl.system.SharedLibraryExtractPath=${natives_directory}",
+          "-Dio.netty.native.workdir=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "java-runtime-delta",
+        "majorVersion": 21
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.3.3"
+      },
+      "loaders": [
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.20.5",
+          "toolchain": "fabric-loom"
+        },
+        {
+          "loader": "neoforge",
+          "artifact": "net.neoforged:neoforge:20.5.21-beta",
+          "channel": "beta",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "neogradle"
+        }
+      ]
+    },
+    {
+      "id": "1.20.6",
+      "family": "1.20",
+      "releaseTime": "2024-04-29T12:40:45+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/f218f389b6a159ac30b44a3adf9a8700ed42f397/1.20.6.json",
+        "sha1": "f218f389b6a159ac30b44a3adf9a8700ed42f397"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/05b6f1c6b46a29d6ea82b4e0d42190e42402030f/client.jar",
+        "sha1": "05b6f1c6b46a29d6ea82b4e0d42190e42402030f",
+        "size": 26565641
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/de46c8f33d7826eb83e8ef0e9f80dc1f08cb9498/client.txt",
+        "sha1": "de46c8f33d7826eb83e8ef0e9f80dc1f08cb9498",
+        "size": 9422442
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--clientId",
+          "${clientid}",
+          "--xuid",
+          "${auth_xuid}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Djna.tmpdir=${natives_directory}",
+          "-Dorg.lwjgl.system.SharedLibraryExtractPath=${natives_directory}",
+          "-Dio.netty.native.workdir=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "java-runtime-delta",
+        "majorVersion": 21
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.3.3"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.20.6-50.2.14",
+          "channel": "recommended",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.20.6",
+          "toolchain": "fabric-loom"
+        },
+        {
+          "loader": "neoforge",
+          "artifact": "net.neoforged:neoforge:20.6.144",
+          "channel": "stable",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "neogradle"
+        }
+      ]
+    },
+    {
+      "id": "1.21",
+      "family": "1.21",
+      "releaseTime": "2024-06-13T08:24:03+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/4fc7dfb1d245736485d1f0e9c7a41c0273ad8638/1.21.json",
+        "sha1": "4fc7dfb1d245736485d1f0e9c7a41c0273ad8638"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/0e9a07b9bb3390602f977073aa12884a4ce12431/client.jar",
+        "sha1": "0e9a07b9bb3390602f977073aa12884a4ce12431",
+        "size": 26836080
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/0530a206839eb1e9b35ec86acbbe394b07a2d9fb/client.txt",
+        "sha1": "0530a206839eb1e9b35ec86acbbe394b07a2d9fb",
+        "size": 9597156
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--clientId",
+          "${clientid}",
+          "--xuid",
+          "${auth_xuid}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Djna.tmpdir=${natives_directory}",
+          "-Dorg.lwjgl.system.SharedLibraryExtractPath=${natives_directory}",
+          "-Dio.netty.native.workdir=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "java-runtime-delta",
+        "majorVersion": 21
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.3.3"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.21-51.0.33",
+          "channel": "latest",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.21",
+          "toolchain": "fabric-loom"
+        },
+        {
+          "loader": "neoforge",
+          "artifact": "net.neoforged:neoforge:21.0.167",
+          "channel": "stable",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "neogradle"
+        }
+      ]
+    },
+    {
+      "id": "1.21.1",
+      "family": "1.21",
+      "releaseTime": "2024-08-08T12:24:45+00:00",
+      "metadata": {
+        "url": "https://piston-meta.mojang.com/v1/packages/9aa86ea608c3ec777dcdc09e6c5a06c85b53599e/1.21.1.json",
+        "sha1": "9aa86ea608c3ec777dcdc09e6c5a06c85b53599e"
+      },
+      "client": {
+        "url": "https://piston-data.mojang.com/v1/objects/30c73b1c5da787909b2f73340419fdf13b9def88/client.jar",
+        "sha1": "30c73b1c5da787909b2f73340419fdf13b9def88",
+        "size": 26836906
+      },
+      "clientMappings": {
+        "url": "https://piston-data.mojang.com/v1/objects/2244b6f072256667bcd9a73df124d6c58de77992/client.txt",
+        "sha1": "2244b6f072256667bcd9a73df124d6c58de77992",
+        "size": 9598610
+      },
+      "launch": {
+        "mainClass": "net.minecraft.client.main.Main",
+        "gameArguments": [
+          "--username",
+          "${auth_player_name}",
+          "--version",
+          "${version_name}",
+          "--gameDir",
+          "${game_directory}",
+          "--assetsDir",
+          "${assets_root}",
+          "--assetIndex",
+          "${assets_index_name}",
+          "--uuid",
+          "${auth_uuid}",
+          "--accessToken",
+          "${auth_access_token}",
+          "--clientId",
+          "${clientid}",
+          "--xuid",
+          "${auth_xuid}",
+          "--userType",
+          "${user_type}",
+          "--versionType",
+          "${version_type}"
+        ],
+        "jvmArguments": [
+          "-Djava.library.path=${natives_directory}",
+          "-Djna.tmpdir=${natives_directory}",
+          "-Dorg.lwjgl.system.SharedLibraryExtractPath=${natives_directory}",
+          "-Dio.netty.native.workdir=${natives_directory}",
+          "-Dminecraft.launcher.brand=${launcher_name}",
+          "-Dminecraft.launcher.version=${launcher_version}",
+          "-cp",
+          "${classpath}"
+        ]
+      },
+      "runtime": {
+        "component": "java-runtime-delta",
+        "majorVersion": 21
+      },
+      "lwjgl": {
+        "generation": 3,
+        "version": "3.3.3"
+      },
+      "loaders": [
+        {
+          "loader": "forge",
+          "artifact": "net.minecraftforge:forge:1.21.1-52.1.20",
+          "channel": "recommended",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "forgegradle"
+        },
+        {
+          "loader": "fabric",
+          "artifact": "net.fabricmc:fabric-loader:0.20.1",
+          "channel": "stable",
+          "bootstrap": "fabric-knot",
+          "mappings": "net.fabricmc:intermediary:1.21.1",
+          "toolchain": "fabric-loom"
+        },
+        {
+          "loader": "neoforge",
+          "artifact": "net.neoforged:neoforge:21.1.266",
+          "channel": "stable",
+          "bootstrap": "modlauncher",
+          "mappings": null,
+          "toolchain": "neogradle"
+        }
+      ]
+    }
+  ]
+}

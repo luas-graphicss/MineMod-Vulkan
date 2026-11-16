@@ -1,0 +1,47 @@
+package io.github.luasgraphicss.minemod.verification.cli;
+
+import java.io.IOException;
+import java.io.PrintStream;
+import java.nio.file.Path;
+
+public final class VerificationCli {
+    static final int EXIT_OK = 0;
+    static final int EXIT_VIOLATIONS = 1;
+    static final int EXIT_USAGE = 2;
+    static final int EXIT_FAILURE = 3;
+
+    private static final String USAGE = """
+            usage:
+              verification check --profile <name> [--root <directory>]
+              verification targets refresh [--root <directory>]
+            """;
+
+    private VerificationCli() {}
+
+    public static void main(String[] arguments) {
+        System.exit(run(arguments, System.out, System.err));
+    }
+
+    static int run(String[] arguments, PrintStream output, PrintStream errors) {
+        try {
+            Invocation invocation = Invocation.parse(arguments);
+            Path repositoryRoot = Path.of(invocation.option("root").orElse("")).toAbsolutePath().normalize();
+            return switch (invocation.commandLine()) {
+                case "check" -> CheckCommand.run(invocation, repositoryRoot, output);
+                case "targets refresh" -> RefreshTargetsCommand.run(invocation, repositoryRoot, output);
+                default -> throw new UsageException("unknown command: " + invocation.commandLine());
+            };
+        } catch (UsageException exception) {
+            errors.println(exception.getMessage());
+            errors.print(USAGE);
+            return EXIT_USAGE;
+        } catch (IOException exception) {
+            errors.println("verification failed: " + exception.getMessage());
+            return EXIT_FAILURE;
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            errors.println("verification interrupted");
+            return EXIT_FAILURE;
+        }
+    }
+}
