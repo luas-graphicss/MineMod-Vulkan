@@ -58,8 +58,7 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo",
         "MINEMOD_BUILD_JNI_BRIDGE": "ON",
-        "MINEMOD_BUILD_TESTS": "OFF",
-        "MINEMOD_BUILD_RENDERER": "OFF"
+        "MINEMOD_BUILD_TESTS": "OFF"
       }
     },
     {
