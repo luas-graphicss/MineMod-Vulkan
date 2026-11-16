@@ -25,6 +25,7 @@ add_library(minemod_renderer STATIC
     src/graph/render_graph.cpp
     src/graph/transient_images.cpp
     src/graph/transient_slots.cpp
+    src/lifetime/retirement_queue.cpp
     src/pipelines/shader_module.cpp
     src/presentation/headless_surface.cpp
     src/presentation/swapchain.cpp
