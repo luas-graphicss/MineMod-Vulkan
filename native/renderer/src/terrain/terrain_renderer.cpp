@@ -3,11 +3,13 @@
 #include <stdint.h>
 
 #include <array>
+#include <span>
 #include <stdexcept>
 #include <vector>
 
 #include "descriptors/descriptor_layout.hpp"
 #include "frame/frame_targets.hpp"
+#include "frame/viewport.hpp"
 #include "pipelines/shader_module.hpp"
 #include "terrain/section_selection.hpp"
 #include "terrain/section_space.hpp"
@@ -29,9 +31,10 @@ struct TerrainConstants {
     float fog_start;
     float fog_end;
     std::uint32_t samples_base_level_only;
+    std::uint32_t fog_shape;
 };
 
-static_assert(sizeof(TerrainConstants) == 108, "the push constant block mirrors the std430 layout of the shaders");
+static_assert(sizeof(TerrainConstants) == 112, "the push constant block mirrors the std430 layout of the shaders");
 
 constexpr std::array texture_bindings{
     DescriptorBinding{0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT},
@@ -49,15 +52,6 @@ DeviceHandle<VkPipelineLayout> create_pipeline_layout(const Device& device, VkDe
     };
     return create_device_handle<VkPipelineLayout>(
         device.get(), create_info, vkCreatePipelineLayout, vkDestroyPipelineLayout, "creating the terrain pipeline layout");
-}
-
-void set_upright_viewport(VkCommandBuffer commands, VkExtent2D extent) {
-    const auto width = static_cast<float>(extent.width);
-    const auto height = static_cast<float>(extent.height);
-    const VkViewport viewport{0.0f, height, width, -height, 0.0f, 1.0f};
-    const VkRect2D scissor{{0, 0}, extent};
-    vkCmdSetViewport(commands, 0, 1, &viewport);
-    vkCmdSetScissor(commands, 0, 1, &scissor);
 }
 
 class LayerRecorder {
@@ -80,6 +74,7 @@ public:
             frame_.fog.start,
             frame_.fog.end,
             state_.atlas_levels == AtlasLevels::base_only ? 1u : 0u,
+            static_cast<std::uint32_t>(frame_.fog.shape),
         };
         vkCmdPushConstants(commands_, layout_, constant_stages, 0, sizeof(constants), &constants);
 
@@ -132,7 +127,10 @@ VkDescriptorSet TerrainRenderer::bind_textures(DescriptorPools& pools, const Ter
 }
 
 std::uint32_t TerrainRenderer::record(
-    VkCommandBuffer commands, const TerrainFrame& frame, const TerrainSections& sections) const {
+    VkCommandBuffer commands,
+    const TerrainFrame& frame,
+    const TerrainSections& sections,
+    std::span<const TerrainLayer> layers) const {
     if (!has_depth(frame.fog)) {
         throw std::invalid_argument("terrain fog must end farther from the camera than it starts");
     }
@@ -145,7 +143,7 @@ std::uint32_t TerrainRenderer::record(
         commands, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_layout_.get(), 0, 1, &frame.textures, 0, nullptr);
 
     std::uint32_t draw_count = 0;
-    for (const TerrainLayer layer : terrain_layers) {
+    for (const TerrainLayer layer : layers) {
         const LayerState state = layer_state(layer);
         const LayerRecorder recorder(commands, pipeline_layout_.get(), frame, layer);
         vkCmdBindPipeline(commands, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines_.pipeline_for(pipeline_state(state)));

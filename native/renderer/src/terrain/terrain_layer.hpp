@@ -21,6 +21,14 @@ inline constexpr std::array terrain_layers{
 
 inline constexpr std::size_t terrain_layer_count = terrain_layers.size();
 
+inline constexpr std::array opaque_terrain_layers{
+    TerrainLayer::solid,
+    TerrainLayer::cutout_mipped,
+    TerrainLayer::cutout,
+};
+
+inline constexpr std::array translucent_terrain_layers{TerrainLayer::translucent};
+
 enum class DrawDirection { front_to_back, back_to_front };
 enum class AtlasLevels { mipmapped, base_only };
 

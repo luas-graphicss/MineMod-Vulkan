@@ -45,6 +45,7 @@ add_library(minemod_renderer STATIC
     src/frame/frame_readback.cpp
     src/frame/frame_targets.cpp
     src/frame/frames_in_flight.cpp
+    src/frame/viewport.cpp
     src/graph/graph_images.cpp
     src/graph/graph_plan.cpp
     src/graph/image_state.cpp

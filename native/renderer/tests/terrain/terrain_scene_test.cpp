@@ -237,7 +237,7 @@ public:
             },
             [this, frame, color, depth](VkCommandBuffer commands, const GraphImages& images) {
                 begin_cleared_rendering(commands, images.at(color), images.at(depth));
-                draw_count_ = renderer_.record(commands, frame, sections_);
+                draw_count_ = renderer_.record(commands, frame, sections_, terrain_layers);
                 vkCmdEndRendering(commands);
             });
 
@@ -362,5 +362,5 @@ TEST_CASE("fog without depth is rejected before anything is recorded") {
     const TerrainRenderer renderer(gpu.device(), pipelines);
     const TerrainFrame frame{frame_extent, scene_projection(), camera, Fog{blue_haze, 10.0f, 10.0f}, VK_NULL_HANDLE};
 
-    CHECK_THROWS_AS(renderer.record(VK_NULL_HANDLE, frame, sections), std::invalid_argument);
+    CHECK_THROWS_AS(renderer.record(VK_NULL_HANDLE, frame, sections, terrain_layers), std::invalid_argument);
 }

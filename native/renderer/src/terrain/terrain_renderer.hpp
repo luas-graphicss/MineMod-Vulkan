@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <span>
 
 #include <vulkan/vulkan.h>
 
@@ -27,7 +28,11 @@ public:
     TerrainRenderer(const Device& device, PipelineCache& pipelines);
 
     VkDescriptorSet bind_textures(DescriptorPools& pools, const TerrainTextures& textures) const;
-    std::uint32_t record(VkCommandBuffer commands, const TerrainFrame& frame, const TerrainSections& sections) const;
+    std::uint32_t record(
+        VkCommandBuffer commands,
+        const TerrainFrame& frame,
+        const TerrainSections& sections,
+        std::span<const TerrainLayer> layers) const;
 
 private:
     GraphicsPipelineState pipeline_state(const LayerState& state) const;

@@ -8,6 +8,7 @@ layout(push_constant) uniform Frame {
     float fog_start;
     float fog_end;
     uint samples_base_level_only;
+    uint fog_shape;
 } frame;
 
 layout(set = 0, binding = 0) uniform sampler2D block_atlas;
@@ -16,7 +17,7 @@ layout(set = 0, binding = 1) uniform sampler2D lightmap;
 layout(location = 0) in vec4 in_color;
 layout(location = 1) in vec2 in_texture_coordinate;
 layout(location = 2) in vec2 in_light_coordinate;
-layout(location = 3) in float in_camera_distance;
+layout(location = 3) in float in_fog_distance;
 
 layout(location = 0) out vec4 out_color;
 
@@ -34,6 +35,6 @@ void main() {
     }
 
     vec3 lit = color.rgb * texture(lightmap, in_light_coordinate).rgb;
-    float fog = clamp((in_camera_distance - frame.fog_start) / (frame.fog_end - frame.fog_start), 0.0, 1.0);
+    float fog = smoothstep(frame.fog_start, frame.fog_end, in_fog_distance) * frame.fog_color.a;
     out_color = vec4(mix(lit, frame.fog_color.rgb, fog), color.a);
 }
