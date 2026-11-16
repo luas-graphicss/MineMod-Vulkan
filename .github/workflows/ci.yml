@@ -119,9 +119,10 @@ jobs:
             glslang-tools libegl1 libegl-mesa0 libgl1-mesa-dri libvulkan-dev mesa-vulkan-drivers ninja-build \
             vulkan-validationlayers
 
-      - name: Build the renderer stand-in that shares its attachments
+      - name: Build the renderer and the stand-in that share their attachments
         run: |
           cmake --preset linux-client
+          cmake --build --preset linux-client
           cmake --build --preset linux-scene-host
 
       - name: Test the layer against the installed Mesa
@@ -130,7 +131,9 @@ jobs:
           :compatibility:runtime:check
           :compatibility:lwjgl2:check
           :compatibility:lwjgl3:check
+          :jvm:client-runtime:check
           -Pminemod.systemProvider="$SYSTEM_PROVIDER"
           -Pminemod.sceneHost="$GITHUB_WORKSPACE/build/linux-client/jni/libminemod_scene_host_jni.so"
+          -Pminemod.sceneLibrary="$GITHUB_WORKSPACE/build/linux-client/jni/libminemod_jni.so"
           -Porg.gradle.java.installations.auto-download=false
           -Porg.gradle.java.installations.fromEnv=JAVA_HOME_8_X64,JAVA_HOME_16_X64,JAVA_HOME_17_X64,JAVA_HOME_21_X64
