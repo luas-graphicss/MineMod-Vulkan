@@ -1,6 +1,7 @@
 package io.github.luasgraphicss.minemod.codec.scene;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import io.github.luasgraphicss.minemod.codec.CommandStreamValidator;
 import io.github.luasgraphicss.minemod.codec.CommandStreamWriter;
@@ -29,6 +30,20 @@ class SectionFaceCommandsTest {
     void connectsNothingOrEveryPairOfFaces() {
         assertEquals(0, FaceConnections.none().pairs());
         assertEquals(EVERY_PAIR, FaceConnections.open().pairs());
+    }
+
+    @Test
+    void comparesByTheConnectedPairs() {
+        FaceConnections everyPair = FaceConnections.none();
+        for (SectionFace first : SectionFace.values()) {
+            for (SectionFace second : SectionFace.values()) {
+                everyPair = everyPair.connecting(first, second);
+            }
+        }
+
+        assertEquals(FaceConnections.open(), everyPair);
+        assertEquals(FaceConnections.open().hashCode(), everyPair.hashCode());
+        assertNotEquals(FaceConnections.open(), FaceConnections.none().connecting(SectionFace.WEST, SectionFace.EAST));
     }
 
     @Test
