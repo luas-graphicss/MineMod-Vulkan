@@ -10,6 +10,9 @@ java {
 
 dependencies {
     implementation(libs.jackson.databind)
+    implementation(project(":compatibility:contexts"))
+    implementation(project(":compatibility:interop"))
+    implementation(project(":compatibility:translation"))
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter)
