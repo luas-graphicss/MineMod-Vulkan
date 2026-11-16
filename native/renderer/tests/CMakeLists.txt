@@ -1,6 +1,7 @@
 add_library(minemod_renderer_test_support STATIC
     support/graph_passes.cpp
     support/pixel_colors.cpp
+    support/presenting_device.cpp
     support/scene_vertices.cpp
     support/terrain_quads.cpp
     support/validated_device.cpp)
@@ -55,6 +56,7 @@ add_executable(minemod_renderer_resource_device_tests
     descriptors/descriptor_pools_test.cpp
     frame/frames_in_flight_test.cpp
     pipelines/pipeline_cache_test.cpp
+    presentation/presenter_test.cpp
     textures/sampler_cache_test.cpp
     textures/texture_upload_test.cpp
     upload/upload_arena_test.cpp)

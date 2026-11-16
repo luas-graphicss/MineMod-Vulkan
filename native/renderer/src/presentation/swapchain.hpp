@@ -1,12 +1,12 @@
 #pragma once
 
+#include <cstdint>
 #include <vector>
 
 #include <vulkan/vulkan.h>
 
 #include "device/device.hpp"
 #include "device/device_handle.hpp"
-#include "resources/image.hpp"
 
 namespace minemod::renderer {
 
@@ -22,7 +22,16 @@ public:
         return format_;
     }
 
-    void present(const Device& device, const Image& transfer_source);
+    VkExtent2D extent() const noexcept {
+        return extent_;
+    }
+
+    VkImage image(std::uint32_t index) const {
+        return images_.at(index);
+    }
+
+    VkResult acquire(VkSemaphore signaled_on_acquisition, std::uint32_t& image_index) const;
+    VkResult present(VkQueue queue, VkSemaphore awaited, std::uint32_t image_index) const;
 
 private:
     VkDevice device_;
@@ -30,8 +39,6 @@ private:
     VkExtent2D extent_;
     DeviceHandle<VkSwapchainKHR> swapchain_;
     std::vector<VkImage> images_;
-    DeviceHandle<VkSemaphore> image_acquired_;
-    DeviceHandle<VkSemaphore> frame_copied_;
 };
 
 }

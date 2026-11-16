@@ -70,6 +70,7 @@ add_library(minemod_renderer STATIC
     src/pipelines/shader_module.cpp
     src/presentation/frame_lifecycle.cpp
     src/presentation/headless_surface.cpp
+    src/presentation/presenter.cpp
     src/presentation/swapchain.cpp
     src/resources/buffer.cpp
     src/resources/image.cpp

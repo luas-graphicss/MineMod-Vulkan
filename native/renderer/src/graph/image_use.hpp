@@ -63,4 +63,8 @@ constexpr bool writes_image(const ImageUse& use) noexcept {
     return (use.access & image_write_accesses) != 0;
 }
 
+constexpr ImageUse discarded_after(const ImageUse& last_use) noexcept {
+    return ImageUse{VK_IMAGE_LAYOUT_UNDEFINED, last_use.stages, last_use.access};
+}
+
 }
