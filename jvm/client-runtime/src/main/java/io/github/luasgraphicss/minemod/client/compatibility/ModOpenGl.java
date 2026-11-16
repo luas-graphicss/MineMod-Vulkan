@@ -4,6 +4,7 @@ import io.github.luasgraphicss.minemod.bridge.SceneSharing;
 import io.github.luasgraphicss.minemod.client.compatibility.frame.MixedFrame;
 import io.github.luasgraphicss.minemod.client.compatibility.handoff.RecordedFrame;
 import io.github.luasgraphicss.minemod.client.compatibility.scene.SharedScene;
+import io.github.luasgraphicss.minemod.client.compatibility.state.WrapperCalls;
 import io.github.luasgraphicss.minemod.compatibility.dispatch.binding.BindingGeneration;
 import io.github.luasgraphicss.minemod.compatibility.dispatch.install.DispatchInstaller;
 import io.github.luasgraphicss.minemod.compatibility.layer.CompatibilityLayer;
@@ -25,6 +26,7 @@ public final class ModOpenGl implements AutoCloseable {
     private final SessionContext context;
     private final CompatibilityLayer layer;
     private final MixedFrame frame;
+    private final WrapperCalls wrapperCalls = new WrapperCalls();
     private long presentedFrames;
 
     private ModOpenGl(
@@ -35,7 +37,7 @@ public final class ModOpenGl implements AutoCloseable {
         this.context = session.createContext(
                 new ContextPlan(scene, scene::handoffThrough, setup.origins(), setup.wrapperState()));
         this.layer = context.layer();
-        this.frame = new MixedFrame(layer);
+        this.frame = new MixedFrame(layer, wrapperCalls);
         CallGate.bind(this::call);
         frame.begin();
     }
@@ -65,6 +67,10 @@ public final class ModOpenGl implements AutoCloseable {
 
     public SharedScene scene() {
         return scene;
+    }
+
+    public WrapperCalls wrapperCalls() {
+        return wrapperCalls;
     }
 
     public void beforeNativeWork() {

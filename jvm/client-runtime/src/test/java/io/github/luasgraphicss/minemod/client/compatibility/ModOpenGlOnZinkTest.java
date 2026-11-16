@@ -3,6 +3,7 @@ package io.github.luasgraphicss.minemod.client.compatibility;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import io.github.luasgraphicss.minemod.client.compatibility.state.WrapperCall;
 import io.github.luasgraphicss.minemod.client.compatibility.support.SharedSession;
 import io.github.luasgraphicss.minemod.compatibility.dispatch.binding.BindingGeneration;
 import io.github.luasgraphicss.minemod.compatibility.dispatch.install.DispatchInstaller;
@@ -116,6 +117,23 @@ class ModOpenGlOnZinkTest {
 
         assertEquals(Collections.emptyList(), reasonsOfTheFlushes());
         assertArrayEquals(RED, renderer.pixelAt(LEFT, ROW));
+        assertEquals("", renderer.validationText());
+    }
+
+    @Test
+    void stateTheGameLeftThroughItsWrappersReachesTheNextCallOfAMod() {
+        renderer.recordFrameOver(BLUE);
+        mods.wrapperCalls().keep(WrapperCall.SCISSOR_BOX, 0, 0, WIDTH / 2, HEIGHT);
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glClearColor(0.0F, 1.0F, 0.0F, 1.0F);
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        int error = GL11.glGetError();
+        presentFrame();
+
+        assertArrayEquals(GREEN, renderer.pixelAt(LEFT, ROW));
+        assertArrayEquals(BLUE, renderer.pixelAt(RIGHT, ROW));
+        assertEquals(GL11.GL_NO_ERROR, error);
         assertEquals("", renderer.validationText());
     }
 
