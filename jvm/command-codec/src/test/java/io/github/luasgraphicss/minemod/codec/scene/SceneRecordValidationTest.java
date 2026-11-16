@@ -64,7 +64,7 @@ class SceneRecordValidationTest {
     @Test
     void knowsNoOpcodeAroundTheSceneCommands() {
         assertFalse(SceneOpcode.find((short) 15).isPresent());
-        assertFalse(SceneOpcode.find((short) 27).isPresent());
+        assertFalse(SceneOpcode.find((short) 31).isPresent());
         assertFalse(SceneOpcode.find((short) -1).isPresent());
     }
 

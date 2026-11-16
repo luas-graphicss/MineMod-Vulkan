@@ -13,7 +13,11 @@ public enum SceneOpcode {
     SET_VIEW(23, 136, false),
     SET_TERRAIN(24, 136, false),
     DRAW_BATCH(25, 152, true),
-    END_FRAME(26, 0, false);
+    END_FRAME(26, 0, false),
+    SET_CLIP(27, 16, false),
+    CLEAR_CLIP(28, 0, false),
+    SET_TEXTURE_TRANSFORM(29, 24, false),
+    SET_QUAD_ORDER(30, 8, false);
 
     private static final SceneOpcode[] OPCODES = values();
     private static final int FIRST_CODE = OPCODES[0].code;

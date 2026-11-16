@@ -6,7 +6,9 @@ public enum Blending {
     ADDITIVE(2),
     LIGHTNING(3),
     GLINT(4),
-    CRUMBLING(5);
+    CRUMBLING(5),
+    INVERSION(6),
+    DARKENING(7);
 
     private final int code;
 

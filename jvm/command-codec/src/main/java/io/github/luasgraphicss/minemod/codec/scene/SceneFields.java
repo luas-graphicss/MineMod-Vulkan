@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 final class SceneFields {
     static final int MATRIX_VALUES = 16;
     static final int DIRECTION_VALUES = 3;
+    static final int TEXTURE_ROW_VALUES = 3;
     static final long NO_TEXTURE = 0;
 
     private SceneFields() {}
@@ -17,6 +18,10 @@ final class SceneFields {
 
     static float[] direction(float[] values) {
         return copyOf(values, DIRECTION_VALUES, "a direction");
+    }
+
+    static float[] textureRow(float[] values) {
+        return copyOf(values, TEXTURE_ROW_VALUES, "a texture row");
     }
 
     static long texture(ResourceHandle handle) {

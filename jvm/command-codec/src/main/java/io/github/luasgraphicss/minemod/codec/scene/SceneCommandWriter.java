@@ -97,6 +97,33 @@ public final class SceneCommandWriter {
         return this;
     }
 
+    public SceneCommandWriter setClip(int left, int bottom, int width, int height) {
+        if (width < 0 || height < 0) {
+            throw new IllegalArgumentException("a clip cannot have a negative size: " + width + "x" + height);
+        }
+        begin(SceneOpcode.SET_CLIP).putInt(left).putInt(bottom).putInt(width).putInt(height);
+        return this;
+    }
+
+    public SceneCommandWriter clearClip() {
+        begin(SceneOpcode.CLEAR_CLIP);
+        return this;
+    }
+
+    public SceneCommandWriter setTextureTransform(float[] uRow, float[] vRow) {
+        float[] checkedURow = SceneFields.textureRow(uRow);
+        float[] checkedVRow = SceneFields.textureRow(vRow);
+        ByteBuffer payload = begin(SceneOpcode.SET_TEXTURE_TRANSFORM);
+        SceneFields.putFloats(payload, checkedURow);
+        SceneFields.putFloats(payload, checkedVRow);
+        return this;
+    }
+
+    public SceneCommandWriter setQuadOrder(QuadOrder order) {
+        begin(SceneOpcode.SET_QUAD_ORDER).putInt(order.code()).putInt(0);
+        return this;
+    }
+
     private SceneCommandWriter beginFrame(float red, float green, float blue, float alpha, int flags) {
         begin(SceneOpcode.BEGIN_FRAME).putFloat(red).putFloat(green).putFloat(blue).putFloat(alpha).putInt(flags).putInt(0);
         return this;
