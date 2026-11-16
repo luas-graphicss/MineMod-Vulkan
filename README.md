@@ -43,11 +43,9 @@ sh gradlew :tools:verification:run --args="check --profile foundation"
 
 `gradlew` is stored without the executable bit, hence `sh gradlew`.
 
-The Fabric mod for 1.21.1 bundles the JNI library with the renderer in it, which the `linux-client` preset builds:
+The Fabric mod for 1.21.1 has a build of its own. It also builds the JNI library the mod bundles, with the renderer in it, through the `linux-client` preset:
 
 ```sh
-cmake --preset linux-client
-cmake --build --preset linux-client
 sh gradlew -p adapters/fabric/mc-1.21.1 build
 ```
 
