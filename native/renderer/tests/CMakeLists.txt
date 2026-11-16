@@ -10,6 +10,5 @@ add_test(NAME renderer_harness_cli COMMAND minemod_harness --validation --frames
 set_tests_properties(renderer_harness renderer_harness_cli PROPERTIES LABELS vulkan-device)
 
 if(MINEMOD_ENABLE_SANITIZERS)
-    # Vulkan drivers unload with allocations LeakSanitizer cannot attribute; validation covers leaked Vulkan objects.
     set_tests_properties(renderer_harness renderer_harness_cli PROPERTIES ENVIRONMENT "ASAN_OPTIONS=detect_leaks=0")
 endif()

@@ -151,7 +151,6 @@ Swapchain::Swapchain(const Device& device, VkSurfaceKHR surface, VkExtent2D desi
 }
 
 Swapchain::~Swapchain() {
-    // A presented frame keeps its semaphore in use until the queue drains.
     vkDeviceWaitIdle(device_);
 }
 

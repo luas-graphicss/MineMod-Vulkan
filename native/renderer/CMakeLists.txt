@@ -6,7 +6,6 @@ endif()
 function(minemod_configure_vulkan_target target)
     minemod_configure_target(${target})
     if(NOT MSVC)
-        # Vulkan structures name only the fields they set; the language zeroes the rest.
         target_compile_options(${target} PRIVATE -Wno-missing-field-initializers)
     endif()
 endfunction()
