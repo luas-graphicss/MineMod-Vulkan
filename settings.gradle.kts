@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic")
     repositories {
         gradlePluginPortal()
     }
@@ -17,4 +18,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "minemod-vulkan"
 
+include(":jvm:render-contract")
+include(":jvm:command-codec")
 include(":tools:verification")
