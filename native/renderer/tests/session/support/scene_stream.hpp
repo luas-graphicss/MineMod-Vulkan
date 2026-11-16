@@ -52,6 +52,7 @@ struct BatchState {
     std::uint32_t depth_compare = MINEMOD_DEPTH_COMPARE_ALWAYS;
     std::uint32_t culling = MINEMOD_CULLING_DISABLED;
     std::uint32_t shading = 0;
+    std::uint32_t program = 0;
     minemod_handle texture = MINEMOD_HANDLE_NULL;
     std::array<float, 16> model_view = identity;
     std::array<float, 4> color_modulator{1.0f, 1.0f, 1.0f, 1.0f};

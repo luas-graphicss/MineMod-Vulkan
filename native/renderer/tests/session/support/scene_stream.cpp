@@ -151,7 +151,7 @@ SceneStream& SceneStream::set_terrain(const TerrainState& terrain) {
 SceneStream& SceneStream::draw_batch(const BatchState& batch, std::span<const std::uint8_t> vertices) {
     Payload payload;
     payload.u32(batch.slot).u32(batch.view).u32(batch.elements).u32(batch.mode).u32(batch.blending);
-    payload.u32(batch.depth).u32(batch.depth_compare).u32(batch.culling).u32(batch.shading).u32(0);
+    payload.u32(batch.depth).u32(batch.depth_compare).u32(batch.culling).u32(batch.shading).u32(batch.program);
     payload.u64(batch.texture).floats(batch.model_view).floats(batch.color_modulator);
     payload.f32(batch.alpha_cutoff).f32(batch.line_width).f32(0.0f).f32(0.0f);
     builder_.command(MINEMOD_OPCODE_DRAW_BATCH, payload.blob(vertices).bytes());

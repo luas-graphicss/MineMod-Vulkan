@@ -101,6 +101,7 @@ add_executable(minemod_scene_drawing_tests
     interface/clip_rectangle_test.cpp
     interface/hud_blending_test.cpp
     pipelines/blending_test.cpp
+    shaders/program_check_test.cpp
     shaders/scene_shader_contract_test.cpp)
 target_link_libraries(minemod_scene_drawing_tests
     PRIVATE minemod_renderer_test_support minemod_doctest_main minemod_scene_shaders)
@@ -123,6 +124,7 @@ add_library(minemod_scene_session_test_support STATIC
     session/support/running_session.cpp
     session/support/scene_shapes.cpp
     session/support/scene_stream.cpp
+    session/support/session_reload.cpp
     session/support/terrain_frames.cpp)
 target_link_libraries(minemod_scene_session_test_support
     PUBLIC minemod::scene_session minemod_abi_test_support minemod_renderer_test_support)
@@ -132,14 +134,16 @@ add_executable(minemod_scene_session_device_tests
     session/scene_batch_options_test.cpp
     session/scene_corpus_test.cpp
     session/scene_frames_test.cpp
+    session/scene_metrics_test.cpp
     session/scene_presentation_test.cpp
+    session/scene_reload_test.cpp
     session/scene_resources_test.cpp
     session/scene_terrain_intake_test.cpp
     session/scene_visibility_test.cpp)
 target_compile_definitions(minemod_scene_session_device_tests PRIVATE
     MINEMOD_COMMAND_STREAM_CORPUS="${PROJECT_SOURCE_DIR}/tests/fixtures/command-streams")
 target_link_libraries(minemod_scene_session_device_tests
-    PRIVATE minemod_scene_session_test_support minemod_doctest_main)
+    PRIVATE minemod_scene_session_test_support minemod_doctest_main minemod_scene_shaders)
 minemod_configure_vulkan_target(minemod_scene_session_device_tests)
 
 add_test(NAME render_graph COMMAND minemod_render_graph_tests)

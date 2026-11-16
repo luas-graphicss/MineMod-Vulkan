@@ -6,6 +6,8 @@
 #include <memory>
 #include <optional>
 #include <span>
+#include <string>
+#include <string_view>
 #include <vector>
 
 #include <vulkan/vulkan.h>
@@ -19,6 +21,7 @@
 #include "graph/render_graph.hpp"
 #include "host/scene_host.hpp"
 #include "lifetime/retirement_queue.hpp"
+#include "metrics/session_metrics.hpp"
 #include "minemod/abi/handle.h"
 #include "minemod/abi/result.h"
 #include "minemod/scene/scene_session.h"
@@ -26,6 +29,7 @@
 #include "presentation/present_pacing.hpp"
 #include "presentation/presenter.hpp"
 #include "presentation/window_surface.hpp"
+#include "reload/program_reload.hpp"
 #include "resources/texture_registry.hpp"
 #include "scene/scene_renderer.hpp"
 #include "terrain/section_intake.hpp"
@@ -61,6 +65,16 @@ public:
     minemod_result read_frame(std::span<std::byte> rgba);
     minemod_scene_counters counters() const noexcept;
 
+    minemod_result begin_reload();
+    minemod_result stage_program(
+        std::uint32_t program, std::span<const std::uint32_t> vertex, std::span<const std::uint32_t> fragment);
+    minemod_result commit_reload();
+    minemod_result abort_reload();
+    const std::string& reload_report() const noexcept;
+
+    minemod_scene_metrics metrics() const;
+    std::string metrics_report() const;
+
 private:
     struct SampledTexture {
         VkImageView view;
@@ -91,6 +105,10 @@ private:
     VkDescriptorSet bound_texture(minemod_handle texture, const SampledTexture& sampled);
     std::vector<renderer::ImageId> add_texture_writes(renderer::RenderGraph& graph, const FrameSlot& slot);
     void submit_frame(const renderer::FramesInFlight::Frame& frame);
+    std::vector<renderer::PassSample> pass_samples(std::span<const renderer::PassTiming> timings) const;
+    std::uint32_t draws_in(std::string_view pass) const noexcept;
+    FrameUsage usage_of(std::uint64_t frame, const FrameSlot& slot) const noexcept;
+    SessionState state() const noexcept;
 
     std::shared_ptr<const SceneHost> host_;
     std::optional<renderer::WindowSurface> surface_;
@@ -104,6 +122,7 @@ private:
     renderer::TerrainRenderer terrain_;
     renderer::BatchRenderer batches_;
     renderer::SceneRenderer scene_;
+    ProgramReload reload_;
     renderer::JobEpochs epochs_;
     renderer::TerrainSections sections_;
     SectionIntake intake_;
@@ -122,6 +141,7 @@ private:
     std::uint32_t world_ = 0;
     bool has_drawn_frame_ = false;
     minemod_scene_counters counters_{};
+    SessionMetrics metrics_;
 };
 
 }

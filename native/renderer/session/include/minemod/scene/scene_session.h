@@ -16,6 +16,8 @@
 #define MINEMOD_SCENE_MAX_ARENA_BYTES (UINT64_C(1) << 30)
 #define MINEMOD_SCENE_MAX_TEXTURES (UINT32_C(1) << 16)
 #define MINEMOD_SCENE_MAX_SECTIONS (UINT32_C(1) << 20)
+#define MINEMOD_SCENE_MAX_PROGRAMS (UINT32_C(1) << 10)
+#define MINEMOD_SCENE_MAX_PROGRAM_WORDS (UINT64_C(1) << 20)
 
 enum {
     MINEMOD_PRESENTATION_OFFSCREEN = 0,
@@ -67,6 +69,17 @@ typedef struct minemod_scene_counters {
     uint64_t peak_geometry_bytes;
 } minemod_scene_counters;
 
+typedef struct minemod_scene_metrics {
+    uint64_t frames_measured;
+    uint64_t mean_frame_nanoseconds;
+    uint64_t worst_frame_nanoseconds;
+    uint64_t peak_texture_bytes;
+    uint64_t peak_staging_bytes;
+    uint64_t peak_pipelines;
+    uint64_t retired_resources;
+    uint64_t resource_generation;
+} minemod_scene_metrics;
+
 MINEMOD_ABI_BEGIN
 
 minemod_result minemod_scene_host_create(
@@ -106,6 +119,29 @@ minemod_result minemod_scene_session_read_frame(
 
 minemod_result minemod_scene_session_get_counters(
     const minemod_scene_session* session, minemod_scene_counters* counters) MINEMOD_ABI_NOEXCEPT;
+
+minemod_result minemod_scene_session_begin_reload(minemod_scene_session* session) MINEMOD_ABI_NOEXCEPT;
+
+minemod_result minemod_scene_session_stage_program(
+    minemod_scene_session* session,
+    uint32_t program,
+    const uint32_t* vertex_words,
+    uint64_t vertex_word_count,
+    const uint32_t* fragment_words,
+    uint64_t fragment_word_count) MINEMOD_ABI_NOEXCEPT;
+
+minemod_result minemod_scene_session_commit_reload(minemod_scene_session* session) MINEMOD_ABI_NOEXCEPT;
+
+minemod_result minemod_scene_session_abort_reload(minemod_scene_session* session) MINEMOD_ABI_NOEXCEPT;
+
+uint64_t minemod_scene_session_read_reload_text(
+    const minemod_scene_session* session, char* destination, uint64_t capacity) MINEMOD_ABI_NOEXCEPT;
+
+minemod_result minemod_scene_session_get_metrics(
+    const minemod_scene_session* session, minemod_scene_metrics* metrics) MINEMOD_ABI_NOEXCEPT;
+
+uint64_t minemod_scene_session_read_metrics_text(
+    const minemod_scene_session* session, char* destination, uint64_t capacity) MINEMOD_ABI_NOEXCEPT;
 
 MINEMOD_ABI_END
 

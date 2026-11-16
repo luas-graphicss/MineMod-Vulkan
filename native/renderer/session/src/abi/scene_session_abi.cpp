@@ -23,6 +23,7 @@
 static_assert(sizeof(minemod_scene_host_config) == 16 + sizeof(void*));
 static_assert(sizeof(minemod_scene_session_config) == 48);
 static_assert(sizeof(minemod_scene_counters) == 80);
+static_assert(sizeof(minemod_scene_metrics) == 64);
 
 struct minemod_scene_host {
     std::shared_ptr<const minemod::scene::SceneHost> core;
@@ -120,6 +121,14 @@ minemod::scene::SessionSetup setup_from(const minemod_scene_session_config& conf
             config.max_sections,
         },
     };
+}
+
+std::uint64_t copy_text(const std::string& text, char* destination, std::uint64_t capacity) noexcept {
+    const auto copied = static_cast<std::size_t>(std::min<std::uint64_t>(capacity, text.size()));
+    if (copied != 0) {
+        std::memcpy(destination, text.data(), copied);
+    }
+    return text.size();
 }
 
 minemod_result run_command(void* session, const minemod_command_record* record) {
@@ -265,4 +274,74 @@ minemod_result minemod_scene_session_get_counters(
     }
     *counters = session->core.counters();
     return MINEMOD_RESULT_OK;
+}
+
+minemod_result minemod_scene_session_begin_reload(minemod_scene_session* session) noexcept {
+    if (session == nullptr) {
+        return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+    return run_guarded([&] { return session->core.begin_reload(); });
+}
+
+minemod_result minemod_scene_session_stage_program(
+    minemod_scene_session* session,
+    uint32_t program,
+    const uint32_t* vertex_words,
+    uint64_t vertex_word_count,
+    const uint32_t* fragment_words,
+    uint64_t fragment_word_count) noexcept {
+    if (session == nullptr || vertex_words == nullptr || fragment_words == nullptr) {
+        return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+    if (vertex_word_count > MINEMOD_SCENE_MAX_PROGRAM_WORDS || fragment_word_count > MINEMOD_SCENE_MAX_PROGRAM_WORDS) {
+        return MINEMOD_RESULT_LIMIT_EXCEEDED;
+    }
+    const std::span<const std::uint32_t> vertex(vertex_words, static_cast<std::size_t>(vertex_word_count));
+    const std::span<const std::uint32_t> fragment(fragment_words, static_cast<std::size_t>(fragment_word_count));
+    return run_guarded([&] { return session->core.stage_program(program, vertex, fragment); });
+}
+
+minemod_result minemod_scene_session_commit_reload(minemod_scene_session* session) noexcept {
+    if (session == nullptr) {
+        return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+    return run_guarded([&] { return session->core.commit_reload(); });
+}
+
+minemod_result minemod_scene_session_abort_reload(minemod_scene_session* session) noexcept {
+    if (session == nullptr) {
+        return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+    return run_guarded([&] { return session->core.abort_reload(); });
+}
+
+uint64_t minemod_scene_session_read_reload_text(
+    const minemod_scene_session* session, char* destination, uint64_t capacity) noexcept {
+    if (session == nullptr || (destination == nullptr && capacity != 0)) {
+        return 0;
+    }
+    return copy_text(session->core.reload_report(), destination, capacity);
+}
+
+minemod_result minemod_scene_session_get_metrics(
+    const minemod_scene_session* session, minemod_scene_metrics* metrics) noexcept {
+    if (session == nullptr || metrics == nullptr) {
+        return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+    return run_guarded([&] {
+        *metrics = session->core.metrics();
+        return MINEMOD_RESULT_OK;
+    });
+}
+
+uint64_t minemod_scene_session_read_metrics_text(
+    const minemod_scene_session* session, char* destination, uint64_t capacity) noexcept {
+    if (session == nullptr || (destination == nullptr && capacity != 0)) {
+        return 0;
+    }
+    try {
+        return copy_text(session->core.metrics_report(), destination, capacity);
+    } catch (...) {
+        return 0;
+    }
 }

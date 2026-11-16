@@ -67,6 +67,7 @@ struct TerrainDefinition {
 struct BatchSubmission {
     std::uint32_t slot;
     std::uint32_t view;
+    std::uint32_t program;
     renderer::VertexFormat format;
     renderer::PrimitiveMode mode;
     renderer::Material material;

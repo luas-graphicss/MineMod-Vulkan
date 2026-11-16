@@ -249,7 +249,7 @@ Decoded<BatchSubmission> decode_batch_submission(std::span<const std::byte> payl
     const std::optional<VkCompareOp> compare = depth_compare(fields.read<std::uint32_t>());
     const auto culling = fields.read<std::uint32_t>();
     const auto shading = fields.read<std::uint32_t>();
-    const auto reserved = fields.read<std::uint32_t>();
+    const auto program = fields.read<std::uint32_t>();
     const auto texture = fields.read<std::uint64_t>();
     const renderer::Matrix4 model_view{fields.read_floats<16>()};
     const std::array<float, 4> color_modulator = fields.read_floats<4>();
@@ -262,13 +262,14 @@ Decoded<BatchSubmission> decode_batch_submission(std::span<const std::byte> payl
     const bool has_known_state = slot <= MINEMOD_BATCH_INTERFACE && view < MINEMOD_FRAME_MAX_VIEWS
         && mode <= MINEMOD_PRIMITIVE_LINES && blending <= MINEMOD_BLENDING_DARKENING
         && (depth & ~known_depth) == 0 && compare.has_value() && culling <= MINEMOD_CULLING_DISABLED
-        && (shading & ~known_shading) == 0 && reserved == 0;
+        && (shading & ~known_shading) == 0;
     if (!has_known_elements || !has_known_state) {
         return MINEMOD_RESULT_MALFORMED_STREAM;
     }
     return BatchSubmission{
         slot,
         view,
+        program,
         format_from(elements),
         static_cast<renderer::PrimitiveMode>(mode),
         renderer::Material{
