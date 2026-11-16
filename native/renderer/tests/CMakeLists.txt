@@ -69,6 +69,7 @@ minemod_configure_vulkan_target(minemod_renderer_resource_device_tests)
 add_executable(minemod_world_geometry_tests
     environment/fog_test.cpp
     math/matrix_test.cpp
+    terrain/pending_sections_test.cpp
     terrain/section_containing_test.cpp
     terrain/section_mesh_test.cpp
     terrain/section_selection_test.cpp
@@ -83,6 +84,7 @@ minemod_configure_vulkan_target(minemod_world_geometry_tests)
 
 add_executable(minemod_world_geometry_device_tests
     terrain/occluded_terrain_test.cpp
+    terrain/section_uploads_test.cpp
     terrain/terrain_scene_test.cpp
     terrain/terrain_sections_test.cpp
     terrain/translucent_scene_test.cpp)

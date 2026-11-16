@@ -83,10 +83,12 @@ add_library(minemod_renderer STATIC
     src/shaders/core_shader_contract.cpp
     src/shaders/shader_interface.cpp
     src/shaders/spirv_module.cpp
+    src/terrain/pending_sections.cpp
     src/terrain/section_buffers.cpp
     src/terrain/section_mesh.cpp
     src/terrain/section_selection.cpp
     src/terrain/section_space.cpp
+    src/terrain/section_uploads.cpp
     src/terrain/terrain_renderer.cpp
     src/terrain/terrain_sections.cpp
     src/terrain/terrain_vertex.cpp
