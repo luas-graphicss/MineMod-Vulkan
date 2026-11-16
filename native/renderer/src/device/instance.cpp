@@ -1,6 +1,7 @@
 #include "device/instance.hpp"
 
 #include <algorithm>
+#include <array>
 #include <cstdint>
 #include <string_view>
 
@@ -11,6 +12,8 @@ namespace minemod::renderer {
 namespace {
 
 constexpr const char* validation_layer = "VK_LAYER_KHRONOS_validation";
+constexpr const char* installation = nullptr;
+constexpr std::array validation_additions{VK_VALIDATION_FEATURE_ENABLE_SYNCHRONIZATION_VALIDATION_EXT};
 
 bool has_layer(std::string_view name) {
     std::uint32_t count = 0;
@@ -20,15 +23,20 @@ bool has_layer(std::string_view name) {
     return std::ranges::any_of(layers, [&](const VkLayerProperties& layer) { return name == layer.layerName; });
 }
 
-bool has_extension(std::string_view name) {
+bool provides_extension(const char* provider, std::string_view name) {
     std::uint32_t count = 0;
     require_success(
-        vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr), "counting the instance extensions");
+        vkEnumerateInstanceExtensionProperties(provider, &count, nullptr), "counting the instance extensions");
     std::vector<VkExtensionProperties> extensions(count);
     require_success(
-        vkEnumerateInstanceExtensionProperties(nullptr, &count, extensions.data()), "listing the instance extensions");
+        vkEnumerateInstanceExtensionProperties(provider, &count, extensions.data()), "listing the instance extensions");
     return std::ranges::any_of(
         extensions, [&](const VkExtensionProperties& extension) { return name == extension.extensionName; });
+}
+
+bool has_extension(std::string_view name, std::span<const char* const> enabled_layers) {
+    return provides_extension(installation, name)
+        || std::ranges::any_of(enabled_layers, [&](const char* layer) { return provides_extension(layer, name); });
 }
 
 }
@@ -43,9 +51,10 @@ Instance::Instance(Validation validation, std::span<const char* const> extension
         }
         enabled_layers.push_back(validation_layer);
         enabled_extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+        enabled_extensions.push_back(VK_EXT_VALIDATION_FEATURES_EXTENSION_NAME);
     }
     for (const char* extension : enabled_extensions) {
-        if (!has_extension(extension)) {
+        if (!has_extension(extension, enabled_layers)) {
             throw UnsupportedSystem(std::string("the Vulkan installation lacks the instance extension ") + extension);
         }
     }
@@ -55,8 +64,14 @@ Instance::Instance(Validation validation, std::span<const char* const> extension
         .pApplicationName = "MineMod",
         .apiVersion = VK_API_VERSION_1_3,
     };
+    const VkValidationFeaturesEXT validated_features{
+        .sType = VK_STRUCTURE_TYPE_VALIDATION_FEATURES_EXT,
+        .enabledValidationFeatureCount = static_cast<std::uint32_t>(validation_additions.size()),
+        .pEnabledValidationFeatures = validation_additions.data(),
+    };
     const VkInstanceCreateInfo create_info{
         .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+        .pNext = validation == Validation::required ? &validated_features : nullptr,
         .pApplicationInfo = &application,
         .enabledLayerCount = static_cast<std::uint32_t>(enabled_layers.size()),
         .ppEnabledLayerNames = enabled_layers.data(),

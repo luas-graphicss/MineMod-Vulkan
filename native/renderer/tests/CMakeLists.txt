@@ -1,8 +1,16 @@
+add_library(minemod_renderer_test_support STATIC
+    support/validated_device.cpp)
+target_include_directories(minemod_renderer_test_support PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(minemod_renderer_test_support PUBLIC minemod::renderer)
+minemod_configure_vulkan_target(minemod_renderer_test_support)
+
 add_executable(minemod_renderer_tests
     device_requirements_test.cpp
     harness_options_test.cpp
-    harness_run_test.cpp)
-target_link_libraries(minemod_renderer_tests PRIVATE minemod_harness_run minemod_doctest_main)
+    harness_run_test.cpp
+    synchronization_validation_test.cpp)
+target_link_libraries(minemod_renderer_tests
+    PRIVATE minemod_harness_run minemod_renderer_test_support minemod_doctest_main)
 minemod_configure_vulkan_target(minemod_renderer_tests)
 
 add_executable(minemod_render_graph_tests
