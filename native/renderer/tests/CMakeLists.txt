@@ -34,6 +34,9 @@ add_executable(minemod_renderer_resource_tests
     shaders/core_shader_contract_test.cpp
     shaders/shader_interface_test.cpp
     shaders/spirv_module_test.cpp
+    textures/atlas_layout_test.cpp
+    textures/mip_chain_test.cpp
+    textures/sprite_animation_test.cpp
     upload/arena_layout_test.cpp)
 target_include_directories(minemod_renderer_resource_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(minemod_renderer_resource_tests
@@ -43,6 +46,8 @@ minemod_configure_vulkan_target(minemod_renderer_resource_tests)
 add_executable(minemod_renderer_resource_device_tests
     descriptors/descriptor_pools_test.cpp
     pipelines/pipeline_cache_test.cpp
+    textures/sampler_cache_test.cpp
+    textures/texture_upload_test.cpp
     upload/upload_arena_test.cpp)
 target_link_libraries(minemod_renderer_resource_device_tests
     PRIVATE minemod_renderer_test_support minemod_doctest_main minemod_sprite_shaders)

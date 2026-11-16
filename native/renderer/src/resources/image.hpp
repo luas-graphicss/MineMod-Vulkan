@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #include <vulkan/vulkan.h>
 
 #include "device/device.hpp"
@@ -12,6 +14,7 @@ struct ImageDescription {
     VkFormat format;
     VkImageUsageFlags usage;
     VkImageAspectFlags aspect;
+    std::uint32_t mip_levels = 1;
 };
 
 class Image {

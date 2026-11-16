@@ -63,6 +63,11 @@ add_library(minemod_renderer STATIC
     src/shaders/core_shader_contract.cpp
     src/shaders/shader_interface.cpp
     src/shaders/spirv_module.cpp
+    src/textures/atlas_layout.cpp
+    src/textures/mip_chain.cpp
+    src/textures/sampler_cache.cpp
+    src/textures/sprite_animation.cpp
+    src/textures/texture.cpp
     src/upload/arena_layout.cpp
     src/upload/upload_arena.cpp)
 add_library(minemod::renderer ALIAS minemod_renderer)

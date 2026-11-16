@@ -14,7 +14,7 @@ void change_layout(VkCommandBuffer commands, VkImage image, VkImageAspectFlags a
         .srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
         .dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED,
         .image = image,
-        .subresourceRange = {aspect, 0, 1, 0, 1},
+        .subresourceRange = {aspect, 0, VK_REMAINING_MIP_LEVELS, 0, 1},
     };
     const VkDependencyInfo dependency{
         .sType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO,
