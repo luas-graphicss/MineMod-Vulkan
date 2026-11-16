@@ -9,6 +9,7 @@ import io.github.luasgraphicss.minemod.client.failure.RendererFailure;
 import io.github.luasgraphicss.minemod.client.frame.FrameContent;
 import io.github.luasgraphicss.minemod.client.frame.StreamBudget;
 import io.github.luasgraphicss.minemod.client.lightmap.LightmapPublisher;
+import io.github.luasgraphicss.minemod.client.overlay.OverlayPublisher;
 import io.github.luasgraphicss.minemod.client.presentation.PresentationControl;
 import io.github.luasgraphicss.minemod.client.terrain.TerrainPublisher;
 import io.github.luasgraphicss.minemod.client.window.FramebufferSize;
@@ -42,6 +43,7 @@ public final class ClientRenderer implements AutoCloseable {
     private final long resourceRecordsPerStream;
     private final HandleAllocator textures = new HandleAllocator(ResourceKind.TEXTURE, MAX_TEXTURES);
     private final LightmapPublisher lightmap = new LightmapPublisher(textures.allocate());
+    private final OverlayPublisher overlay = new OverlayPublisher(textures.allocate());
     private final TerrainPublisher terrain;
 
     private ClientRenderer(
@@ -84,6 +86,10 @@ public final class ClientRenderer implements AutoCloseable {
         return lightmap;
     }
 
+    public OverlayPublisher overlay() {
+        return overlay;
+    }
+
     public TerrainPublisher terrain() {
         return terrain;
     }
@@ -98,6 +104,7 @@ public final class ClientRenderer implements AutoCloseable {
         SceneCommandWriter scene = new SceneCommandWriter(stream);
         StreamBudget resources = new StreamBudget(resourceBytesPerStream, resourceRecordsPerStream);
         lightmap.publish(scene, resources);
+        overlay.publish(scene, resources);
         terrain.publish(scene, resources);
         if (!isDrawable && !resources.hasTaken()) {
             return;
