@@ -19,8 +19,10 @@ What runs today:
 - `native/renderer/src/scene` orders a frame as world, hand and interface: sky first, entities between opaque and translucent terrain, particles after it, and a fresh depth buffer for the hand and for the interface. A texture region can be updated at the start of a frame without losing the texels around it. Device tests check the composed pixels, also over several frames in flight; no game adapter submits batches yet.
 - `native/interop` is the renderer's side of sharing images with the OpenGL provider on Linux. It reads the device and driver UUIDs and refuses a different GPU, asks the driver whether a format and usage can be exported, and exports the memory of a dedicated allocation as a file descriptor that has a single owner. Nothing imports that memory yet.
 - `minemod_harness` creates a Vulkan 1.3 device, draws a textured and depth-tested scene through a planned frame, reads it back and presents it on a headless surface. `--validation` also checks synchronization.
+- `jvm/client-runtime` is what a game adapter drives, in Java 8 bytecode without Minecraft types. It extracts the JNI library a mod bundles into a directory named after its SHA-256 and refuses contents that do not match it, opens a native session on a window surface, presents one frame per buffer swap with the pacing the game asks for, and publishes the lightmap texels and the section meshes of the game's compiler as scene resources.
+- `adapters/minecraft/mc-1.21.1` and `adapters/fabric/mc-1.21.1` are the first game adapter: mixins for Minecraft 1.21.1, packaged as a Fabric mod by a Loom build of their own outside the root Gradle build. The mod opens the game window without an OpenGL context, starts the native session on its surface, presents at every buffer swap, follows the window size and the vertical sync option, and hands over the lightmap and each section the game compiles. The frame it presents is only cleared, and Minecraft has not been launched with it: outside the game, the same classes presented, resized and changed pacing on a GLFW window under lavapipe.
 
-What does not exist yet: a game window or input on any Minecraft version, the Mesa/Zink OpenGL provider, the import and the semaphore handoff of its interop with the renderer, and any run on Windows or on a real GPU. `docs/architecture` says which decisions are backed by tests and which are still proposals.
+What does not exist yet: a launch of Minecraft with the mod, any drawing of the game in the frame it presents, adapters for the other releases and loaders, the Mesa/Zink OpenGL provider, the import and the semaphore handoff of its interop with the renderer, and any run on Windows or on a real GPU. `docs/architecture` says which decisions are backed by tests and which are still proposals.
 
 ## Requirements
 
@@ -32,7 +34,7 @@ Only Linux has been built. The Windows presets are untested.
 
 ## Build and test
 
-The JVM side, including the JNI library it builds through the `linux-jni` preset:
+The JVM side, including the JNI library it builds through the `linux-jni` preset, which leaves the renderer out and needs no Vulkan:
 
 ```sh
 sh gradlew check
@@ -40,6 +42,16 @@ sh gradlew :tools:verification:run --args="check --profile foundation"
 ```
 
 `gradlew` is stored without the executable bit, hence `sh gradlew`.
+
+The Fabric mod for 1.21.1 bundles the JNI library with the renderer in it, which the `linux-client` preset builds:
+
+```sh
+cmake --preset linux-client
+cmake --build --preset linux-client
+sh gradlew -p adapters/fabric/mc-1.21.1 build
+```
+
+The jar lands in `adapters/fabric/mc-1.21.1/build/libs`. Set `-Dminemod.validation=true` on the game's JVM to run the session with the validation layers.
 
 The native side, with AddressSanitizer and UndefinedBehaviorSanitizer in `linux-debug`:
 
