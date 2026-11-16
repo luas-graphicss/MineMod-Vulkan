@@ -5,6 +5,8 @@ import java.util.Locale;
 public final class NativePlatform {
     private static final String BUNDLE_ROOT = "natives/";
     private static final String DIGEST_SUFFIX = ".sha256";
+    private static final String RENDERER = "minemod_jni";
+    private static final String OPENGL_PROVIDER = "minemod_gl_provider_jni";
 
     private final String name;
     private final String libraryFile;
@@ -22,12 +24,16 @@ public final class NativePlatform {
         String system = systemName.toLowerCase(Locale.ROOT);
         String architecture = architecture(architectureName);
         if (system.startsWith("windows")) {
-            return new NativePlatform("windows-" + architecture, "minemod_jni.dll");
+            return new NativePlatform("windows-" + architecture, RENDERER + ".dll");
         }
         if (system.startsWith("linux")) {
-            return new NativePlatform("linux-" + architecture, "libminemod_jni.so");
+            return new NativePlatform("linux-" + architecture, "lib" + RENDERER + ".so");
         }
         throw new NativeLibraryUnavailable("the native renderer is not built for " + systemName);
+    }
+
+    public NativePlatform openGlProvider() {
+        return new NativePlatform(name, libraryFile.replace(RENDERER, OPENGL_PROVIDER));
     }
 
     public String libraryFile() {

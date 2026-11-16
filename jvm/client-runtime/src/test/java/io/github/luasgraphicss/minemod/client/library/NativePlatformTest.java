@@ -23,6 +23,16 @@ class NativePlatformTest {
     }
 
     @Test
+    void bundlesTheOpenGlProviderNextToTheRenderer() {
+        assertEquals(
+                "natives/linux-x86_64/libminemod_gl_provider_jni.so",
+                NativePlatform.of("Linux", "amd64").openGlProvider().libraryResource());
+        assertEquals(
+                "natives/windows-x86_64/minemod_gl_provider_jni.dll.sha256",
+                NativePlatform.of("Windows 11", "x86_64").openGlProvider().digestResource());
+    }
+
+    @Test
     void refusesASystemWithoutANativeRenderer() {
         assertThrows(NativeLibraryUnavailable.class, () -> NativePlatform.of("Mac OS X", "aarch64"));
     }
