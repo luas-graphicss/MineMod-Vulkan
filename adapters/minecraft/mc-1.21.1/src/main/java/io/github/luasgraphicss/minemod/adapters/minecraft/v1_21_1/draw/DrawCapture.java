@@ -75,7 +75,7 @@ public final class DrawCapture {
             draw.quadOrder(orderOf(RenderSystem.getVertexSorting()));
         }
         GameFrame.state().clipInto(draw);
-        GameFrame.recorder().draw(draw.build());
+        GameFrame.record(draw.build());
     }
 
     private static void tint(GameDraw.Builder draw, ShaderInstance shader) {

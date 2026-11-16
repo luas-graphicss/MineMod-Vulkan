@@ -1,9 +1,11 @@
 package io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.frame;
 
 import io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.bootstrap.ClientRendering;
+import io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.compatibility.ModRendering;
 import io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.draw.CapturedState;
 import io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.terrain.TerrainView;
 import io.github.luasgraphicss.minemod.client.draw.frame.DrawRecorder;
+import io.github.luasgraphicss.minemod.client.draw.frame.GameDraw;
 import io.github.luasgraphicss.minemod.client.draw.texture.SceneTextures;
 import io.github.luasgraphicss.minemod.client.session.ClientRenderer;
 import io.github.luasgraphicss.minemod.codec.scene.BatchSlot;
@@ -39,8 +41,9 @@ public final class GameFrame {
         return STATE;
     }
 
-    public static DrawRecorder recorder() {
-        return RECORDER;
+    public static void record(GameDraw draw) {
+        ModRendering.beforeNativeWork();
+        RECORDER.draw(draw);
     }
 
     public static SceneTextures textures() {
@@ -56,6 +59,7 @@ public final class GameFrame {
         if (!drawsIntoTheWindow()) {
             return;
         }
+        ModRendering.beforeNativeWork();
         if ((buffers & COLOR_BUFFER) != 0) {
             float[] color = STATE.clearColor();
             RECORDER.clearColor(color[0], color[1], color[2], OPAQUE);
@@ -67,6 +71,7 @@ public final class GameFrame {
 
     public static void blur(int radius) {
         if (radius >= FAINTEST_BLUR) {
+            ModRendering.beforeNativeWork();
             RECORDER.blur(new FrameBlur(Math.min(radius, FrameBlur.MAX_RADIUS), BLUR_REPEATS));
             STATE.blend(false);
         }
@@ -77,7 +82,7 @@ public final class GameFrame {
             return;
         }
         Optional<TerrainState> terrain = terrainSeenFrom(camera, frustum, projection);
-        if (terrain.isPresent()) {
+        if (terrain.isPresent() && !RECORDER.isPartlyWritten()) {
             RECORDER.enterWorld();
             RECORDER.terrain(terrain.get());
             drawsWorld = true;
@@ -122,7 +127,12 @@ public final class GameFrame {
         return leftOutWorlds;
     }
 
+    public static boolean submitPart(ClientRenderer renderer) {
+        return renderer.submitPart(RECORDER);
+    }
+
     public static void present(ClientRenderer renderer) {
+        ModRendering.present();
         renderer.presentFrame(RECORDER);
         RECORDER.beginFrame();
         drawsWorld = false;
