@@ -35,6 +35,10 @@ public final class LightmapPublisher {
         return texture;
     }
 
+    public boolean isDefined() {
+        return isDefined;
+    }
+
     public void update(ByteBuffer rgbaTexels) {
         if (rgbaTexels.remaining() != TEXEL_BYTES) {
             throw new IllegalArgumentException(
