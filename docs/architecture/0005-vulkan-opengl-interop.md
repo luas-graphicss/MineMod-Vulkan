@@ -1,6 +1,6 @@
 # 5. Sharing images between the renderer and the OpenGL provider
 
-Status: proposed. `compatibility/interop` implements the negotiation, the handle ownership and the semaphore order and is tested against a recording backend. The round trip has not been run on a GPU.
+Status: proposed. `compatibility/interop` implements the negotiation, the handle ownership and the semaphore order, and `native/interop` exports the memory and hands the attachments over on the renderer's side. On lavapipe, Zink imported memory that another Vulkan device exported, and both sides drew on it in turn, ordered by finishing one side before the other drew. The semaphore round trip between the two devices has not run, and nothing has run on a hardware GPU or on Windows.
 
 ## Context
 
