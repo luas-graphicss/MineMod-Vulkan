@@ -6,6 +6,8 @@ import java.util.EnumSet;
 import java.util.Set;
 
 public final class BatchState {
+    public static final int BUILT_IN_PROGRAM = 0;
+
     private static final int DEPTH_TEST = 1;
     private static final int DEPTH_WRITE = 1 << 1;
     private static final int DEPTH_ONLY = 1 << 2;
@@ -39,7 +41,7 @@ public final class BatchState {
         payload.putInt(state.slot.code()).putInt(state.view).putInt(VertexElement.maskOf(state.elements));
         payload.putInt(state.mode.code()).putInt(state.blending.code()).putInt(state.depth);
         payload.putInt(state.depthCompare.code()).putInt(state.culling.code());
-        payload.putInt(Shading.maskOf(state.shading)).putInt(0).putLong(state.texture);
+        payload.putInt(Shading.maskOf(state.shading)).putInt(state.program).putLong(state.texture);
         SceneFields.putFloats(payload, state.modelView);
         SceneFields.putFloats(payload, state.colorModulator);
         payload.putFloat(state.alphaCutoff).putFloat(state.lineWidth);
@@ -56,6 +58,7 @@ public final class BatchState {
         private DepthCompare depthCompare = DepthCompare.ALWAYS;
         private FaceCulling culling = FaceCulling.BACK_FACES;
         private Set<Shading> shading = EnumSet.noneOf(Shading.class);
+        private int program = BUILT_IN_PROGRAM;
         private long texture = SceneFields.NO_TEXTURE;
         private float[] modelView = IDENTITY;
         private float[] colorModulator = UNTINTED;
@@ -99,6 +102,15 @@ public final class BatchState {
 
         public Builder shading(Set<Shading> steps) {
             this.shading = steps.isEmpty() ? EnumSet.noneOf(Shading.class) : EnumSet.copyOf(steps);
+            return this;
+        }
+
+        public Builder program(int staged) {
+            if (staged < BUILT_IN_PROGRAM) {
+                throw new IllegalArgumentException(
+                        "a batch draws with the built-in program or a staged one, found " + staged);
+            }
+            this.program = staged;
             return this;
         }
 
