@@ -17,6 +17,20 @@
 #define MINEMOD_SCENE_MAX_TEXTURES (UINT32_C(1) << 16)
 #define MINEMOD_SCENE_MAX_SECTIONS (UINT32_C(1) << 20)
 
+enum {
+    MINEMOD_PRESENTATION_OFFSCREEN = 0,
+    MINEMOD_PRESENTATION_AWAITING_SWAPCHAIN = 1,
+    MINEMOD_PRESENTATION_RUNNING = 2,
+    MINEMOD_PRESENTATION_SUSPENDED = 3,
+    MINEMOD_PRESENTATION_DEVICE_LOST = 4,
+    MINEMOD_PRESENTATION_STOPPED = 5
+};
+
+enum {
+    MINEMOD_PRESENT_PACING_VSYNC = 0,
+    MINEMOD_PRESENT_PACING_IMMEDIATE = 1
+};
+
 typedef struct minemod_scene_host minemod_scene_host;
 typedef struct minemod_scene_session minemod_scene_session;
 
@@ -80,6 +94,12 @@ minemod_result minemod_scene_session_submit(
 
 minemod_result minemod_scene_session_resize(
     minemod_scene_session* session, uint32_t width, uint32_t height) MINEMOD_ABI_NOEXCEPT;
+
+minemod_result minemod_scene_session_set_present_pacing(
+    minemod_scene_session* session, uint32_t pacing) MINEMOD_ABI_NOEXCEPT;
+
+minemod_result minemod_scene_session_get_presentation_state(
+    const minemod_scene_session* session, uint32_t* state) MINEMOD_ABI_NOEXCEPT;
 
 minemod_result minemod_scene_session_read_frame(
     minemod_scene_session* session, uint8_t* rgba, uint64_t capacity) MINEMOD_ABI_NOEXCEPT;

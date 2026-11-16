@@ -61,6 +61,12 @@ public:
         return counters.frames_presented;
     }
 
+    std::uint32_t presentation_state() const {
+        std::uint32_t state = 0;
+        REQUIRE(minemod_scene_session_get_presentation_state(session_, &state) == MINEMOD_RESULT_OK);
+        return state;
+    }
+
     std::string validation_text() const {
         std::string text(minemod_scene_host_read_validation_text(host_, nullptr, 0), '\0');
         minemod_scene_host_read_validation_text(host_, text.data(), text.size());
@@ -112,4 +118,52 @@ TEST_CASE("a window without area keeps drawing and presents again once it has ar
     session.draw_frame(resized_extent);
     CHECK(session.frames_presented() == 3);
     CHECK(session.validation_text() == "");
+}
+
+TEST_CASE("a session reports whether its window presents, waits for a swapchain or has no area") {
+    WindowedSession session;
+    CHECK(session.presentation_state() == MINEMOD_PRESENTATION_RUNNING);
+
+    REQUIRE(minemod_scene_session_resize(session.get(), 0, 0) == MINEMOD_RESULT_OK);
+    CHECK(session.presentation_state() == MINEMOD_PRESENTATION_SUSPENDED);
+
+    REQUIRE(
+        minemod_scene_session_resize(session.get(), resized_extent.width, resized_extent.height) == MINEMOD_RESULT_OK);
+    CHECK(session.presentation_state() == MINEMOD_PRESENTATION_AWAITING_SWAPCHAIN);
+
+    session.draw_frame(resized_extent);
+    CHECK(session.presentation_state() == MINEMOD_PRESENTATION_RUNNING);
+}
+
+TEST_CASE("a session without a window reports that it draws offscreen") {
+    RunningSession session(offscreen_config(window_extent.width, window_extent.height));
+    std::uint32_t state = MINEMOD_PRESENTATION_RUNNING;
+
+    REQUIRE(minemod_scene_session_get_presentation_state(session.get(), &state) == MINEMOD_RESULT_OK);
+
+    CHECK(state == MINEMOD_PRESENTATION_OFFSCREEN);
+}
+
+TEST_CASE("a session keeps presenting every frame after its pacing changes") {
+    WindowedSession session;
+    session.draw_frame(window_extent);
+
+    REQUIRE(
+        minemod_scene_session_set_present_pacing(session.get(), MINEMOD_PRESENT_PACING_IMMEDIATE)
+        == MINEMOD_RESULT_OK);
+    session.draw_frame(window_extent);
+    REQUIRE(
+        minemod_scene_session_set_present_pacing(session.get(), MINEMOD_PRESENT_PACING_VSYNC) == MINEMOD_RESULT_OK);
+    session.draw_frame(window_extent);
+
+    CHECK(session.frames_presented() == 3);
+    CHECK(session.validation_text() == "");
+}
+
+TEST_CASE("a session refuses a pacing it does not know") {
+    WindowedSession session;
+    constexpr std::uint32_t unknown_pacing = 7;
+
+    CHECK(minemod_scene_session_set_present_pacing(session.get(), unknown_pacing) == MINEMOD_RESULT_INVALID_ARGUMENT);
+    CHECK(session.presentation_state() == MINEMOD_PRESENTATION_RUNNING);
 }

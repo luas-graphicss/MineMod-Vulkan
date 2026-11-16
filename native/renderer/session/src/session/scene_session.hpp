@@ -23,6 +23,7 @@
 #include "minemod/abi/result.h"
 #include "minemod/scene/scene_session.h"
 #include "pipelines/pipeline_cache.hpp"
+#include "presentation/present_pacing.hpp"
 #include "presentation/presenter.hpp"
 #include "presentation/window_surface.hpp"
 #include "resources/texture_registry.hpp"
@@ -53,6 +54,8 @@ public:
 
     minemod_result execute(std::uint16_t opcode, std::span<const std::byte> payload);
     minemod_result resize(VkExtent2D extent);
+    void set_present_pacing(renderer::PresentPacing pacing) noexcept;
+    std::uint32_t presentation_state() const noexcept;
     minemod_result read_frame(std::span<std::byte> rgba);
     minemod_scene_counters counters() const noexcept;
 

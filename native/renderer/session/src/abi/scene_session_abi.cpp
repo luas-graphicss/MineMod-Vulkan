@@ -221,6 +221,31 @@ minemod_result minemod_scene_session_resize(
     return run_guarded([&] { return session->core.resize(VkExtent2D{width, height}); });
 }
 
+minemod_result minemod_scene_session_set_present_pacing(minemod_scene_session* session, uint32_t pacing) noexcept {
+    if (session == nullptr) {
+        return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+    switch (pacing) {
+        case MINEMOD_PRESENT_PACING_VSYNC:
+            session->core.set_present_pacing(minemod::renderer::PresentPacing::vsync);
+            return MINEMOD_RESULT_OK;
+        case MINEMOD_PRESENT_PACING_IMMEDIATE:
+            session->core.set_present_pacing(minemod::renderer::PresentPacing::immediate);
+            return MINEMOD_RESULT_OK;
+        default:
+            return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+}
+
+minemod_result minemod_scene_session_get_presentation_state(
+    const minemod_scene_session* session, uint32_t* state) noexcept {
+    if (session == nullptr || state == nullptr) {
+        return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+    *state = session->core.presentation_state();
+    return MINEMOD_RESULT_OK;
+}
+
 minemod_result minemod_scene_session_read_frame(
     minemod_scene_session* session, uint8_t* rgba, uint64_t capacity) noexcept {
     if (session == nullptr || rgba == nullptr) {

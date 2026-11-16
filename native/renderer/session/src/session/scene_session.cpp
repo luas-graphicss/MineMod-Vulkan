@@ -181,6 +181,31 @@ minemod_result SceneSession::resize(VkExtent2D extent) {
     return MINEMOD_RESULT_OK;
 }
 
+void SceneSession::set_present_pacing(renderer::PresentPacing pacing) noexcept {
+    if (presenter_) {
+        presenter_->set_pacing(pacing);
+    }
+}
+
+std::uint32_t SceneSession::presentation_state() const noexcept {
+    if (!presenter_) {
+        return MINEMOD_PRESENTATION_OFFSCREEN;
+    }
+    switch (presenter_->state()) {
+        case renderer::FrameState::awaiting_swapchain:
+            return MINEMOD_PRESENTATION_AWAITING_SWAPCHAIN;
+        case renderer::FrameState::running:
+            return MINEMOD_PRESENTATION_RUNNING;
+        case renderer::FrameState::suspended:
+            return MINEMOD_PRESENTATION_SUSPENDED;
+        case renderer::FrameState::device_lost:
+            return MINEMOD_PRESENTATION_DEVICE_LOST;
+        case renderer::FrameState::stopped:
+            break;
+    }
+    return MINEMOD_PRESENTATION_STOPPED;
+}
+
 minemod_result SceneSession::read_frame(std::span<std::byte> rgba) {
     if (!has_drawn_frame_) {
         return MINEMOD_RESULT_INVALID_ARGUMENT;
