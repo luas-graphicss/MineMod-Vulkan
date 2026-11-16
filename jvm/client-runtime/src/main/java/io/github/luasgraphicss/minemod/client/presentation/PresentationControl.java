@@ -10,6 +10,7 @@ public final class PresentationControl {
     private final PresentationTarget target;
     private final WindowSurface window;
     private FramebufferSize appliedSize;
+    private FramebufferSize frameSize;
     private PresentPacing appliedPacing = PresentPacing.VSYNC;
     private PresentPacing requestedPacing = PresentPacing.VSYNC;
 
@@ -17,6 +18,11 @@ public final class PresentationControl {
         this.target = target;
         this.window = window;
         this.appliedSize = openedSize;
+        this.frameSize = openedSize;
+    }
+
+    public FramebufferSize frameSize() {
+        return frameSize;
     }
 
     public void pace(PresentPacing pacing) {
@@ -28,6 +34,9 @@ public final class PresentationControl {
         if (!size.equals(appliedSize)) {
             target.resize(size.width(), size.height());
             appliedSize = size;
+        }
+        if (size.hasArea()) {
+            frameSize = size;
         }
         if (requestedPacing != appliedPacing) {
             target.setPacing(requestedPacing);

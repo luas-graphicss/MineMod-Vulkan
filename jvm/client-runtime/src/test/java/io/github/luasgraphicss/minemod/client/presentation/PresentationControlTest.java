@@ -63,6 +63,16 @@ class PresentationControlTest {
     }
 
     @Test
+    void keepsTheSizeOfTheLastFrameThatHadAnArea() {
+        window.size = MAXIMISED;
+        control.beginFrame();
+        window.size = MINIMISED;
+        control.beginFrame();
+
+        assertEquals(MAXIMISED, control.frameSize());
+    }
+
+    @Test
     void appliesARequestedPacingAtTheNextFrame() {
         control.pace(PresentPacing.IMMEDIATE);
         control.beginFrame();
