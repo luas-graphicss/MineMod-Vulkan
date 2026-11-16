@@ -12,7 +12,8 @@ minemod_configure_vulkan_target(minemod_interop_tests)
 add_executable(minemod_interop_device_tests
     contexts/device_identity_test.cpp
     memory/shared_buffer_test.cpp
-    memory/shared_image_test.cpp)
+    memory/shared_image_test.cpp
+    sync/shared_semaphore_test.cpp)
 target_link_libraries(minemod_interop_device_tests
     PRIVATE minemod_interop_test_support minemod_renderer_test_support minemod_doctest_main)
 minemod_configure_vulkan_target(minemod_interop_device_tests)

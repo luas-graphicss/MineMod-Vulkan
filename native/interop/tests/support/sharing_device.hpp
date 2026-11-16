@@ -1,5 +1,6 @@
 #pragma once
 
+#include <span>
 #include <string>
 
 #include "device/device.hpp"
@@ -10,6 +11,7 @@ namespace minemod::interop::test_support {
 class SharingDevice {
 public:
     SharingDevice();
+    explicit SharingDevice(std::span<const char* const> extensions);
 
     const renderer::Device& device() const noexcept {
         return device_;

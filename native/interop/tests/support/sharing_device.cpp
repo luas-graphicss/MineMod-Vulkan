@@ -5,11 +5,11 @@
 
 namespace minemod::interop::test_support {
 
-SharingDevice::SharingDevice()
+SharingDevice::SharingDevice() : SharingDevice(shared_image_extensions) {}
+
+SharingDevice::SharingDevice(std::span<const char* const> extensions)
     : instance_(renderer::Validation::required, {}),
-      device_(
-          renderer::select_device(instance_.get(), renderer::DeviceRequirements{shared_image_extensions}),
-          shared_image_extensions) {}
+      device_(renderer::select_device(instance_.get(), renderer::DeviceRequirements{extensions}), extensions) {}
 
 std::string SharingDevice::validation_text() const {
     std::string text;

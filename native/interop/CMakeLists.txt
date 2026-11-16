@@ -4,7 +4,8 @@ add_library(minemod_interop STATIC
     src/memory/external_support.cpp
     src/memory/owned_descriptor.cpp
     src/memory/shared_buffer.cpp
-    src/memory/shared_image.cpp)
+    src/memory/shared_image.cpp
+    src/sync/shared_semaphore.cpp)
 add_library(minemod::interop ALIAS minemod_interop)
 
 target_include_directories(minemod_interop PUBLIC src)
