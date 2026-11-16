@@ -56,7 +56,7 @@ public final class ClientRenderer implements AutoCloseable {
         this.streamStorage = ByteBuffer.allocateDirect((int) streamBytes);
         this.resourceBytesPerStream = streamBytes / RESOURCE_SHARE_OF_STREAM;
         this.resourceRecordsPerStream = negotiation.maxStreamCommands() / RESOURCE_SHARE_OF_STREAM;
-        this.terrain = new TerrainPublisher(streamBytes / SECTION_SHARE_OF_STREAM);
+        this.terrain = new TerrainPublisher(streamBytes / SECTION_SHARE_OF_STREAM, MAX_SECTIONS);
     }
 
     public static ClientRenderer start(Path nativeLibrary, WindowSurface window, DeviceValidation validation) {
