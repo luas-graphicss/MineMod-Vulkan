@@ -2,6 +2,7 @@ package io.github.luasgraphicss.minemod.bridge;
 
 import io.github.luasgraphicss.minemod.contract.stream.StreamReport;
 import java.nio.ByteBuffer;
+import java.util.function.LongFunction;
 
 public final class NativeSceneSession implements AutoCloseable {
     private static final long CLOSED = 0;
@@ -65,6 +66,14 @@ public final class NativeSceneSession implements AutoCloseable {
         return new SceneCounters(fields);
     }
 
+    public SceneReload reload() {
+        return new SceneReload(this);
+    }
+
+    public SceneDiagnostics diagnostics() {
+        return new SceneDiagnostics(this);
+    }
+
     @Override
     public synchronized void close() {
         if (address == CLOSED) {
@@ -72,6 +81,10 @@ public final class NativeSceneSession implements AutoCloseable {
         }
         nativeDestroy(address);
         address = CLOSED;
+    }
+
+    synchronized <T> T withOpenAddress(LongFunction<T> call) {
+        return call.apply(openAddress());
     }
 
     private long openAddress() {

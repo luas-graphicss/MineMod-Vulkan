@@ -11,6 +11,8 @@ target_include_directories(minemod_jni PRIVATE src)
 target_link_libraries(minemod_jni PRIVATE minemod::abi minemod_jni_headers)
 if(TARGET minemod::scene_session)
     target_sources(minemod_jni PRIVATE
+        src/metrics/scene_metrics_calls.cpp
+        src/reload/scene_reload_calls.cpp
         src/scene/scene_calls.cpp
         src/scene/scene_host_calls.cpp
         src/scene/scene_session_calls.cpp)
