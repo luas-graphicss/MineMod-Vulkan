@@ -7,6 +7,7 @@ layout(push_constant) uniform Draw {
     uint shading;
     vec2 frame_size;
     float line_width;
+    float texture_rows[6];
 } draw;
 
 layout(set = 0, binding = 0) uniform View {

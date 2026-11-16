@@ -7,6 +7,7 @@ layout(push_constant) uniform Draw {
     uint shading;
     vec2 frame_size;
     float line_width;
+    float texture_rows[6];
 } draw;
 
 layout(set = 0, binding = 0) uniform View {
@@ -64,6 +65,13 @@ vec4 table_texel(sampler2D table, ivec2 texel) {
     return texelFetch(table, clamp(texel, first_table_texel, last_table_texel), 0);
 }
 
+vec2 transformed_texture_coordinate(vec2 coordinate) {
+    vec3 point = vec3(coordinate, 1.0);
+    vec3 u_row = vec3(draw.texture_rows[0], draw.texture_rows[1], draw.texture_rows[2]);
+    vec3 v_row = vec3(draw.texture_rows[3], draw.texture_rows[4], draw.texture_rows[5]);
+    return vec2(dot(u_row, point), dot(v_row, point));
+}
+
 vec4 widened_line_corner(vec4 start, vec4 toward_end) {
     vec3 start_point = start.xyz / start.w;
     vec3 end_point = toward_end.xyz / toward_end.w;
@@ -87,7 +95,7 @@ void main() {
     if ((draw.shading & shades_by_normal) != 0u) {
         out_color.rgb *= diffuse_light(in_normal);
     }
-    out_texture_coordinate = in_texture_coordinate;
+    out_texture_coordinate = transformed_texture_coordinate(in_texture_coordinate);
     out_overlay_color =
         (draw.shading & applies_overlay) != 0u ? table_texel(overlay, in_overlay_texel) : untouched_by_overlay;
     out_light_color = (draw.shading & applies_lightmap) != 0u

@@ -25,9 +25,10 @@ struct DrawConstants {
     std::uint32_t shading;
     std::array<float, 2> frame_size;
     float line_width;
+    TextureTransform texture_transform;
 };
 
-static_assert(sizeof(DrawConstants) == 100, "the push constant block mirrors the std430 layout of the shaders");
+static_assert(sizeof(DrawConstants) == 124, "the push constant block mirrors the std430 layout of the shaders");
 
 constexpr std::array view_bindings{
     DescriptorBinding{0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, constant_stages},
@@ -147,6 +148,7 @@ void BatchRenderer::record(VkCommandBuffer commands, const BatchPass& pass, std:
             shading_bits(material.shading),
             frame_size,
             batch.line_width,
+            batch.texture_transform,
         };
         vkCmdPushConstants(commands, pipeline_layout_.get(), constant_stages, 0, sizeof(constants), &constants);
 

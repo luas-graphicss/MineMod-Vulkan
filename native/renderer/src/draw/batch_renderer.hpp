@@ -12,6 +12,7 @@
 #include "device/device_handle.hpp"
 #include "draw/batch_geometry.hpp"
 #include "draw/material.hpp"
+#include "draw/texture_transform.hpp"
 #include "draw/vertex_format.hpp"
 #include "draw/view_constants.hpp"
 #include "math/matrix.hpp"
@@ -37,6 +38,7 @@ struct DrawBatch {
     std::array<float, 4> color_modulator;
     float line_width = 1.0f;
     VkDescriptorSet view = VK_NULL_HANDLE;
+    TextureTransform texture_transform{};
 };
 
 struct BatchPass {
