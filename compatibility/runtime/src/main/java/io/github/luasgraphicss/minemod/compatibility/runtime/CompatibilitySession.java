@@ -129,16 +129,19 @@ public final class CompatibilitySession implements AutoCloseable {
     private SessionContext enter(CompatibilityContext context, ContextPlan plan) {
         contexts.makeCurrent(context);
         try {
-            int sceneFramebuffer;
+            SceneTarget scene;
             try (ScratchInts scratch = new ScratchInts(memory, 1)) {
                 SceneTextures textures = plan.scene().attach(calls, scratch);
-                sceneFramebuffer = SceneFramebuffer.assemble(calls, scratch, textures.color(), textures.depthStencil());
+                scene = new SceneTarget(
+                        calls,
+                        memory,
+                        SceneFramebuffer.assemble(calls, scratch, textures.color(), textures.depthStencil()));
             }
             CompatibilityLayer layer = new CompatibilityLayer(
                     new LayerPorts(calls, memory, context.names(), plan.handoff().apply(calls), plan.origins()),
                     new LayerSettings(
-                            CallCatalog.standard(), profile, exposedExtensions, plan.wrapperState(), sceneFramebuffer));
-            SessionContext entered = new SessionContext(contexts, context, layer);
+                            CallCatalog.standard(), profile, exposedExtensions, plan.wrapperState(), scene.framebuffer()));
+            SessionContext entered = new SessionContext(contexts, context, layer, scene);
             entered.makeCurrent();
             return entered;
         } catch (RuntimeException failure) {
