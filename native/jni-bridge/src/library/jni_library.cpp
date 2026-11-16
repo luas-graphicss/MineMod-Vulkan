@@ -3,6 +3,7 @@
 #include "bridge/bridge_calls.hpp"
 #include "scene/scene_calls.hpp"
 #include "session/session_calls.hpp"
+#include "shaders/shader_calls.hpp"
 
 extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void*) {
     JNIEnv* env = nullptr;
@@ -10,6 +11,6 @@ extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void*) {
         return JNI_ERR;
     }
     const bool registered = minemod::jni::register_bridge_calls(*env) && minemod::jni::register_session_calls(*env)
-        && minemod::jni::register_scene_calls(*env);
+        && minemod::jni::register_scene_calls(*env) && minemod::jni::register_shader_calls(*env);
     return registered ? JNI_VERSION_1_8 : JNI_ERR;
 }
