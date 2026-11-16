@@ -23,6 +23,11 @@ TEST_CASE("each quad becomes two triangles that share its first and third corner
     CHECK(triangle_index_count(PrimitiveMode::quads, 8) == 12);
 }
 
+TEST_CASE("each line segment becomes the two triangles between its doubled end points") {
+    CHECK(triangle_indices(PrimitiveMode::lines, 8) == std::vector<std::uint32_t>{0, 1, 2, 3, 2, 1, 4, 5, 6, 7, 6, 5});
+    CHECK_THROWS_AS(triangle_index_count(PrimitiveMode::lines, 6), std::invalid_argument);
+}
+
 TEST_CASE("a strip alternates its corner order so every triangle keeps the same winding") {
     CHECK(triangle_indices(PrimitiveMode::triangle_strip, 5) == std::vector<std::uint32_t>{0, 1, 2, 2, 1, 3, 2, 3, 4});
 }

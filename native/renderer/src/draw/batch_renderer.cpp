@@ -23,9 +23,11 @@ struct DrawConstants {
     std::array<float, 4> color_modulator;
     float alpha_cutoff;
     std::uint32_t shading;
+    std::array<float, 2> frame_size;
+    float line_width;
 };
 
-static_assert(sizeof(DrawConstants) == 88, "the push constant block mirrors the std430 layout of the shaders");
+static_assert(sizeof(DrawConstants) == 100, "the push constant block mirrors the std430 layout of the shaders");
 
 constexpr std::array view_bindings{
     DescriptorBinding{0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, constant_stages},
@@ -124,8 +126,11 @@ void BatchRenderer::record(VkCommandBuffer commands, const BatchPass& pass, std:
     vkCmdBindDescriptorSets(
         commands, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_layout_.get(), view_set, 1, &pass.view, 0, nullptr);
 
+    const std::array frame_size{static_cast<float>(pass.extent.width), static_cast<float>(pass.extent.height)};
     for (const DrawBatch& batch : batches) {
-        const PipelineKey key{batch.format, batch.material.blending, batch.material.depth, batch.material.culling};
+        const Material& material = batch.material;
+        const PipelineKey key{
+            batch.format, material.blending, material.depth, material.culling, material.depth_bias, material.writes_color};
         vkCmdBindPipeline(commands, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_for(key));
         vkCmdBindDescriptorSets(
             commands, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_layout_.get(), texture_set, 1, &batch.texture, 0, nullptr);
@@ -133,8 +138,10 @@ void BatchRenderer::record(VkCommandBuffer commands, const BatchPass& pass, std:
         const DrawConstants constants{
             batch.model_view.columns,
             batch.color_modulator,
-            batch.material.alpha_cutoff,
-            shading_bits(batch.material.shading),
+            material.alpha_cutoff,
+            shading_bits(material.shading),
+            frame_size,
+            batch.line_width,
         };
         vkCmdPushConstants(commands, pipeline_layout_.get(), constant_stages, 0, sizeof(constants), &constants);
 
@@ -163,6 +170,8 @@ VkPipeline BatchRenderer::pipeline_for(const PipelineKey& key) {
         .blending = key.blending,
         .color_format = frame_color_format,
         .depth_format = frame_depth_format,
+        .depth_bias = key.depth_bias,
+        .writes_color = key.writes_color,
     });
     used_pipelines_.emplace_back(key, pipeline);
     return pipeline;

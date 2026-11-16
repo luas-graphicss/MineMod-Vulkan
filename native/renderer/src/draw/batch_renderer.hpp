@@ -35,6 +35,7 @@ struct DrawBatch {
     VkDescriptorSet texture;
     Matrix4 model_view;
     std::array<float, 4> color_modulator;
+    float line_width = 1.0f;
 };
 
 struct BatchPass {
@@ -58,6 +59,8 @@ private:
         Blending blending;
         DepthState depth;
         FaceCulling culling;
+        DepthBias depth_bias;
+        bool writes_color;
 
         friend bool operator==(const PipelineKey&, const PipelineKey&) = default;
     };

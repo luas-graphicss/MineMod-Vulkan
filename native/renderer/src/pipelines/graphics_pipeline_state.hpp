@@ -40,6 +40,13 @@ struct DepthState {
     friend bool operator==(const DepthState&, const DepthState&) = default;
 };
 
+struct DepthBias {
+    float constant;
+    float slope;
+
+    friend bool operator==(const DepthBias&, const DepthBias&) = default;
+};
+
 struct GraphicsPipelineState {
     VkShaderModule vertex_shader;
     VkShaderModule fragment_shader;
@@ -51,6 +58,8 @@ struct GraphicsPipelineState {
     Blending blending;
     VkFormat color_format;
     VkFormat depth_format;
+    DepthBias depth_bias{};
+    bool writes_color = true;
 
     friend bool operator==(const GraphicsPipelineState&, const GraphicsPipelineState&) = default;
 };

@@ -14,6 +14,7 @@ struct Shading {
     bool applies_overlay;
     bool shades_by_normal;
     bool fades_into_fog;
+    bool widens_lines;
 
     friend bool operator==(const Shading&, const Shading&) = default;
 };
@@ -21,7 +22,7 @@ struct Shading {
 constexpr std::uint32_t shading_bits(const Shading& shading) noexcept {
     return (shading.samples_texture ? 1u : 0u) | (shading.applies_lightmap ? 2u : 0u)
         | (shading.applies_overlay ? 4u : 0u) | (shading.shades_by_normal ? 8u : 0u)
-        | (shading.fades_into_fog ? 16u : 0u);
+        | (shading.fades_into_fog ? 16u : 0u) | (shading.widens_lines ? 32u : 0u);
 }
 
 struct Material {
@@ -30,6 +31,8 @@ struct Material {
     FaceCulling culling;
     float alpha_cutoff;
     Shading shading;
+    DepthBias depth_bias{};
+    bool writes_color = true;
 
     friend bool operator==(const Material&, const Material&) = default;
 };

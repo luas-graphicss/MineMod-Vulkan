@@ -41,12 +41,18 @@ std::vector<VkVertexInputBindingDescription> binding_descriptions(const VertexLa
     return descriptions;
 }
 
-VkPipelineColorBlendAttachmentState blend_attachment(Blending blending) {
+constexpr VkColorComponentFlags every_color_component =
+    VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+
+bool is_biased(const DepthBias& bias) noexcept {
+    return bias.constant != 0.0f || bias.slope != 0.0f;
+}
+
+VkPipelineColorBlendAttachmentState blend_attachment(const GraphicsPipelineState& state) {
     VkPipelineColorBlendAttachmentState attachment{
-        .colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT
-            | VK_COLOR_COMPONENT_A_BIT,
+        .colorWriteMask = state.writes_color ? every_color_component : VkColorComponentFlags{0},
     };
-    const std::optional<BlendFactors> factors = blend_factors(blending);
+    const std::optional<BlendFactors> factors = blend_factors(state.blending);
     if (factors) {
         attachment.blendEnable = VK_TRUE;
         attachment.srcColorBlendFactor = factors->source_color;
@@ -88,6 +94,9 @@ DeviceHandle<VkPipeline> create_pipeline(VkDevice device, const GraphicsPipeline
         .polygonMode = VK_POLYGON_MODE_FILL,
         .cullMode = state.cull_mode,
         .frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE,
+        .depthBiasEnable = is_biased(state.depth_bias) ? VK_TRUE : VK_FALSE,
+        .depthBiasConstantFactor = state.depth_bias.constant,
+        .depthBiasSlopeFactor = state.depth_bias.slope,
         .lineWidth = 1.0f,
     };
     const VkPipelineMultisampleStateCreateInfo multisample{
@@ -100,7 +109,7 @@ DeviceHandle<VkPipeline> create_pipeline(VkDevice device, const GraphicsPipeline
         .depthWriteEnable = state.depth.write ? VK_TRUE : VK_FALSE,
         .depthCompareOp = state.depth.compare,
     };
-    const VkPipelineColorBlendAttachmentState color_attachment = blend_attachment(state.blending);
+    const VkPipelineColorBlendAttachmentState color_attachment = blend_attachment(state);
     const VkPipelineColorBlendStateCreateInfo color_blend{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
         .attachmentCount = 1,

@@ -56,6 +56,8 @@ constexpr VertexFormat entity_format{
     VertexElement::normal,
 };
 
+constexpr VertexFormat line_format{VertexElement::position, VertexElement::color, VertexElement::normal};
+
 constexpr SamplerDescription nearest_sampler{
     VK_FILTER_NEAREST,
     VK_FILTER_NEAREST,
@@ -190,6 +192,13 @@ public:
         const std::vector<std::byte> bytes = encode_vertices(format, vertices);
         const BatchGeometry staged = stager_.stage({format, mode, bytes}).value();
         batches_.push_back(DrawBatch{format, staged, material, surface_set_, identity_matrix, color_modulator});
+    }
+
+    void add_line(const SceneVertex& start, const SceneVertex& end, const Material& material, float width) {
+        const std::array<SceneVertex, 4> doubled_ends{start, start, end, end};
+        const std::vector<std::byte> bytes = encode_vertices(line_format, doubled_ends);
+        const BatchGeometry staged = stager_.stage({line_format, PrimitiveMode::lines, bytes}).value();
+        batches_.push_back(DrawBatch{line_format, staged, material, surface_set_, identity_matrix, untinted, width});
     }
 
     void add_quad(const QuadPlacement& placement, const SceneVertex& surface, const Material& material) {
@@ -397,6 +406,62 @@ TEST_CASE("back faces are dropped unless the material keeps both sides") {
     const std::array<SceneVertex, 4> right_clockwise{right[3], right[2], right[1], right[0]};
     scene.add(colored_format, PrimitiveMode::quads, left_clockwise, opaque);
     scene.add(colored_format, PrimitiveMode::quads, right_clockwise, two_sided);
+
+    const FramePixels pixels = scene.render(view_through(clear_air));
+
+    check_pixel(pixels, left_center, {0, 0, 0});
+    check_pixel(pixels, right_center, {255, 0, 0});
+    CHECK(scene.validation_text() == "");
+}
+
+TEST_CASE("a line segment is widened to its width in pixels around its center") {
+    constexpr float line_pixels = 4.0f;
+    constexpr VkOffset2D above_center{20, 31};
+    constexpr VkOffset2D below_center{20, 32};
+    constexpr VkOffset2D above_line{20, 28};
+    constexpr VkOffset2D below_line{20, 35};
+    BatchScene scene;
+    Material outline = opaque;
+    outline.culling = FaceCulling::disabled;
+    outline.shading.widens_lines = true;
+    SceneVertex start = colored(green);
+    start.position = {-1.0f, 0.0f, 0.5f};
+    start.normal = {127, 0, 0, 0};
+    SceneVertex end = start;
+    end.position = {1.0f, 0.0f, 0.5f};
+    scene.add_line(start, end, outline, line_pixels);
+
+    const FramePixels pixels = scene.render(view_through(clear_air));
+
+    check_pixel(pixels, above_center, {0, 255, 0});
+    check_pixel(pixels, below_center, {0, 255, 0});
+    check_pixel(pixels, above_line, {0, 0, 0});
+    check_pixel(pixels, below_line, {0, 0, 0});
+    CHECK(scene.validation_text() == "");
+}
+
+TEST_CASE("a depth bias keeps a decal in front of the coplanar surface drawn after it") {
+    BatchScene scene;
+    Material decal = opaque;
+    decal.depth_bias = {-10.0f, -1.0f};
+    scene.add_quad(left_half, colored(green), decal);
+    scene.add_quad(left_half, colored(red), opaque);
+    scene.add_quad(right_half, colored(green), opaque);
+    scene.add_quad(right_half, colored(red), opaque);
+
+    const FramePixels pixels = scene.render(view_through(clear_air));
+
+    check_pixel(pixels, left_center, {0, 255, 0});
+    check_pixel(pixels, right_center, {255, 0, 0});
+    CHECK(scene.validation_text() == "");
+}
+
+TEST_CASE("a batch that writes only depth hides what is drawn behind it afterwards") {
+    BatchScene scene;
+    Material depth_mask = opaque;
+    depth_mask.writes_color = false;
+    scene.add_quad(left_half, colored(green), depth_mask);
+    scene.add_quad(far_backdrop, colored(red), opaque);
 
     const FramePixels pixels = scene.render(view_through(clear_air));
 

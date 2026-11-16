@@ -9,6 +9,7 @@ namespace {
 constexpr std::uint32_t triangle_corners = 3;
 constexpr std::uint32_t quad_corners = 4;
 constexpr std::array<std::uint32_t, 6> quad_triangles{0, 1, 2, 2, 3, 0};
+constexpr std::array<std::uint32_t, 6> widened_line_triangles{0, 1, 2, 3, 2, 1};
 
 void require_whole_primitives(std::uint32_t vertex_count, std::uint32_t corners) {
     if (vertex_count == 0 || vertex_count % corners != 0) {
@@ -22,9 +23,10 @@ void require_connected_triangle(std::uint32_t vertex_count) {
     }
 }
 
-void append_quads(std::uint32_t vertex_count, std::vector<std::uint32_t>& indices) {
+void append_four_cornered(
+    std::uint32_t vertex_count, const std::array<std::uint32_t, 6>& triangles, std::vector<std::uint32_t>& indices) {
     for (std::uint32_t first = 0; first < vertex_count; first += quad_corners) {
-        for (const std::uint32_t corner : quad_triangles) {
+        for (const std::uint32_t corner : triangles) {
             indices.push_back(first + corner);
         }
     }
@@ -52,6 +54,7 @@ void append_fan(std::uint32_t vertex_count, std::vector<std::uint32_t>& indices)
 std::uint32_t triangle_index_count(PrimitiveMode mode, std::uint32_t vertex_count) {
     switch (mode) {
     case PrimitiveMode::quads:
+    case PrimitiveMode::lines:
         require_whole_primitives(vertex_count, quad_corners);
         return vertex_count / quad_corners * static_cast<std::uint32_t>(quad_triangles.size());
     case PrimitiveMode::triangle_strip:
@@ -69,7 +72,10 @@ void append_triangle_indices(PrimitiveMode mode, std::uint32_t vertex_count, std
     indices.reserve(indices.size() + triangle_index_count(mode, vertex_count));
     switch (mode) {
     case PrimitiveMode::quads:
-        append_quads(vertex_count, indices);
+        append_four_cornered(vertex_count, quad_triangles, indices);
+        return;
+    case PrimitiveMode::lines:
+        append_four_cornered(vertex_count, widened_line_triangles, indices);
         return;
     case PrimitiveMode::triangle_strip:
         append_strip(vertex_count, indices);

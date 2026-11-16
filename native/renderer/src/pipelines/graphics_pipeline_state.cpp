@@ -46,6 +46,9 @@ std::size_t GraphicsPipelineStateHash::operator()(const GraphicsPipelineState& s
     digest.mix(state.blending);
     digest.mix(state.color_format);
     digest.mix(state.depth_format);
+    digest.mix(state.depth_bias.constant);
+    digest.mix(state.depth_bias.slope);
+    digest.mix(state.writes_color);
     return digest.get();
 }
 

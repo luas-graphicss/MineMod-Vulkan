@@ -5,6 +5,8 @@ layout(push_constant) uniform Draw {
     vec4 color_modulator;
     float alpha_cutoff;
     uint shading;
+    vec2 frame_size;
+    float line_width;
 } draw;
 
 layout(set = 0, binding = 0) uniform View {

@@ -5,7 +5,7 @@
 
 namespace minemod::renderer {
 
-enum class PrimitiveMode : std::uint8_t { triangles, triangle_strip, triangle_fan, quads };
+enum class PrimitiveMode : std::uint8_t { triangles, triangle_strip, triangle_fan, quads, lines };
 
 std::uint32_t triangle_index_count(PrimitiveMode mode, std::uint32_t vertex_count);
 
