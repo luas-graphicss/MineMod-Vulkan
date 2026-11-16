@@ -49,6 +49,7 @@ struct DrawBatch {
     TextureTransform texture_transform{};
     std::optional<VkRect2D> clip{};
     std::optional<BatchProgram> program{};
+    bool clears_depth = false;
 };
 
 struct BatchPass {

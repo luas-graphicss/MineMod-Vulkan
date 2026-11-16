@@ -48,4 +48,13 @@ void begin_frame_rendering(
     vkCmdBeginRendering(commands, &rendering);
 }
 
+void clear_frame_depth(VkCommandBuffer commands, VkExtent2D extent) {
+    const VkClearAttachment depth{
+        .aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT,
+        .clearValue = {.depthStencil = {farthest_depth, 0}},
+    };
+    const VkClearRect whole_frame{{{0, 0}, extent}, 0, 1};
+    vkCmdClearAttachments(commands, 1, &depth, 1, &whole_frame);
+}
+
 }
