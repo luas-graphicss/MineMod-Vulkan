@@ -33,6 +33,7 @@
 #include "terrain/terrain_sections.hpp"
 #include "textures/sampler_cache.hpp"
 #include "textures/texture.hpp"
+#include "visibility/section_occlusion.hpp"
 #include "work/job_epochs.hpp"
 
 namespace minemod::scene {
@@ -77,10 +78,12 @@ private:
     minemod_result set_terrain(std::span<const std::byte> payload);
     minemod_result draw_batch(std::span<const std::byte> payload);
     minemod_result set_batch_option(std::uint16_t opcode, std::span<const std::byte> payload);
+    minemod_result connect_section_faces(std::span<const std::byte> payload);
     minemod_result end_frame();
 
     void upload_waiting_sections();
     void order_translucent_terrain();
+    void select_reachable_sections();
     const renderer::FramesInFlight::Frame& recording();
     FrameSlot& recording_slot();
     std::uint64_t last_frame_using_removed_resources() const noexcept;
@@ -104,6 +107,8 @@ private:
     renderer::JobEpochs epochs_;
     renderer::TerrainSections sections_;
     SectionIntake intake_;
+    renderer::SectionOcclusion occlusion_;
+    std::optional<std::vector<renderer::SectionPosition>> reachable_;
     TextureRegistry textures_;
     renderer::Texture white_;
     VkSampler white_sampler_;

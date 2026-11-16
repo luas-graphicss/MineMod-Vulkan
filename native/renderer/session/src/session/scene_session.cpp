@@ -6,6 +6,7 @@
 
 #include "commands/batch_option_commands.hpp"
 #include "commands/scene_commands.hpp"
+#include "commands/section_face_commands.hpp"
 #include "device/physical_device.hpp"
 #include "frame/frame_readback.hpp"
 #include "graph/graph_images.hpp"
@@ -14,6 +15,7 @@
 #include "minemod/abi/command_stream.h"
 #include "minemod/abi/scene_commands.h"
 #include "scene/scene_frame.hpp"
+#include "terrain/reachable_sections.hpp"
 #include "textures/mip_chain.hpp"
 #include "upload/upload_arena.hpp"
 
@@ -164,6 +166,8 @@ minemod_result SceneSession::execute(std::uint16_t opcode, std::span<const std::
         case MINEMOD_OPCODE_SET_TEXTURE_TRANSFORM:
         case MINEMOD_OPCODE_SET_QUAD_ORDER:
             return set_batch_option(opcode, payload);
+        case MINEMOD_OPCODE_CONNECT_SECTION_FACES:
+            return connect_section_faces(payload);
         default:
             return MINEMOD_RESULT_UNSUPPORTED_CAPABILITY;
     }
@@ -307,6 +311,7 @@ minemod_result SceneSession::unload_section(std::span<const std::byte> payload) 
     epochs_.unload(section.command());
     sections_.unload(section.command(), last_frame_using_removed_resources());
     counters_.sections_dropped += intake_.forget(epochs_, section.command());
+    occlusion_.forget(section.command());
     return MINEMOD_RESULT_OK;
 }
 
@@ -314,6 +319,7 @@ minemod_result SceneSession::change_world() {
     epochs_.change_world();
     sections_.unload_all(last_frame_using_removed_resources());
     counters_.sections_dropped += intake_.forget_all(epochs_);
+    occlusion_.clear();
     ++world_;
     return MINEMOD_RESULT_OK;
 }
@@ -431,6 +437,22 @@ minemod_result SceneSession::set_batch_option(std::uint16_t opcode, std::span<co
     return change_batch_options(frame_.batch_options, extent_, opcode, payload);
 }
 
+minemod_result SceneSession::connect_section_faces(std::span<const std::byte> payload) {
+    const Decoded<SectionFaces> decoded = decode_section_faces(payload);
+    if (decoded.result() != MINEMOD_RESULT_OK) {
+        return decoded.result();
+    }
+    const SectionFaces& faces = decoded.command();
+    if (faces.world != world_) {
+        return MINEMOD_RESULT_OK;
+    }
+    if (!occlusion_.describes(faces.section) && occlusion_.size() >= MINEMOD_SCENE_MAX_SECTIONS) {
+        return MINEMOD_RESULT_LIMIT_EXCEEDED;
+    }
+    occlusion_.describe(faces.section, faces.connections);
+    return MINEMOD_RESULT_OK;
+}
+
 minemod_result SceneSession::end_frame() {
     if (!frame_.is_open || (frame_.draws_world && !frame_.terrain)) {
         return MINEMOD_RESULT_INVALID_ARGUMENT;
@@ -439,6 +461,7 @@ minemod_result SceneSession::end_frame() {
     FrameSlot& slot = recording_slot();
     upload_waiting_sections();
     order_translucent_terrain();
+    select_reachable_sections();
     if (frame_.uploaded_sections) {
         make_uploads_readable_by_draws(frame.commands);
     }
@@ -511,6 +534,16 @@ void SceneSession::order_translucent_terrain() {
     const std::size_t reordered =
         intake_.reorder_translucent({frame.commands, frame.number, camera_}, recording_slot().uploads);
     frame_.uploaded_sections = frame_.uploaded_sections || reordered != 0;
+}
+
+void SceneSession::select_reachable_sections() {
+    if (!frame_.terrain) {
+        return;
+    }
+    reachable_ = reachable_sections(occlusion_, sections_, camera_);
+    if (reachable_) {
+        frame_.terrain->reachable_sections = std::span<const renderer::SectionPosition>(*reachable_);
+    }
 }
 
 const renderer::FramesInFlight::Frame& SceneSession::recording() {

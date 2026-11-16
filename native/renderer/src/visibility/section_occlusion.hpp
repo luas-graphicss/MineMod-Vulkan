@@ -17,6 +17,10 @@ public:
 
     std::vector<SectionPosition> reachable_from(const SectionPosition& camera_section) const;
 
+    bool describes(const SectionPosition& section) const {
+        return sections_.contains(section);
+    }
+
     std::size_t size() const noexcept {
         return sections_.size();
     }

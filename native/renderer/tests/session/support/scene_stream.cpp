@@ -184,4 +184,11 @@ SceneStream& SceneStream::set_quad_order(std::uint32_t order) {
     return *this;
 }
 
+SceneStream& SceneStream::connect_section_faces(const SectionKey& section, std::uint64_t connections) {
+    builder_.command(
+        MINEMOD_OPCODE_CONNECT_SECTION_FACES,
+        Payload().i32(section.x).i32(section.y).i32(section.z).u32(section.world).u64(connections).bytes());
+    return *this;
+}
+
 }

@@ -134,7 +134,8 @@ add_executable(minemod_scene_session_device_tests
     session/scene_frames_test.cpp
     session/scene_presentation_test.cpp
     session/scene_resources_test.cpp
-    session/scene_terrain_intake_test.cpp)
+    session/scene_terrain_intake_test.cpp
+    session/scene_visibility_test.cpp)
 target_compile_definitions(minemod_scene_session_device_tests PRIVATE
     MINEMOD_COMMAND_STREAM_CORPUS="${PROJECT_SOURCE_DIR}/tests/fixtures/command-streams")
 target_link_libraries(minemod_scene_session_device_tests
