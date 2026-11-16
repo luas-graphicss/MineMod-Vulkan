@@ -163,4 +163,25 @@ SceneStream& SceneStream::end_frame() {
     return *this;
 }
 
+SceneStream& SceneStream::set_clip(const ClipState& clip) {
+    builder_.command(
+        MINEMOD_OPCODE_SET_CLIP, Payload().i32(clip.left).i32(clip.bottom).i32(clip.width).i32(clip.height).bytes());
+    return *this;
+}
+
+SceneStream& SceneStream::clear_clip() {
+    builder_.command(MINEMOD_OPCODE_CLEAR_CLIP, {});
+    return *this;
+}
+
+SceneStream& SceneStream::set_texture_transform(const std::array<float, 3>& u_row, const std::array<float, 3>& v_row) {
+    builder_.command(MINEMOD_OPCODE_SET_TEXTURE_TRANSFORM, Payload().floats(u_row).floats(v_row).bytes());
+    return *this;
+}
+
+SceneStream& SceneStream::set_quad_order(std::uint32_t order) {
+    builder_.command(MINEMOD_OPCODE_SET_QUAD_ORDER, Payload().u32(order).u32(0).bytes());
+    return *this;
+}
+
 }

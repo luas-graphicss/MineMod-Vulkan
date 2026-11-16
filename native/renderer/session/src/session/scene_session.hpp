@@ -75,6 +75,7 @@ private:
     minemod_result set_view(std::span<const std::byte> payload);
     minemod_result set_terrain(std::span<const std::byte> payload);
     minemod_result draw_batch(std::span<const std::byte> payload);
+    minemod_result set_batch_option(std::uint16_t opcode, std::span<const std::byte> payload);
     minemod_result end_frame();
 
     const renderer::FramesInFlight::Frame& recording();

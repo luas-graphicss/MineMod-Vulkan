@@ -31,10 +31,10 @@ std::array<Corner, 4> corners_of(const VkRect2D& pixels) {
     return {Corner{left, top, 0.0f, 0.0f}, {left, bottom, 0.0f, 1.0f}, {right, bottom, 1.0f, 1.0f}, {right, top, 1.0f, 0.0f}};
 }
 
-void append_colored_corner(std::vector<std::uint8_t>& bytes, const Corner& corner, const Color& color) {
+void append_colored_corner(std::vector<std::uint8_t>& bytes, const Corner& corner, float depth, const Color& color) {
     append_float(bytes, corner.x);
     append_float(bytes, corner.y);
-    append_float(bytes, interface_depth);
+    append_float(bytes, depth);
     bytes.insert(bytes.end(), color.begin(), color.end());
 }
 
@@ -50,9 +50,13 @@ std::array<float, 16> pixel_projection(VkExtent2D extent) {
 }
 
 std::vector<std::uint8_t> colored_rectangle(const VkRect2D& pixels, const Color& color) {
+    return colored_rectangle_at(pixels, interface_depth, color);
+}
+
+std::vector<std::uint8_t> colored_rectangle_at(const VkRect2D& pixels, float depth, const Color& color) {
     std::vector<std::uint8_t> bytes;
     for (const Corner& corner : corners_of(pixels)) {
-        append_colored_corner(bytes, corner, color);
+        append_colored_corner(bytes, corner, depth, color);
     }
     return bytes;
 }
@@ -60,7 +64,7 @@ std::vector<std::uint8_t> colored_rectangle(const VkRect2D& pixels, const Color&
 std::vector<std::uint8_t> textured_rectangle(const VkRect2D& pixels, const Color& color) {
     std::vector<std::uint8_t> bytes;
     for (const Corner& corner : corners_of(pixels)) {
-        append_colored_corner(bytes, corner, color);
+        append_colored_corner(bytes, corner, interface_depth, color);
         append_float(bytes, corner.u);
         append_float(bytes, corner.v);
     }

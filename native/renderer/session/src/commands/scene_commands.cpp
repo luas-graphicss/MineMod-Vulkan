@@ -260,7 +260,7 @@ Decoded<BatchSubmission> decode_batch_submission(std::span<const std::byte> payl
     const bool has_known_elements =
         (elements & MINEMOD_VERTEX_POSITION) != 0 && (elements & ~known_vertex_elements) == 0;
     const bool has_known_state = slot <= MINEMOD_BATCH_INTERFACE && view < MINEMOD_FRAME_MAX_VIEWS
-        && mode <= MINEMOD_PRIMITIVE_LINES && blending <= MINEMOD_BLENDING_CRUMBLING
+        && mode <= MINEMOD_PRIMITIVE_LINES && blending <= MINEMOD_BLENDING_DARKENING
         && (depth & ~known_depth) == 0 && compare.has_value() && culling <= MINEMOD_CULLING_DISABLED
         && (shading & ~known_shading) == 0 && reserved == 0;
     if (!has_known_elements || !has_known_state) {

@@ -1,5 +1,6 @@
 add_library(minemod_scene_session STATIC
     src/abi/scene_session_abi.cpp
+    src/commands/batch_option_commands.cpp
     src/commands/scene_commands.cpp
     src/frame/frame_slot.cpp
     src/host/scene_host.cpp

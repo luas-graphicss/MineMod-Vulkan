@@ -67,6 +67,13 @@ struct TextureRegion {
     std::uint32_t height;
 };
 
+struct ClipState {
+    std::int32_t left;
+    std::int32_t bottom;
+    std::int32_t width;
+    std::int32_t height;
+};
+
 struct SectionKey {
     std::int32_t x;
     std::int32_t y;
@@ -91,6 +98,10 @@ public:
     SceneStream& set_terrain(const TerrainState& terrain);
     SceneStream& draw_batch(const BatchState& batch, std::span<const std::uint8_t> vertices);
     SceneStream& end_frame();
+    SceneStream& set_clip(const ClipState& clip);
+    SceneStream& clear_clip();
+    SceneStream& set_texture_transform(const std::array<float, 3>& u_row, const std::array<float, 3>& v_row);
+    SceneStream& set_quad_order(std::uint32_t order);
 
     std::vector<std::uint8_t> build() const {
         return builder_.build();

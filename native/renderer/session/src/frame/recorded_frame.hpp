@@ -10,6 +10,7 @@
 #include <vulkan/vulkan.h>
 
 #include "draw/batch_renderer.hpp"
+#include "frame/batch_options.hpp"
 #include "minemod/abi/handle.h"
 #include "minemod/abi/scene_commands.h"
 #include "terrain/terrain_frame.hpp"
@@ -34,6 +35,7 @@ struct RecordedFrame {
         uploaded_sections = false;
         views.fill(VK_NULL_HANDLE);
         terrain.reset();
+        batch_options = BatchOptions{};
         for (std::vector<renderer::DrawBatch>& slot : batches) {
             slot.clear();
         }
@@ -48,6 +50,7 @@ struct RecordedFrame {
     std::array<float, 4> clear_color{};
     std::array<VkDescriptorSet, MINEMOD_FRAME_MAX_VIEWS> views{};
     std::optional<renderer::TerrainFrame> terrain;
+    BatchOptions batch_options;
     std::array<std::vector<renderer::DrawBatch>, batch_slot_count> batches;
     std::vector<StagedTextureWrite> texture_writes;
     std::vector<minemod_handle> unread_textures;

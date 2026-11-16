@@ -4,6 +4,7 @@
 #include <cstring>
 #include <utility>
 
+#include "commands/batch_option_commands.hpp"
 #include "commands/scene_commands.hpp"
 #include "device/physical_device.hpp"
 #include "frame/frame_readback.hpp"
@@ -158,6 +159,11 @@ minemod_result SceneSession::execute(std::uint16_t opcode, std::span<const std::
             return draw_batch(payload);
         case MINEMOD_OPCODE_END_FRAME:
             return end_frame();
+        case MINEMOD_OPCODE_SET_CLIP:
+        case MINEMOD_OPCODE_CLEAR_CLIP:
+        case MINEMOD_OPCODE_SET_TEXTURE_TRANSFORM:
+        case MINEMOD_OPCODE_SET_QUAD_ORDER:
+            return set_batch_option(opcode, payload);
         default:
             return MINEMOD_RESULT_UNSUPPORTED_CAPABILITY;
     }
@@ -407,7 +413,8 @@ minemod_result SceneSession::draw_batch(std::span<const std::byte> payload) {
         return MINEMOD_RESULT_INVALID_HANDLE;
     }
     const std::optional<renderer::BatchGeometry> staged =
-        recording_slot().stager.stage({batch.format, batch.mode, batch.vertices});
+        recording_slot().stager.stage(
+            {batch.format, batch.mode, batch.vertices}, frame_.batch_options.order_for(batch.mode));
     if (!staged) {
         return MINEMOD_RESULT_LIMIT_EXCEEDED;
     }
@@ -421,7 +428,15 @@ minemod_result SceneSession::draw_batch(std::span<const std::byte> payload) {
         batch.line_width,
         frame_.views[batch.view],
     });
+    frame_.batch_options.apply_to(frame_.batches[batch.slot].back());
     return MINEMOD_RESULT_OK;
+}
+
+minemod_result SceneSession::set_batch_option(std::uint16_t opcode, std::span<const std::byte> payload) {
+    if (!frame_.is_open) {
+        return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+    return change_batch_options(frame_.batch_options, extent_, opcode, payload);
 }
 
 minemod_result SceneSession::end_frame() {
