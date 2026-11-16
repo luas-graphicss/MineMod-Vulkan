@@ -32,7 +32,7 @@ public:
     SceneRenderer(const TerrainRenderer& terrain, BatchRenderer& batches, const FrameBlurRenderer& blur) noexcept
         : terrain_(terrain), batches_(batches), blur_(blur) {}
 
-    void add_passes(
+    std::optional<SceneStage> add_passes(
         RenderGraph& graph, const SceneTargets& targets, const SceneFrame& frame, const TerrainSections& sections);
 
     std::uint32_t recorded_terrain_draws() const noexcept {

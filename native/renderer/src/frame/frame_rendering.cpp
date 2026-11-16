@@ -27,14 +27,15 @@ VkRenderingAttachmentInfo color_attachment(
 void begin_frame_rendering(
     VkCommandBuffer commands,
     const FrameAttachments& attachments,
-    const std::optional<std::array<float, 4>>& clear_color) {
+    const std::optional<std::array<float, 4>>& clear_color,
+    const DepthOperations& depth_operations) {
     const VkRenderingAttachmentInfo color = color_attachment(attachments.color, clear_color);
     const VkRenderingAttachmentInfo depth{
         .sType = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO,
         .imageView = attachments.depth.view,
         .imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
-        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-        .storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        .loadOp = depth_operations.load,
+        .storeOp = depth_operations.store,
         .clearValue = {.depthStencil = {farthest_depth, 0}},
     };
     const VkRenderingInfo rendering{
