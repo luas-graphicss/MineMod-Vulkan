@@ -11,18 +11,15 @@ add_executable(minemod_abi_tests
     command_stream_validation_test.cpp
     negotiation_test.cpp
     session_test.cpp
-    stream_mutation_test.cpp
-    support/doctest_main.cpp)
+    stream_mutation_test.cpp)
 target_compile_definitions(minemod_abi_tests PRIVATE
     MINEMOD_COMMAND_STREAM_CORPUS="${PROJECT_SOURCE_DIR}/tests/fixtures/command-streams")
-target_link_libraries(minemod_abi_tests PRIVATE minemod_abi_test_support minemod_doctest)
+target_link_libraries(minemod_abi_tests PRIVATE minemod_abi_test_support minemod_doctest_main)
 minemod_configure_target(minemod_abi_tests)
 add_test(NAME abi COMMAND minemod_abi_tests)
 
-add_executable(minemod_abi_allocation_tests
-    allocation_failure_test.cpp
-    support/doctest_main.cpp)
-target_link_libraries(minemod_abi_allocation_tests PRIVATE minemod_abi_test_support minemod_doctest)
+add_executable(minemod_abi_allocation_tests allocation_failure_test.cpp)
+target_link_libraries(minemod_abi_allocation_tests PRIVATE minemod_abi_test_support minemod_doctest_main)
 minemod_configure_target(minemod_abi_allocation_tests)
 add_test(NAME abi_allocation COMMAND minemod_abi_allocation_tests)
 

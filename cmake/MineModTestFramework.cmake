@@ -8,3 +8,7 @@ FetchContent_MakeAvailable(doctest)
 
 add_library(minemod_doctest INTERFACE)
 target_include_directories(minemod_doctest SYSTEM INTERFACE "${doctest_SOURCE_DIR}/doctest")
+
+add_library(minemod_doctest_main OBJECT "${PROJECT_SOURCE_DIR}/tests/support/doctest_main.cpp")
+target_link_libraries(minemod_doctest_main PUBLIC minemod_doctest)
+minemod_configure_target(minemod_doctest_main)
