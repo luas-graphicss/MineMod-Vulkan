@@ -1,5 +1,6 @@
 add_library(minemod_renderer_test_support STATIC
     support/graph_passes.cpp
+    support/terrain_quads.cpp
     support/validated_device.cpp)
 target_include_directories(minemod_renderer_test_support PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(minemod_renderer_test_support PUBLIC minemod::renderer)
@@ -60,7 +61,12 @@ target_link_libraries(minemod_renderer_resource_device_tests
 minemod_configure_vulkan_target(minemod_renderer_resource_device_tests)
 
 add_executable(minemod_world_geometry_tests
+    environment/fog_test.cpp
     math/matrix_test.cpp
+    terrain/section_mesh_test.cpp
+    terrain/section_selection_test.cpp
+    terrain/section_space_test.cpp
+    terrain/terrain_layer_test.cpp
     visibility/frustum_test.cpp)
 target_link_libraries(minemod_world_geometry_tests PRIVATE minemod_renderer_test_support minemod_doctest_main)
 minemod_configure_vulkan_target(minemod_world_geometry_tests)

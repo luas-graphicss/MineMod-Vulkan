@@ -67,6 +67,10 @@ add_library(minemod_renderer STATIC
     src/shaders/core_shader_contract.cpp
     src/shaders/shader_interface.cpp
     src/shaders/spirv_module.cpp
+    src/terrain/section_mesh.cpp
+    src/terrain/section_selection.cpp
+    src/terrain/section_space.cpp
+    src/terrain/terrain_vertex.cpp
     src/textures/atlas_layout.cpp
     src/textures/mip_chain.cpp
     src/textures/sampler_cache.cpp
