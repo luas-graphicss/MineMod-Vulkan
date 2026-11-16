@@ -14,6 +14,7 @@ public final class VerificationCli {
             usage:
               verification check --profile <name> [--root <directory>]
               verification targets refresh [--root <directory>]
+              verification build-matrix --manifest <file> [--root <directory>]
             """;
 
     private VerificationCli() {}
@@ -29,6 +30,7 @@ public final class VerificationCli {
             return switch (invocation.commandLine()) {
                 case "check" -> CheckCommand.run(invocation, repositoryRoot, output);
                 case "targets refresh" -> RefreshTargetsCommand.run(invocation, repositoryRoot, output);
+                case "build-matrix" -> BuildMatrixCommand.run(invocation, repositoryRoot, output);
                 default -> throw new UsageException("unknown command: " + invocation.commandLine());
             };
         } catch (UsageException exception) {
