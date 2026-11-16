@@ -5,12 +5,16 @@ import io.github.luasgraphicss.minemod.bridge.NativeSceneHost;
 import io.github.luasgraphicss.minemod.bridge.NativeSceneSession;
 import io.github.luasgraphicss.minemod.bridge.PresentPacing;
 import io.github.luasgraphicss.minemod.bridge.SceneSessionSetup;
+import io.github.luasgraphicss.minemod.client.diagnostics.RendererDiagnostics;
 import io.github.luasgraphicss.minemod.client.failure.RendererFailure;
 import io.github.luasgraphicss.minemod.client.frame.FrameContent;
 import io.github.luasgraphicss.minemod.client.frame.StreamBudget;
 import io.github.luasgraphicss.minemod.client.lightmap.LightmapPublisher;
-import io.github.luasgraphicss.minemod.client.overlay.OverlayPublisher;
 import io.github.luasgraphicss.minemod.client.presentation.PresentationControl;
+import io.github.luasgraphicss.minemod.client.reload.ResourceReload;
+import io.github.luasgraphicss.minemod.client.reload.SessionProgramStaging;
+import io.github.luasgraphicss.minemod.client.shaders.NativeShaderCompiler;
+import io.github.luasgraphicss.minemod.client.shaders.ShaderCompiler;
 import io.github.luasgraphicss.minemod.client.terrain.TerrainPublisher;
 import io.github.luasgraphicss.minemod.client.window.FramebufferSize;
 import io.github.luasgraphicss.minemod.client.window.WindowSurface;
@@ -34,6 +38,7 @@ public final class ClientRenderer implements AutoCloseable {
     private static final int MAX_SECTIONS = 65536;
     private static final int RESOURCE_SHARE_OF_STREAM = 2;
     private static final int SECTION_SHARE_OF_STREAM = 4;
+    private static final String SHADER_SCRATCH_DIRECTORY = "shader-scratch";
 
     private final NativeSceneHost host;
     private final NativeSceneSession session;
@@ -43,14 +48,16 @@ public final class ClientRenderer implements AutoCloseable {
     private final long resourceRecordsPerStream;
     private final HandleAllocator textures = new HandleAllocator(ResourceKind.TEXTURE, MAX_TEXTURES);
     private final LightmapPublisher lightmap = new LightmapPublisher(textures.allocate());
-    private final OverlayPublisher overlay = new OverlayPublisher(textures.allocate());
     private final TerrainPublisher terrain;
+    private final ResourceReload reload;
+    private final RendererDiagnostics diagnostics;
 
     private ClientRenderer(
             AbiNegotiation negotiation,
             NativeSceneHost host,
             NativeSceneSession session,
-            PresentationControl presentation) {
+            PresentationControl presentation,
+            ShaderCompiler shaders) {
         long streamBytes = Math.min(negotiation.maxStreamBytes(), Integer.MAX_VALUE);
         this.host = host;
         this.session = session;
@@ -59,6 +66,8 @@ public final class ClientRenderer implements AutoCloseable {
         this.resourceBytesPerStream = streamBytes / RESOURCE_SHARE_OF_STREAM;
         this.resourceRecordsPerStream = negotiation.maxStreamCommands() / RESOURCE_SHARE_OF_STREAM;
         this.terrain = new TerrainPublisher(streamBytes / SECTION_SHARE_OF_STREAM, MAX_SECTIONS);
+        this.reload = new ResourceReload(new SessionProgramStaging(session.reload()), shaders);
+        this.diagnostics = new RendererDiagnostics(session.diagnostics(), reload);
     }
 
     public static ClientRenderer start(Path nativeLibrary, WindowSurface window, DeviceValidation validation) {
@@ -75,7 +84,9 @@ public final class ClientRenderer implements AutoCloseable {
                             .withLimits(MAX_TEXTURES, MAX_SECTIONS));
             PresentationControl presentation =
                     new PresentationControl(new SessionPresentation(session), window, openedSize);
-            return new ClientRenderer(bridge.negotiation(), host, session, presentation);
+            ShaderCompiler shaders =
+                    NativeShaderCompiler.open(nativeLibrary.toAbsolutePath().resolveSibling(SHADER_SCRATCH_DIRECTORY));
+            return new ClientRenderer(bridge.negotiation(), host, session, presentation, shaders);
         } catch (RuntimeException failure) {
             host.close();
             throw failure;
@@ -86,12 +97,16 @@ public final class ClientRenderer implements AutoCloseable {
         return lightmap;
     }
 
-    public OverlayPublisher overlay() {
-        return overlay;
-    }
-
     public TerrainPublisher terrain() {
         return terrain;
+    }
+
+    public ResourceReload reload() {
+        return reload;
+    }
+
+    public RendererDiagnostics diagnostics() {
+        return diagnostics;
     }
 
     public void pace(PresentPacing pacing) {
@@ -104,7 +119,6 @@ public final class ClientRenderer implements AutoCloseable {
         SceneCommandWriter scene = new SceneCommandWriter(stream);
         StreamBudget resources = new StreamBudget(resourceBytesPerStream, resourceRecordsPerStream);
         lightmap.publish(scene, resources);
-        overlay.publish(scene, resources);
         terrain.publish(scene, resources);
         if (!isDrawable && !resources.hasTaken()) {
             return;
@@ -123,6 +137,7 @@ public final class ClientRenderer implements AutoCloseable {
 
     @Override
     public void close() {
+        reload.close();
         session.close();
         host.close();
     }
