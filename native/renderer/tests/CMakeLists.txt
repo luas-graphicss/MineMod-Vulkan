@@ -59,12 +59,19 @@ target_link_libraries(minemod_renderer_resource_device_tests
     PRIVATE minemod_renderer_test_support minemod_doctest_main minemod_sprite_shaders)
 minemod_configure_vulkan_target(minemod_renderer_resource_device_tests)
 
+add_executable(minemod_world_geometry_tests
+    math/matrix_test.cpp
+    visibility/frustum_test.cpp)
+target_link_libraries(minemod_world_geometry_tests PRIVATE minemod_renderer_test_support minemod_doctest_main)
+minemod_configure_vulkan_target(minemod_world_geometry_tests)
+
 add_test(NAME render_graph COMMAND minemod_render_graph_tests)
 add_test(NAME render_graph_device COMMAND minemod_render_graph_device_tests)
 add_test(NAME renderer_harness COMMAND minemod_renderer_tests)
 add_test(NAME renderer_harness_cli COMMAND minemod_harness --validation --frames 2)
 add_test(NAME renderer_resources COMMAND minemod_renderer_resource_tests)
 add_test(NAME renderer_resources_device COMMAND minemod_renderer_resource_device_tests)
+add_test(NAME world_geometry COMMAND minemod_world_geometry_tests)
 
 set(minemod_device_tests render_graph_device renderer_harness renderer_harness_cli renderer_resources_device)
 set_tests_properties(${minemod_device_tests} PROPERTIES LABELS vulkan-device)

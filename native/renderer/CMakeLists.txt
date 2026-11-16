@@ -52,6 +52,7 @@ add_library(minemod_renderer STATIC
     src/graph/transient_images.cpp
     src/graph/transient_slots.cpp
     src/lifetime/retirement_queue.cpp
+    src/math/matrix.cpp
     src/metrics/frame_metrics.cpp
     src/pipelines/graphics_pipeline_state.cpp
     src/pipelines/pipeline_cache.cpp
@@ -73,6 +74,7 @@ add_library(minemod_renderer STATIC
     src/textures/texture.cpp
     src/upload/arena_layout.cpp
     src/upload/upload_arena.cpp
+    src/visibility/frustum.cpp
     src/work/job_epochs.cpp)
 add_library(minemod::renderer ALIAS minemod_renderer)
 
