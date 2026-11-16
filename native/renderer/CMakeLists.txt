@@ -52,6 +52,7 @@ add_library(minemod_renderer STATIC
     src/graph/transient_images.cpp
     src/graph/transient_slots.cpp
     src/lifetime/retirement_queue.cpp
+    src/metrics/frame_metrics.cpp
     src/pipelines/graphics_pipeline_state.cpp
     src/pipelines/pipeline_cache.cpp
     src/pipelines/shader_module.cpp
