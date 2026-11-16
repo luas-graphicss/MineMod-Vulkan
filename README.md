@@ -15,9 +15,10 @@ What runs today:
 - `native/renderer/src` holds the frame-side systems the graph relies on: frames in flight that are submitted without waiting for the GPU, resources retired until their last frame completes, a bounded upload arena, pipeline and sampler caches, descriptor pools that grow up to a limit, atlas packing, mip chains and texture uploads.
 - The same tree validates SPIR-V before a shader module is created and checks a core shader replacement against the interface it must keep, publishes resource generations at a frame boundary, marks section jobs stale when their world, section or resources change, tracks the frame lifecycle through resize, suspension and device loss, and records frame, pass, resource and queue metrics. No game adapter drives these systems yet.
 - `native/renderer/src/terrain` draws world sections in the four terrain layers: solid, cutout with and without mipmaps, and translucent. Section meshes are validated and uploaded through the arena, a superseded section job cannot publish, replaced buffers wait for the last frame that drew them, sections outside the frustum are skipped and translucent sections are drawn from the farthest. The shader samples the block atlas and the lightmap and applies linear fog. A device test composes the layers and checks the pixels; no game adapter feeds it sections yet.
+- `native/interop` is the renderer's side of sharing images with the OpenGL provider on Linux. It reads the device and driver UUIDs and refuses a different GPU, asks the driver whether a format and usage can be exported, and exports the memory of a dedicated allocation as a file descriptor that has a single owner. Nothing imports that memory yet.
 - `minemod_harness` creates a Vulkan 1.3 device, draws a textured and depth-tested scene through a planned frame, reads it back and presents it on a headless surface. `--validation` also checks synchronization.
 
-What does not exist yet: a game window or input on any Minecraft version, the Mesa/Zink OpenGL provider and its interop with the renderer, and any run on Windows or on a real GPU. `docs/architecture` says which decisions are backed by tests and which are still proposals.
+What does not exist yet: a game window or input on any Minecraft version, the Mesa/Zink OpenGL provider, the import and the semaphore handoff of its interop with the renderer, and any run on Windows or on a real GPU. `docs/architecture` says which decisions are backed by tests and which are still proposals.
 
 ## Requirements
 
@@ -46,7 +47,7 @@ cmake --build --preset linux-debug
 ctest --preset linux-debug
 ```
 
-Five tests carry the label `vulkan-device` and need a Vulkan driver. Without one, run `ctest --preset linux-debug -LE vulkan-device`.
+Six tests carry the label `vulkan-device` and need a Vulkan driver. Without one, run `ctest --preset linux-debug -LE vulkan-device`.
 
 The harness also runs on its own, here from the `linux-release` preset:
 
