@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+#include <string_view>
 #include <vector>
 
 #include "draw/batch_renderer.hpp"
@@ -16,6 +18,10 @@ struct SceneTargets {
     std::vector<ImageId> sampled_textures;
 };
 
+inline constexpr std::string_view world_pass = "world";
+inline constexpr std::string_view hand_pass = "hand";
+inline constexpr std::string_view interface_pass = "interface";
+
 class SceneRenderer {
 public:
     SceneRenderer(const TerrainRenderer& terrain, BatchRenderer& batches) noexcept
@@ -24,9 +30,14 @@ public:
     void add_passes(
         RenderGraph& graph, const SceneTargets& targets, const SceneFrame& frame, const TerrainSections& sections);
 
+    std::uint32_t recorded_terrain_draws() const noexcept {
+        return recorded_terrain_draws_;
+    }
+
 private:
     const TerrainRenderer& terrain_;
     BatchRenderer& batches_;
+    std::uint32_t recorded_terrain_draws_ = 0;
 };
 
 }

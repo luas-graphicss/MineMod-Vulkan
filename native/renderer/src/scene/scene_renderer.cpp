@@ -2,6 +2,7 @@
 
 #include <array>
 #include <optional>
+#include <string>
 #include <utility>
 
 #include "frame/frame_rendering.hpp"
@@ -33,8 +34,8 @@ void SceneRenderer::add_passes(
     RenderGraph& graph, const SceneTargets& targets, const SceneFrame& frame, const TerrainSections& sections) {
     const std::vector<ImageAccess> accesses = stage_accesses(targets);
     std::optional<PassId> previous;
-    const auto add_stage = [&](const char* name, RecordPass record) {
-        const PassId stage = graph.add_pass(name, accesses, std::move(record));
+    const auto add_stage = [&](std::string_view name, RecordPass record) {
+        const PassId stage = graph.add_pass(std::string(name), accesses, std::move(record));
         if (previous) {
             graph.add_dependency(stage, *previous);
         }
@@ -42,26 +43,27 @@ void SceneRenderer::add_passes(
     };
 
     if (frame.world) {
-        add_stage("world", [this, targets, frame, &sections](VkCommandBuffer commands, const GraphImages& images) {
+        add_stage(world_pass, [this, targets, frame, &sections](VkCommandBuffer commands, const GraphImages& images) {
             const WorldStage& world = *frame.world;
             const BatchPass pass{frame.extent, world.view};
             begin_frame_rendering(commands, attachments(targets, images), frame.clear_color);
             batches_.record(commands, pass, world.sky);
-            terrain_.record(commands, world.terrain, sections, opaque_terrain_layers);
+            recorded_terrain_draws_ = terrain_.record(commands, world.terrain, sections, opaque_terrain_layers);
             batches_.record(commands, pass, world.solid);
-            terrain_.record(commands, world.terrain, sections, translucent_terrain_layers);
+            recorded_terrain_draws_ +=
+                terrain_.record(commands, world.terrain, sections, translucent_terrain_layers);
             batches_.record(commands, pass, world.blended);
             vkCmdEndRendering(commands);
         });
     }
     if (frame.world && !frame.hand.batches.empty()) {
-        add_stage("hand", [this, targets, frame](VkCommandBuffer commands, const GraphImages& images) {
+        add_stage(hand_pass, [this, targets, frame](VkCommandBuffer commands, const GraphImages& images) {
             begin_frame_rendering(commands, attachments(targets, images), std::nullopt);
             batches_.record(commands, {frame.extent, frame.hand.view}, frame.hand.batches);
             vkCmdEndRendering(commands);
         });
     }
-    add_stage("interface", [this, targets, frame](VkCommandBuffer commands, const GraphImages& images) {
+    add_stage(interface_pass, [this, targets, frame](VkCommandBuffer commands, const GraphImages& images) {
         const std::optional<std::array<float, 4>> clear_color =
             frame.world ? std::nullopt : std::optional(frame.clear_color);
         begin_frame_rendering(commands, attachments(targets, images), clear_color);

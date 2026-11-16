@@ -1,5 +1,9 @@
 #pragma once
 
+#include <chrono>
+#include <string_view>
+#include <vector>
+
 #include <vulkan/vulkan.h>
 
 #include "device/device.hpp"
@@ -10,6 +14,11 @@
 
 namespace minemod::renderer {
 
+struct PassTiming {
+    std::string_view name;
+    std::chrono::nanoseconds cpu_time;
+};
+
 class PlannedFrame {
 public:
     PlannedFrame(const Device& device, RenderGraph graph);
@@ -19,8 +28,11 @@ public:
     }
 
     void record(VkCommandBuffer commands) const;
+    std::vector<PassTiming> record_timed(VkCommandBuffer commands) const;
 
 private:
+    void record_passes(VkCommandBuffer commands, std::vector<PassTiming>* timings) const;
+
     RenderGraph graph_;
     GraphPlan plan_;
     TransientImages transients_;
