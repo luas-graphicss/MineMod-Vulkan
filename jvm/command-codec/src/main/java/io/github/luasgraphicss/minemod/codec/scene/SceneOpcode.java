@@ -18,7 +18,9 @@ public enum SceneOpcode {
     CLEAR_CLIP(28, 0, false),
     SET_TEXTURE_TRANSFORM(29, 24, false),
     SET_QUAD_ORDER(30, 8, false),
-    CONNECT_SECTION_FACES(31, 24, false);
+    CONNECT_SECTION_FACES(31, 24, false),
+    CLEAR_DEPTH(32, 0, false),
+    BLUR_FRAME(33, 8, false);
 
     private static final SceneOpcode[] OPCODES = values();
     private static final int FIRST_CODE = OPCODES[0].code;

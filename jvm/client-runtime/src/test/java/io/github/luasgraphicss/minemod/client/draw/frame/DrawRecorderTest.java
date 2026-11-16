@@ -11,6 +11,7 @@ import io.github.luasgraphicss.minemod.client.support.RecordedStream;
 import io.github.luasgraphicss.minemod.codec.scene.BatchSlot;
 import io.github.luasgraphicss.minemod.codec.scene.Fog;
 import io.github.luasgraphicss.minemod.codec.scene.FogShape;
+import io.github.luasgraphicss.minemod.codec.scene.FrameBlur;
 import io.github.luasgraphicss.minemod.codec.scene.PrimitiveMode;
 import io.github.luasgraphicss.minemod.codec.scene.QuadOrder;
 import io.github.luasgraphicss.minemod.codec.scene.SceneOpcode;
@@ -47,6 +48,8 @@ class DrawRecorderTest {
     private static final int DESTINATION_ALPHA = 0x0304;
     private static final int DEPTH_LESS_OR_EQUAL = 0x0203;
     private static final int GREEN = 0xFF00FF00;
+    private static final float FIVE_PIXELS = 5.0f;
+    private static final int THRICE = 3;
     private static final ResourceHandle ATLAS = ResourceHandle.of(ResourceKind.TEXTURE, 1, 0);
     private static final ResourceHandle LIGHTMAP = ResourceHandle.of(ResourceKind.TEXTURE, 2, 0);
     private static final float[] IDENTITY = {
@@ -274,6 +277,94 @@ class DrawRecorderTest {
         recorder.draw(triangle(IDENTITY).view(view).build());
 
         assertEquals(SceneOpcode.SET_VIEW, written(recorder).opcodes().get(1));
+    }
+
+    @Test
+    void aDepthClearIsWrittenBeforeTheDrawThatFollowsIt() {
+        recorder.draw(triangle(IDENTITY).build());
+        recorder.clearDepth();
+        recorder.draw(triangle(IDENTITY).build());
+
+        assertEquals(
+                Arrays.asList(
+                        SceneOpcode.BEGIN_FRAME,
+                        SceneOpcode.SET_VIEW,
+                        SceneOpcode.DRAW_BATCH,
+                        SceneOpcode.CLEAR_DEPTH,
+                        SceneOpcode.DRAW_BATCH,
+                        SceneOpcode.END_FRAME),
+                written(recorder).opcodes());
+    }
+
+    @Test
+    void depthThatIsAlreadyClearIsNotClearedAgain() {
+        recorder.clearDepth();
+        recorder.draw(triangle(IDENTITY).build());
+        recorder.clearDepth();
+        recorder.clearDepth();
+
+        assertEquals(
+                Arrays.asList(
+                        SceneOpcode.BEGIN_FRAME,
+                        SceneOpcode.SET_VIEW,
+                        SceneOpcode.DRAW_BATCH,
+                        SceneOpcode.CLEAR_DEPTH,
+                        SceneOpcode.END_FRAME),
+                written(recorder).opcodes());
+    }
+
+    @Test
+    void aBlurIsWrittenAfterTheDrawsItSpreads() {
+        recorder.draw(triangle(IDENTITY).build());
+        assertTrue(recorder.blur(new FrameBlur(FIVE_PIXELS, THRICE)));
+        recorder.draw(triangle(IDENTITY).build());
+
+        RecordedStream stream = written(recorder);
+
+        assertEquals(
+                Arrays.asList(
+                        SceneOpcode.BEGIN_FRAME,
+                        SceneOpcode.SET_VIEW,
+                        SceneOpcode.DRAW_BATCH,
+                        SceneOpcode.BLUR_FRAME,
+                        SceneOpcode.DRAW_BATCH,
+                        SceneOpcode.END_FRAME),
+                stream.opcodes());
+        assertEquals(FIVE_PIXELS, stream.payload(3).getFloat(0));
+        assertEquals(THRICE, stream.payload(3).getInt(4));
+    }
+
+    @Test
+    void aBlurAfterTheLastDrawStillReachesTheFrame() {
+        recorder.draw(triangle(IDENTITY).build());
+        recorder.blur(new FrameBlur(FIVE_PIXELS, THRICE));
+
+        assertEquals(
+                Arrays.asList(
+                        SceneOpcode.BEGIN_FRAME,
+                        SceneOpcode.SET_VIEW,
+                        SceneOpcode.DRAW_BATCH,
+                        SceneOpcode.BLUR_FRAME,
+                        SceneOpcode.END_FRAME),
+                written(recorder).opcodes());
+    }
+
+    @Test
+    void beginningAFrameForgetsTheEffectsOfTheOneBefore() {
+        recorder.draw(triangle(IDENTITY).build());
+        recorder.clearDepth();
+        recorder.blur(new FrameBlur(FIVE_PIXELS, THRICE));
+        recorder.beginFrame();
+
+        assertEquals(Arrays.asList(SceneOpcode.BEGIN_FRAME, SceneOpcode.END_FRAME), written(recorder).opcodes());
+    }
+
+    @Test
+    void aBlurThatDoesNotFitTheStreamOfTheFrameIsDroppedAndCounted() {
+        DrawRecorder full = new DrawRecorder(SceneOpcode.BEGIN_FRAME.fixedBytes() + 64, 2);
+
+        assertFalse(full.blur(new FrameBlur(FIVE_PIXELS, THRICE)));
+        assertEquals(1, full.droppedDraws());
     }
 
     private static GameDraw.Builder triangle(float[] projection) {

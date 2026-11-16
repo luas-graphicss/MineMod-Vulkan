@@ -7,6 +7,8 @@ public final class CapturedState {
     private static final int ZERO = 0;
     private static final int ONE = 1;
     private static final int LESS = 0x0201;
+    private static final int ONE_MINUS_SOURCE_COLOR = 0x0301;
+    private static final int ONE_MINUS_DESTINATION_COLOR = 0x0307;
 
     private final int[] clipBox = new int[4];
     private final float[] clearColor = new float[4];
@@ -22,6 +24,7 @@ public final class CapturedState {
     private float offsetFactor;
     private float offsetUnits;
     private boolean clips;
+    private boolean combinesByLogic;
     private Object target;
 
     public void blend(boolean isEnabled) {
@@ -31,6 +34,10 @@ public final class CapturedState {
     public void blendFactors(int source, int destination) {
         sourceColor = source;
         destinationColor = destination;
+    }
+
+    public void colorLogic(boolean isEnabled) {
+        combinesByLogic = isEnabled;
     }
 
     public void depthTest(boolean isEnabled) {
@@ -97,7 +104,9 @@ public final class CapturedState {
                 .depthWrite(writesDepth)
                 .colorWrite(writesColor)
                 .cullBackFaces(cullsBackFaces);
-        if (blends) {
+        if (combinesByLogic) {
+            state.blend(ONE_MINUS_DESTINATION_COLOR, ONE_MINUS_SOURCE_COLOR);
+        } else if (blends) {
             state.blend(sourceColor, destinationColor);
         }
         if (testsDepth) {

@@ -130,6 +130,16 @@ public final class SceneCommandWriter {
         return this;
     }
 
+    public SceneCommandWriter clearDepth() {
+        begin(SceneOpcode.CLEAR_DEPTH);
+        return this;
+    }
+
+    public SceneCommandWriter blurFrame(FrameBlur blur) {
+        blur.put(begin(SceneOpcode.BLUR_FRAME));
+        return this;
+    }
+
     private SceneCommandWriter beginFrame(float red, float green, float blue, float alpha, int flags) {
         begin(SceneOpcode.BEGIN_FRAME).putFloat(red).putFloat(green).putFloat(blue).putFloat(alpha).putInt(flags).putInt(0);
         return this;

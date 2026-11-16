@@ -22,7 +22,7 @@ public final class TerrainView {
 
     public static Optional<TerrainState> seenFrom(
             Vec3 camera, Matrix4f frustum, Matrix4f projection, SceneTextures textures, LightmapPublisher lightmap) {
-        if (textures == SceneTextures.NONE || !lightmap.isDefined()) {
+        if (!lightmap.isDefined()) {
             return Optional.empty();
         }
         float[] viewProjection =

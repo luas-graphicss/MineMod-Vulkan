@@ -17,6 +17,13 @@ abstract class RenderTargetMixin {
         }
     }
 
+    @Inject(method = "_blitToScreen", at = @At("HEAD"), cancellable = true)
+    private void minemod$presentWithoutCopyingTheTarget(CallbackInfo callback) {
+        if (GameFrame.isRecording()) {
+            callback.cancel();
+        }
+    }
+
     @Inject(method = "unbindWrite", at = @At("HEAD"), cancellable = true)
     private void minemod$drawIntoNoTarget(CallbackInfo callback) {
         if (GameFrame.isRecording()) {

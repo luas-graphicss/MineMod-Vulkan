@@ -13,6 +13,7 @@
 #include "draw/primitive_mode.hpp"
 #include "draw/vertex_format.hpp"
 #include "draw/view_constants.hpp"
+#include "effects/frame_blur.hpp"
 #include "environment/fog.hpp"
 #include "math/matrix.hpp"
 #include "math/vector.hpp"
@@ -106,5 +107,6 @@ Decoded<FrameStart> decode_frame_start(std::span<const std::byte> payload);
 Decoded<ViewDefinition> decode_view_definition(std::span<const std::byte> payload);
 Decoded<TerrainDefinition> decode_terrain_definition(std::span<const std::byte> payload);
 Decoded<BatchSubmission> decode_batch_submission(std::span<const std::byte> payload);
+Decoded<renderer::FrameBlur> decode_frame_blur(std::span<const std::byte> payload);
 
 }

@@ -11,6 +11,7 @@
 #include "terrain/terrain_layer.hpp"
 
 namespace minemod::renderer {
+
 namespace {
 
 std::vector<ImageAccess> stage_accesses(const SceneTargets& targets) {
@@ -34,14 +35,25 @@ void SceneRenderer::add_passes(
     RenderGraph& graph, const SceneTargets& targets, const SceneFrame& frame, const TerrainSections& sections) {
     const std::vector<ImageAccess> accesses = stage_accesses(targets);
     std::optional<PassId> previous;
-    const auto add_stage = [&](std::string_view name, RecordPass record) {
-        const PassId stage = graph.add_pass(std::string(name), accesses, std::move(record));
+    const auto add_pass = [&](std::string_view name, std::vector<ImageAccess> used, RecordPass record) {
+        const PassId pass = graph.add_pass(std::string(name), std::move(used), std::move(record));
         if (previous) {
-            graph.add_dependency(stage, *previous);
+            graph.add_dependency(pass, *previous);
         }
-        previous = stage;
+        previous = pass;
     };
-
+    const auto add_stage = [&](std::string_view name, RecordPass record) {
+        add_pass(name, accesses, std::move(record));
+    };
+    const auto add_blur = [&](ImageId source, VkDescriptorSet bound_source, ImageId target, BlurAxis axis) {
+        const float radius = frame.backdrop->blur.radius;
+        add_pass(
+            blur_pass,
+            {{source, uses::sampled_by_fragment_shader}, {target, uses::color_attachment}},
+            [this, bound_source, target, axis, radius](VkCommandBuffer commands, const GraphImages& images) {
+                blur_.record(commands, bound_source, images.at(target), axis, radius);
+            });
+    };
     if (frame.world) {
         add_stage(world_pass, [this, targets, frame, &sections](VkCommandBuffer commands, const GraphImages& images) {
             const WorldStage& world = *frame.world;
@@ -63,9 +75,27 @@ void SceneRenderer::add_passes(
             vkCmdEndRendering(commands);
         });
     }
-    add_stage(interface_pass, [this, targets, frame](VkCommandBuffer commands, const GraphImages& images) {
+    bool is_cleared = frame.world.has_value();
+    if (frame.backdrop && targets.scratch) {
+        if (!is_cleared || !frame.backdrop->batches.empty()) {
+            add_stage(
+                backdrop_pass, [this, targets, frame, is_cleared](VkCommandBuffer commands, const GraphImages& images) {
+                    const std::optional<std::array<float, 4>> clear_color =
+                        is_cleared ? std::nullopt : std::optional(frame.clear_color);
+                    begin_frame_rendering(commands, attachments(targets, images), clear_color);
+                    batches_.record(commands, {frame.extent, frame.interface.view}, frame.backdrop->batches);
+                    vkCmdEndRendering(commands);
+                });
+            is_cleared = true;
+        }
+        for (std::uint32_t repeat = 0; repeat < frame.backdrop->blur.repeats; ++repeat) {
+            add_blur(targets.color, frame.backdrop->frame, *targets.scratch, BlurAxis::across);
+            add_blur(*targets.scratch, frame.backdrop->scratch, targets.color, BlurAxis::down);
+        }
+    }
+    add_stage(interface_pass, [this, targets, frame, is_cleared](VkCommandBuffer commands, const GraphImages& images) {
         const std::optional<std::array<float, 4>> clear_color =
-            frame.world ? std::nullopt : std::optional(frame.clear_color);
+            is_cleared ? std::nullopt : std::optional(frame.clear_color);
         begin_frame_rendering(commands, attachments(targets, images), clear_color);
         batches_.record(commands, {frame.extent, frame.interface.view}, frame.interface.batches);
         vkCmdEndRendering(commands);

@@ -1,6 +1,7 @@
 package io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.mixin.draw;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.bootstrap.ClientRendering;
 import io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.draw.CapturedState;
 import io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.frame.GameFrame;
 import java.util.function.Consumer;
@@ -110,9 +111,45 @@ abstract class GlStateManagerMixin {
         minemod$keep(callback, state -> GameFrame.cleared(buffers));
     }
 
+    @Inject(method = "glBlendFuncSeparate", at = @At("HEAD"), cancellable = true)
+    private static void minemod$keepTheSeparateBlendFactors(
+            int sourceColor, int destinationColor, int sourceAlpha, int destinationAlpha, CallbackInfo callback) {
+        minemod$keep(callback, state -> state.blendFactors(sourceColor, destinationColor));
+    }
+
+    @Inject(method = "_enableColorLogicOp", at = @At("HEAD"), cancellable = true)
+    private static void minemod$combineColorsByLogic(CallbackInfo callback) {
+        minemod$keep(callback, state -> state.colorLogic(true));
+    }
+
+    @Inject(method = "_disableColorLogicOp", at = @At("HEAD"), cancellable = true)
+    private static void minemod$stopCombiningColorsByLogic(CallbackInfo callback) {
+        minemod$keep(callback, state -> state.colorLogic(false));
+    }
+
+    @Inject(
+            method = {
+                "_logicOp",
+                "_viewport",
+                "_polygonMode",
+                "_blendEquation",
+                "_stencilFunc",
+                "_stencilMask",
+                "_stencilOp",
+                "_clearDepth",
+                "_clearStencil"
+            },
+            at = @At("HEAD"),
+            cancellable = true)
+    private static void minemod$leaveTheRestToTheScene(CallbackInfo callback) {
+        if (ClientRendering.replacesOpenGl()) {
+            callback.cancel();
+        }
+    }
+
     @Unique
     private static void minemod$keep(CallbackInfo callback, Consumer<CapturedState> change) {
-        if (GameFrame.isRecording()) {
+        if (ClientRendering.replacesOpenGl()) {
             change.accept(GameFrame.state());
             callback.cancel();
         }

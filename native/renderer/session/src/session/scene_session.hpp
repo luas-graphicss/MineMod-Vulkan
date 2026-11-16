@@ -14,6 +14,7 @@
 
 #include "device/device.hpp"
 #include "draw/batch_renderer.hpp"
+#include "effects/frame_blur.hpp"
 #include "frame/frame_slot.hpp"
 #include "frame/frame_targets.hpp"
 #include "frame/frames_in_flight.hpp"
@@ -92,6 +93,8 @@ private:
     minemod_result set_terrain(std::span<const std::byte> payload);
     minemod_result draw_batch(std::span<const std::byte> payload);
     minemod_result set_batch_option(std::uint16_t opcode, std::span<const std::byte> payload);
+    minemod_result clear_depth();
+    minemod_result blur_frame(std::span<const std::byte> payload);
     minemod_result connect_section_faces(std::span<const std::byte> payload);
     minemod_result end_frame();
 
@@ -104,6 +107,8 @@ private:
     std::optional<SampledTexture> sampled(minemod_handle texture);
     VkDescriptorSet bound_texture(minemod_handle texture, const SampledTexture& sampled);
     std::vector<renderer::ImageId> add_texture_writes(renderer::RenderGraph& graph, const FrameSlot& slot);
+    std::optional<renderer::BlurredBackdrop> blurred_backdrop(FrameSlot& slot) const;
+    std::size_t blurred_interface_batches() const noexcept;
     void submit_frame(const renderer::FramesInFlight::Frame& frame);
     std::vector<renderer::PassSample> pass_samples(std::span<const renderer::PassTiming> timings) const;
     std::uint32_t draws_in(std::string_view pass) const noexcept;
@@ -121,6 +126,7 @@ private:
     renderer::PipelineCache pipelines_;
     renderer::TerrainRenderer terrain_;
     renderer::BatchRenderer batches_;
+    renderer::FrameBlurRenderer blur_;
     renderer::SceneRenderer scene_;
     ProgramReload reload_;
     renderer::JobEpochs epochs_;

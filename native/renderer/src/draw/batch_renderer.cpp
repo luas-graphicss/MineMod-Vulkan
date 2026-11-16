@@ -6,6 +6,7 @@
 
 #include "descriptors/descriptor_layout.hpp"
 #include "draw/element_defaults.hpp"
+#include "frame/frame_rendering.hpp"
 #include "frame/frame_targets.hpp"
 #include "frame/viewport.hpp"
 #include "pipelines/shader_module.hpp"
@@ -130,6 +131,9 @@ void BatchRenderer::record(VkCommandBuffer commands, const BatchPass& pass, std:
 
     const std::array frame_size{static_cast<float>(pass.extent.width), static_cast<float>(pass.extent.height)};
     for (const DrawBatch& batch : batches) {
+        if (batch.clears_depth) {
+            clear_frame_depth(commands, pass.extent);
+        }
         const Material& material = batch.material;
         const VkDescriptorSet view = batch.view == VK_NULL_HANDLE ? pass.view : batch.view;
         if (view != bound_view) {

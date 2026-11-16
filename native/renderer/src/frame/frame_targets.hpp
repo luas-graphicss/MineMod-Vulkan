@@ -22,6 +22,10 @@ public:
         return depth_;
     }
 
+    const Image& scratch() const noexcept {
+        return scratch_;
+    }
+
     VkExtent2D extent() const noexcept {
         return color_.extent();
     }
@@ -29,6 +33,7 @@ public:
 private:
     Image color_;
     Image depth_;
+    Image scratch_;
 };
 
 }

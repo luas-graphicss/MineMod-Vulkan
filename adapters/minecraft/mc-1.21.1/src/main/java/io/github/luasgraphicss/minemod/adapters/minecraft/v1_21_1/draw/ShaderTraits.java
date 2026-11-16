@@ -5,6 +5,7 @@ import io.github.luasgraphicss.minemod.codec.scene.Shading;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import net.minecraft.client.renderer.ShaderInstance;
 
@@ -12,7 +13,9 @@ final class ShaderTraits {
     private static final float CUTOUT = 0.1f;
     private static final float INVISIBLE = 0.001f;
     private static final float KEEP_ALL = 0.0f;
+    private static final String TEXTURE_SAMPLER = "Sampler0";
     private static final String OVERLAY_SAMPLER = "Sampler1";
+    private static final String LIGHTMAP_SAMPLER = "Sampler2";
     private static final Set<String> CUTS_FAINT_TEXELS = new HashSet<>(Arrays.asList(
             "particle",
             "position_color_tex_lightmap",
@@ -55,8 +58,15 @@ final class ShaderTraits {
     private ShaderTraits() {}
 
     static Set<Shading> shadingOf(ShaderInstance shader) {
-        Set<Shading> steps = EnumSet.of(Shading.TEXTURE, Shading.LIGHTMAP);
-        if (((ShaderInstanceAccessor) shader).minemod$samplerNames().contains(OVERLAY_SAMPLER)) {
+        List<String> samplers = ((ShaderInstanceAccessor) shader).minemod$samplerNames();
+        Set<Shading> steps = EnumSet.noneOf(Shading.class);
+        if (samplers.contains(TEXTURE_SAMPLER)) {
+            steps.add(Shading.TEXTURE);
+        }
+        if (samplers.contains(LIGHTMAP_SAMPLER)) {
+            steps.add(Shading.LIGHTMAP);
+        }
+        if (samplers.contains(OVERLAY_SAMPLER)) {
             steps.add(Shading.OVERLAY);
         }
         if (shader.LIGHT0_DIRECTION != null) {
@@ -69,6 +79,10 @@ final class ShaderTraits {
             steps.add(Shading.WIDE_LINES);
         }
         return steps;
+    }
+
+    static boolean samplesATexture(ShaderInstance shader) {
+        return ((ShaderInstanceAccessor) shader).minemod$samplerNames().contains(TEXTURE_SAMPLER);
     }
 
     static float alphaCutoffOf(ShaderInstance shader) {

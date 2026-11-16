@@ -16,6 +16,14 @@ public final class StreamBudget {
         this.records = records;
     }
 
+    public static StreamBudget holding(long records, long payloadBytesOfEach) {
+        return new StreamBudget(records * (RECORD_FRAMING_BYTES + payloadBytesOfEach), records);
+    }
+
+    public StreamBudget without(StreamBudget carved) {
+        return new StreamBudget(bytes - carved.bytes, records - carved.records);
+    }
+
     public boolean take(long payloadBytes) {
         long recordBytes = RECORD_FRAMING_BYTES + payloadBytes;
         if (records == 0 || recordBytes > bytes) {
@@ -25,6 +33,10 @@ public final class StreamBudget {
         records--;
         hasTaken = true;
         return true;
+    }
+
+    public long room() {
+        return records == 0 ? 0 : Math.max(0, bytes - RECORD_FRAMING_BYTES);
     }
 
     public boolean hasTaken() {

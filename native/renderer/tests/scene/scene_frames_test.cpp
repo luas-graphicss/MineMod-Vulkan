@@ -109,7 +109,8 @@ public:
           sections_(retirements_),
           terrain_(gpu_.device(), pipelines_),
           batches_(gpu_.device(), pipelines_),
-          scene_(terrain_, batches_),
+          blur_(gpu_.device(), pipelines_, samplers_.sampler_for(nearest_sampler)),
+          scene_(terrain_, batches_, blur_),
           slots_{FrameSlot(gpu_.device()), FrameSlot(gpu_.device())},
           frames_(gpu_.device(), frames_in_flight) {
         upload(white_, white_extent);
@@ -220,6 +221,7 @@ private:
     TerrainSections sections_;
     TerrainRenderer terrain_;
     BatchRenderer batches_;
+    FrameBlurRenderer blur_;
     SceneRenderer scene_;
     std::array<FrameSlot, frames_in_flight> slots_;
     FramesInFlight frames_;

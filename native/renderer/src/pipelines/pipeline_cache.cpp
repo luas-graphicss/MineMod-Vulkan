@@ -33,9 +33,10 @@ std::vector<VkVertexInputAttributeDescription> attribute_descriptions(const Vert
 }
 
 std::vector<VkVertexInputBindingDescription> binding_descriptions(const VertexLayout& layout) {
-    std::vector<VkVertexInputBindingDescription> descriptions{
-        {per_vertex_binding, layout.stride, VK_VERTEX_INPUT_RATE_VERTEX},
-    };
+    std::vector<VkVertexInputBindingDescription> descriptions;
+    if (layout.stride != 0) {
+        descriptions.push_back({per_vertex_binding, layout.stride, VK_VERTEX_INPUT_RATE_VERTEX});
+    }
     if (layout.constant_stride != 0) {
         descriptions.push_back({shared_constant_binding, layout.constant_stride, VK_VERTEX_INPUT_RATE_INSTANCE});
     }

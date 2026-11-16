@@ -35,6 +35,14 @@ constexpr renderer::SamplerDescription white_sampling{
     1,
 };
 
+constexpr renderer::SamplerDescription smooth_sampling{
+    VK_FILTER_LINEAR,
+    VK_FILTER_LINEAR,
+    VK_SAMPLER_MIPMAP_MODE_NEAREST,
+    VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
+    1,
+};
+
 std::span<const char* const> device_extensions(VkSurfaceKHR window_surface) noexcept {
     if (window_surface == VK_NULL_HANDLE) {
         return {};
@@ -121,7 +129,8 @@ SceneSession::SceneSession(std::shared_ptr<const SceneHost> host, const SessionS
       pipelines_(device_),
       terrain_(device_, pipelines_),
       batches_(device_, pipelines_),
-      scene_(terrain_, batches_),
+      blur_(device_, pipelines_, samplers_.sampler_for(smooth_sampling)),
+      scene_(terrain_, batches_, blur_),
       reload_(device_),
       sections_(retirements_),
       intake_(device_, sections_, setup.limits),
@@ -170,6 +179,10 @@ minemod_result SceneSession::execute(std::uint16_t opcode, std::span<const std::
             return set_batch_option(opcode, payload);
         case MINEMOD_OPCODE_CONNECT_SECTION_FACES:
             return connect_section_faces(payload);
+        case MINEMOD_OPCODE_CLEAR_DEPTH:
+            return clear_depth();
+        case MINEMOD_OPCODE_BLUR_FRAME:
+            return blur_frame(payload);
         default:
             return MINEMOD_RESULT_UNSUPPORTED_CAPABILITY;
     }
@@ -431,6 +444,7 @@ minemod_result SceneSession::draw_batch(std::span<const std::byte> payload) {
     });
     frame_.batches[batch.slot].back().program = reload_.published(batch.program);
     frame_.batch_options.apply_to(frame_.batches[batch.slot].back());
+    frame_.batches[batch.slot].back().clears_depth = std::exchange(frame_.clears_depth, false);
     return MINEMOD_RESULT_OK;
 }
 
@@ -439,6 +453,26 @@ minemod_result SceneSession::set_batch_option(std::uint16_t opcode, std::span<co
         return MINEMOD_RESULT_INVALID_ARGUMENT;
     }
     return change_batch_options(frame_.batch_options, extent_, opcode, payload);
+}
+
+minemod_result SceneSession::clear_depth() {
+    if (!frame_.is_open) {
+        return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+    frame_.clears_depth = true;
+    return MINEMOD_RESULT_OK;
+}
+
+minemod_result SceneSession::blur_frame(std::span<const std::byte> payload) {
+    const Decoded<renderer::FrameBlur> decoded = decode_frame_blur(payload);
+    if (decoded.result() != MINEMOD_RESULT_OK) {
+        return decoded.result();
+    }
+    if (!frame_.is_open) {
+        return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+    frame_.backdrop_blur = BackdropBlur{decoded.command(), frame_.batches[MINEMOD_BATCH_INTERFACE].size()};
+    return MINEMOD_RESULT_OK;
 }
 
 minemod_result SceneSession::connect_section_faces(std::span<const std::byte> payload) {
@@ -497,14 +531,28 @@ minemod_result SceneSession::end_frame() {
             frame_.batches[MINEMOD_BATCH_BLENDED],
         };
     }
+    const std::span<const renderer::DrawBatch> interface = frame_.batches[MINEMOD_BATCH_INTERFACE];
+    const std::optional<renderer::BlurredBackdrop> backdrop = blurred_backdrop(slot);
+    std::optional<renderer::ImageId> scratch;
+    if (backdrop) {
+        scratch = graph.import_image(
+            "frame scratch",
+            imported(
+                targets_->scratch(),
+                VK_IMAGE_ASPECT_COLOR_BIT,
+                renderer::discarded_after(renderer::uses::sampled_by_fragment_shader),
+                std::nullopt));
+    }
     const renderer::SceneFrame scene{
         extent_,
         frame_.clear_color,
         world,
         {VK_NULL_HANDLE, frame_.batches[MINEMOD_BATCH_HAND]},
-        {VK_NULL_HANDLE, frame_.batches[MINEMOD_BATCH_INTERFACE]},
+        {VK_NULL_HANDLE, interface.subspan(blurred_interface_batches())},
+        backdrop,
     };
-    scene_.add_passes(graph, renderer::SceneTargets{color, depth, std::move(written_textures)}, scene, sections_);
+    scene_.add_passes(
+        graph, renderer::SceneTargets{color, depth, std::move(written_textures), scratch}, scene, sections_);
 
     slot.planned = std::make_unique<renderer::PlannedFrame>(device_, std::move(graph));
     std::vector<renderer::PassSample> passes = pass_samples(slot.planned->record_timed(frame.commands));
@@ -675,6 +723,23 @@ std::vector<renderer::ImageId> SceneSession::add_texture_writes(renderer::Render
     return images;
 }
 
+std::optional<renderer::BlurredBackdrop> SceneSession::blurred_backdrop(FrameSlot& slot) const {
+    if (!frame_.backdrop_blur) {
+        return std::nullopt;
+    }
+    const std::span<const renderer::DrawBatch> interface = frame_.batches[MINEMOD_BATCH_INTERFACE];
+    return renderer::BlurredBackdrop{
+        interface.first(blurred_interface_batches()),
+        frame_.backdrop_blur->blur,
+        blur_.bind_source(slot.descriptors, targets_->color().view()),
+        blur_.bind_source(slot.descriptors, targets_->scratch().view()),
+    };
+}
+
+std::size_t SceneSession::blurred_interface_batches() const noexcept {
+    return frame_.backdrop_blur ? frame_.backdrop_blur->interface_batches : 0;
+}
+
 void SceneSession::submit_frame(const renderer::FramesInFlight::Frame& frame) {
     const std::size_t slot = frame.number % frames_in_flight;
     const std::optional<renderer::PresentationTarget> target =
@@ -711,8 +776,12 @@ std::uint32_t SceneSession::draws_in(std::string_view pass) const noexcept {
     if (pass == renderer::hand_pass) {
         return batches_in(MINEMOD_BATCH_HAND);
     }
+    const auto blurred = static_cast<std::uint32_t>(blurred_interface_batches());
+    if (pass == renderer::backdrop_pass) {
+        return blurred;
+    }
     if (pass == renderer::interface_pass) {
-        return batches_in(MINEMOD_BATCH_INTERFACE);
+        return batches_in(MINEMOD_BATCH_INTERFACE) - blurred;
     }
     return pass == texture_write_pass ? static_cast<std::uint32_t>(frame_.texture_writes.size()) : 0;
 }
