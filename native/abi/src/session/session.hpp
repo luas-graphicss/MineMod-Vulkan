@@ -26,6 +26,7 @@ private:
     minemod_result create_buffer(const CreateBufferCommand& command) override;
     minemod_result write_buffer(const WriteBufferCommand& command) override;
     minemod_result destroy_buffer(const DestroyBufferCommand& command) override;
+    minemod_result scene_command(const SceneCommand& command) override;
 
     BufferRegistry buffers_;
     std::uint64_t submissions_accepted_ = 0;

@@ -11,7 +11,8 @@ typedef uint64_t minemod_handle;
 #define MINEMOD_HANDLE_MAX_GENERATION ((UINT32_C(1) << MINEMOD_HANDLE_GENERATION_BITS) - 1)
 
 enum {
-    MINEMOD_HANDLE_KIND_BUFFER = 1
+    MINEMOD_HANDLE_KIND_BUFFER = 1,
+    MINEMOD_HANDLE_KIND_TEXTURE = 2
 };
 
 static inline minemod_handle minemod_handle_pack(uint8_t kind, uint32_t generation, uint32_t index) {

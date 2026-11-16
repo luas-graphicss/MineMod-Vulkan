@@ -5,6 +5,7 @@
 #include "minemod/abi/version.h"
 #include "negotiation/abi_compatibility.hpp"
 #include "stream/little_endian.hpp"
+#include "stream/scene_record_shape.hpp"
 
 namespace minemod::abi {
 namespace {
@@ -37,6 +38,10 @@ public:
     }
 
     minemod_result destroy_buffer(const DestroyBufferCommand&) override {
+        return MINEMOD_RESULT_OK;
+    }
+
+    minemod_result scene_command(const SceneCommand&) override {
         return MINEMOD_RESULT_OK;
     }
 };
@@ -148,6 +153,33 @@ minemod_result dispatch_destroy_buffer(std::span<const std::byte> record, Comman
     return sink.destroy_buffer(DestroyBufferCommand{.handle = read_little_endian<std::uint64_t>(payload, 0)});
 }
 
+minemod_result check_scene_record(const SceneRecordShape& shape, std::span<const std::byte> record) noexcept {
+    const std::size_t fixed_end = MINEMOD_COMMAND_HEADER_BYTES + shape.fixed_bytes;
+    if (shape.tail == RecordTail::none) {
+        return record.size() == fixed_end ? MINEMOD_RESULT_OK : MINEMOD_RESULT_LENGTH_OUT_OF_BOUNDS;
+    }
+    if (record.size() < fixed_end) {
+        return MINEMOD_RESULT_LENGTH_OUT_OF_BOUNDS;
+    }
+    const auto blob_bytes = read_little_endian<std::uint64_t>(record, fixed_end - sizeof(std::uint64_t));
+    const std::uint64_t blob_capacity = record.size() - fixed_end;
+    if (blob_bytes > blob_capacity || blob_capacity - blob_bytes >= MINEMOD_COMMAND_ALIGNMENT) {
+        return MINEMOD_RESULT_LENGTH_OUT_OF_BOUNDS;
+    }
+    return blob_bytes == 0 ? MINEMOD_RESULT_MALFORMED_STREAM : MINEMOD_RESULT_OK;
+}
+
+SceneCommand payload_of(const Record& record) noexcept {
+    return SceneCommand{record.opcode, record.bytes.subspan(MINEMOD_COMMAND_HEADER_BYTES)};
+}
+
+minemod_result dispatch_scene_command(const SceneRecordShape& shape, const Record& record, CommandSink& sink) {
+    if (const auto checked = check_scene_record(shape, record.bytes); checked != MINEMOD_RESULT_OK) {
+        return checked;
+    }
+    return sink.scene_command(payload_of(record));
+}
+
 minemod_result dispatch(const Record& record, CommandSink& sink) {
     switch (record.opcode) {
         case MINEMOD_OPCODE_CREATE_BUFFER:
@@ -157,8 +189,10 @@ minemod_result dispatch(const Record& record, CommandSink& sink) {
         case MINEMOD_OPCODE_DESTROY_BUFFER:
             return dispatch_destroy_buffer(record.bytes, sink);
         default:
-            return MINEMOD_RESULT_UNKNOWN_OPCODE;
+            break;
     }
+    const SceneRecordShape* shape = find_scene_record_shape(record.opcode);
+    return shape == nullptr ? MINEMOD_RESULT_UNKNOWN_OPCODE : dispatch_scene_command(*shape, record, sink);
 }
 
 minemod_result fail(
@@ -168,10 +202,8 @@ minemod_result fail(
     return result;
 }
 
-}
-
-minemod_result walk_command_stream(
-    std::span<const std::byte> stream, CommandSink& sink, minemod_stream_report& report) {
+template <typename OnRecord>
+minemod_result walk_records(std::span<const std::byte> stream, minemod_stream_report& report, OnRecord&& on_record) {
     report = minemod_stream_report{
         .command_count = 0,
         .failed_command = MINEMOD_NO_COMMAND,
@@ -188,7 +220,7 @@ minemod_result walk_command_stream(
         Record record;
         auto result = frame_record(stream.subspan(cursor), record);
         if (result == MINEMOD_RESULT_OK) {
-            result = dispatch(record, sink);
+            result = on_record(record);
         }
         if (result != MINEMOD_RESULT_OK) {
             return fail(report, result, index, cursor);
@@ -203,9 +235,24 @@ minemod_result walk_command_stream(
     return MINEMOD_RESULT_OK;
 }
 
+}
+
+minemod_result walk_command_stream(
+    std::span<const std::byte> stream, CommandSink& sink, minemod_stream_report& report) {
+    return walk_records(stream, report, [&sink](const Record& record) { return dispatch(record, sink); });
+}
+
 minemod_result validate_command_stream(std::span<const std::byte> stream, minemod_stream_report& report) {
     DiscardingSink sink;
     return walk_command_stream(stream, sink, report);
+}
+
+minemod_result visit_command_stream(
+    std::span<const std::byte> stream, const RecordVisitor& visitor, minemod_stream_report& report) {
+    if (const auto validation = validate_command_stream(stream, report); validation != MINEMOD_RESULT_OK) {
+        return validation;
+    }
+    return walk_records(stream, report, [&visitor](const Record& record) { return visitor(payload_of(record)); });
 }
 
 }
