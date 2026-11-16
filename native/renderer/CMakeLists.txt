@@ -74,6 +74,7 @@ add_library(minemod_renderer STATIC
     src/resources/image.cpp
     src/resources/image_layout.cpp
     src/resources/memory_type.cpp
+    src/scene/scene_renderer.cpp
     src/shaders/core_shader_contract.cpp
     src/shaders/shader_interface.cpp
     src/shaders/spirv_module.cpp
