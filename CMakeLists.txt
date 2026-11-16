@@ -30,3 +30,7 @@ if(MINEMOD_BUILD_JNI_BRIDGE)
     include(MineModJniHeaders)
     add_subdirectory(native/jni-bridge)
 endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    add_subdirectory(native/gl-provider)
+endif()

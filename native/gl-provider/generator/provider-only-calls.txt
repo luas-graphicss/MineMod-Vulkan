@@ -1,0 +1,16 @@
+glGenTransformFeedbacks
+glDeleteTransformFeedbacks
+glGenProgramPipelines
+glDeleteProgramPipelines
+glCreateMemoryObjectsEXT
+glDeleteMemoryObjectsEXT
+glImportMemoryFdEXT
+glTexStorageMem2DEXT
+glGenSemaphoresEXT
+glDeleteSemaphoresEXT
+glImportSemaphoreFdEXT
+glWaitSemaphoreEXT
+glSignalSemaphoreEXT
+glGetUnsignedBytevEXT
+glGetUnsignedBytei_vEXT
+glBufferStorageMemEXT
