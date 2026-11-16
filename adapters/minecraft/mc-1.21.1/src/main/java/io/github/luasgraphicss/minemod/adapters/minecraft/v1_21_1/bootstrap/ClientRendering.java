@@ -4,6 +4,7 @@ import io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.window.GlfwWin
 import io.github.luasgraphicss.minemod.client.opengl.OpenGlObjects;
 import io.github.luasgraphicss.minemod.client.session.ClientRenderer;
 import io.github.luasgraphicss.minemod.client.session.DeviceValidation;
+import io.github.luasgraphicss.minemod.client.session.SceneAttachments;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -27,7 +28,8 @@ public final class ClientRendering {
         }
         DeviceValidation validation =
                 Boolean.getBoolean(VALIDATION_PROPERTY) ? DeviceValidation.ENABLED : DeviceValidation.DISABLED;
-        ClientRenderer started = ClientRenderer.start(library, new GlfwWindowSurface(window), validation);
+        ClientRenderer started =
+                ClientRenderer.start(library, new GlfwWindowSurface(window), validation, SceneAttachments.PRIVATE);
         openGl = started.openGl();
         renderer = started;
     }
