@@ -45,7 +45,7 @@ minemod_scene_session_config offscreen_config(std::uint32_t width, std::uint32_t
         .height = height,
         .max_textures = resource_limit,
         .max_sections = resource_limit,
-        .reserved = 0,
+        .flags = 0,
         .window_surface = 0,
         .upload_bytes_per_frame = arena_bytes,
         .geometry_bytes_per_frame = arena_bytes,

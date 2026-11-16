@@ -167,6 +167,16 @@ set(minemod_device_tests
     scene_drawing_device
     scene_session_device
     world_geometry_device)
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    add_executable(minemod_scene_sharing_device_tests session/scene_sharing_test.cpp)
+    target_link_libraries(minemod_scene_sharing_device_tests
+        PRIVATE minemod_scene_session_test_support minemod_interop_test_support minemod_doctest_main)
+    minemod_configure_vulkan_target(minemod_scene_sharing_device_tests)
+    add_test(NAME scene_sharing_device COMMAND minemod_scene_sharing_device_tests)
+    list(APPEND minemod_device_tests scene_sharing_device)
+endif()
+
 set_tests_properties(${minemod_device_tests} PROPERTIES LABELS vulkan-device)
 
 if(MINEMOD_ENABLE_SANITIZERS)

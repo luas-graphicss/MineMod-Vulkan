@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <iterator>
 #include <utility>
 
 #include "commands/batch_option_commands.hpp"
@@ -23,7 +24,6 @@ namespace minemod::scene {
 
 namespace {
 
-constexpr std::array presentation_extensions{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 constexpr std::string_view texture_write_pass = "write textures";
 constexpr VkExtent2D white_extent{1, 1};
 constexpr std::array white_texel{std::byte{0xFF}, std::byte{0xFF}, std::byte{0xFF}, std::byte{0xFF}};
@@ -43,11 +43,16 @@ constexpr renderer::SamplerDescription smooth_sampling{
     1,
 };
 
-std::span<const char* const> device_extensions(VkSurfaceKHR window_surface) noexcept {
-    if (window_surface == VK_NULL_HANDLE) {
-        return {};
+std::vector<const char*> required_extensions(const SessionSetup& setup) {
+    std::vector<const char*> extensions;
+    if (setup.window_surface != VK_NULL_HANDLE) {
+        extensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
     }
-    return presentation_extensions;
+    if (setup.shares_attachments) {
+        const std::span<const char* const> shared = sharing_extensions().attachments;
+        extensions.insert(extensions.end(), shared.begin(), shared.end());
+    }
+    return extensions;
 }
 
 std::optional<renderer::WindowSurface> adopt(const SceneHost& host, VkSurfaceKHR window_surface) {
@@ -57,13 +62,25 @@ std::optional<renderer::WindowSurface> adopt(const SceneHost& host, VkSurfaceKHR
     return std::optional<renderer::WindowSurface>(std::in_place, host.instance(), window_surface);
 }
 
-renderer::Device create_device(const SceneHost& host, VkSurfaceKHR window_surface) {
-    const std::span<const char* const> extensions = device_extensions(window_surface);
-    return renderer::Device(
-        renderer::select_device(
-            host.instance(),
-            renderer::DeviceRequirements{.extensions = extensions, .presentation_surface = window_surface}),
-        extensions);
+renderer::Device create_device(const SceneHost& host, const SessionSetup& setup) {
+    std::vector<const char*> extensions = required_extensions(setup);
+    const renderer::SelectedDevice selected = renderer::select_device(
+        host.instance(),
+        renderer::DeviceRequirements{.extensions = extensions, .presentation_surface = setup.window_surface});
+    if (setup.shares_attachments) {
+        std::ranges::copy_if(
+            sharing_extensions().semaphores, std::back_inserter(extensions), [&selected](const char* extension) {
+                return renderer::supports_extension(selected.handle, extension);
+            });
+    }
+    return renderer::Device(selected, extensions);
+}
+
+std::optional<SessionSharing> open_sharing(const renderer::Device& device, const SessionSetup& setup) {
+    if (!setup.shares_attachments) {
+        return std::nullopt;
+    }
+    return std::optional<SessionSharing>(std::in_place, device);
 }
 
 renderer::Texture create_white_texture(const renderer::Device& device) {
@@ -100,6 +117,14 @@ renderer::ImportedImage imported(
     return renderer::ImportedImage{image.get(), image.view(), image.extent(), aspect, entry, exit};
 }
 
+renderer::ImportedImage imported(
+    const FrameTarget& target,
+    VkExtent2D extent,
+    const renderer::ImageUse& entry,
+    const std::optional<renderer::ImageUse>& exit) {
+    return renderer::ImportedImage{target.image, target.view, extent, target.aspect, entry, exit};
+}
+
 void make_uploads_readable_by_draws(VkCommandBuffer commands) {
     const VkMemoryBarrier2 barrier{
         .sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER_2,
@@ -121,14 +146,15 @@ void make_uploads_readable_by_draws(VkCommandBuffer commands) {
 SceneSession::SceneSession(std::shared_ptr<const SceneHost> host, const SessionSetup& setup)
     : host_(std::move(host)),
       surface_(adopt(*host_, setup.window_surface)),
-      device_(create_device(*host_, setup.window_surface)),
+      device_(create_device(*host_, setup)),
+      sharing_(open_sharing(device_, setup)),
       limits_(setup.limits),
       extent_(setup.extent),
-      targets_(std::in_place, device_, setup.extent),
+      targets_(create_targets(setup.extent)),
       samplers_(device_),
       pipelines_(device_),
-      terrain_(device_, pipelines_),
-      batches_(device_, pipelines_),
+      terrain_(device_, pipelines_, targets_->depth_format()),
+      batches_(device_, pipelines_, targets_->depth_format()),
       blur_(device_, pipelines_, samplers_.sampler_for(smooth_sampling)),
       scene_(terrain_, batches_, blur_),
       reload_(device_),
@@ -200,7 +226,7 @@ minemod_result SceneSession::resize(VkExtent2D extent) {
         return MINEMOD_RESULT_OK;
     }
     retirements_.retire(last_frame_using_removed_resources(), std::move(*targets_));
-    targets_.emplace(device_, extent);
+    targets_.emplace(create_targets(extent));
     extent_ = extent;
     has_drawn_frame_ = false;
     return MINEMOD_RESULT_OK;
@@ -235,7 +261,7 @@ minemod_result SceneSession::read_frame(std::span<std::byte> rgba) {
     if (!has_drawn_frame_) {
         return MINEMOD_RESULT_INVALID_ARGUMENT;
     }
-    const renderer::FramePixels pixels = renderer::read_back_color(device_, targets_->color());
+    const renderer::FramePixels pixels = renderer::read_back_color(device_, targets_->color().image, extent_);
     if (rgba.size() != pixels.rgba().size()) {
         return MINEMOD_RESULT_LENGTH_OUT_OF_BOUNDS;
     }
@@ -509,14 +535,14 @@ minemod_result SceneSession::end_frame() {
         "frame color",
         imported(
             targets_->color(),
-            VK_IMAGE_ASPECT_COLOR_BIT,
+            extent_,
             renderer::discarded_after(renderer::uses::transfer_source),
             renderer::uses::transfer_source));
     const renderer::ImageId depth = graph.import_image(
         "frame depth",
         imported(
             targets_->depth(),
-            VK_IMAGE_ASPECT_DEPTH_BIT,
+            extent_,
             renderer::discarded_after(renderer::uses::depth_attachment),
             std::nullopt));
     std::vector<renderer::ImageId> written_textures = add_texture_writes(graph, slot);
@@ -539,7 +565,7 @@ minemod_result SceneSession::end_frame() {
             "frame scratch",
             imported(
                 targets_->scratch(),
-                VK_IMAGE_ASPECT_COLOR_BIT,
+                extent_,
                 renderer::discarded_after(renderer::uses::sampled_by_fragment_shader),
                 std::nullopt));
     }
@@ -604,6 +630,37 @@ minemod_scene_metrics SceneSession::metrics() const {
 
 std::string SceneSession::metrics_report() const {
     return metrics_.report(state(), limits_);
+}
+
+minemod_result SceneSession::describe_sharing(minemod_scene_sharing& sharing) const {
+    if (!sharing_) {
+        return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+    sharing = sharing_->describe(*targets_->shared(), extent_);
+    return MINEMOD_RESULT_OK;
+}
+
+minemod_result SceneSession::export_attachment(SharedAttachment attachment, std::int64_t& handle) const {
+    if (!sharing_) {
+        return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+    handle = targets_->shared()->export_memory(attachment);
+    return MINEMOD_RESULT_OK;
+}
+
+minemod_result SceneSession::export_semaphores(ExportedSemaphores& semaphores) const {
+    if (!sharing_) {
+        return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+    semaphores = sharing_->export_semaphores();
+    return MINEMOD_RESULT_OK;
+}
+
+SessionTargets SceneSession::create_targets(VkExtent2D extent) {
+    if (sharing_) {
+        return SessionTargets(device_, extent, sharing_->create_targets(extent));
+    }
+    return SessionTargets(device_, extent);
 }
 
 void SceneSession::upload_waiting_sections() {
@@ -731,8 +788,8 @@ std::optional<renderer::BlurredBackdrop> SceneSession::blurred_backdrop(FrameSlo
     return renderer::BlurredBackdrop{
         interface.first(blurred_interface_batches()),
         frame_.backdrop_blur->blur,
-        blur_.bind_source(slot.descriptors, targets_->color().view()),
-        blur_.bind_source(slot.descriptors, targets_->scratch().view()),
+        blur_.bind_source(slot.descriptors, targets_->color().view),
+        blur_.bind_source(slot.descriptors, targets_->scratch().view),
     };
 }
 
@@ -745,7 +802,7 @@ void SceneSession::submit_frame(const renderer::FramesInFlight::Frame& frame) {
     const std::optional<renderer::PresentationTarget> target =
         presenter_ ? presenter_->acquire(slot) : std::nullopt;
     if (target) {
-        presenter_->record_copy(frame.commands, targets_->color(), *target);
+        presenter_->record_copy(frame.commands, targets_->color().image, extent_, *target);
     }
     frames_.submit(target ? target->semaphores : renderer::SubmitSemaphores{});
     last_submitted_frame_ = frame.number;

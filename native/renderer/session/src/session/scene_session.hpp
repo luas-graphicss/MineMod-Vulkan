@@ -16,7 +16,6 @@
 #include "draw/batch_renderer.hpp"
 #include "effects/frame_blur.hpp"
 #include "frame/frame_slot.hpp"
-#include "frame/frame_targets.hpp"
 #include "frame/frames_in_flight.hpp"
 #include "frame/recorded_frame.hpp"
 #include "graph/render_graph.hpp"
@@ -33,6 +32,8 @@
 #include "reload/program_reload.hpp"
 #include "resources/texture_registry.hpp"
 #include "scene/scene_renderer.hpp"
+#include "sharing/session_sharing.hpp"
+#include "targets/session_targets.hpp"
 #include "terrain/section_intake.hpp"
 #include "terrain/terrain_renderer.hpp"
 #include "terrain/terrain_sections.hpp"
@@ -49,6 +50,7 @@ struct SessionSetup {
     VkExtent2D extent;
     VkSurfaceKHR window_surface;
     SceneLimits limits;
+    bool shares_attachments;
 };
 
 class SceneSession {
@@ -76,6 +78,10 @@ public:
     minemod_scene_metrics metrics() const;
     std::string metrics_report() const;
 
+    minemod_result describe_sharing(minemod_scene_sharing& sharing) const;
+    minemod_result export_attachment(SharedAttachment attachment, std::int64_t& handle) const;
+    minemod_result export_semaphores(ExportedSemaphores& semaphores) const;
+
 private:
     struct SampledTexture {
         VkImageView view;
@@ -98,6 +104,7 @@ private:
     minemod_result connect_section_faces(std::span<const std::byte> payload);
     minemod_result end_frame();
 
+    SessionTargets create_targets(VkExtent2D extent);
     void upload_waiting_sections();
     void order_translucent_terrain();
     void select_reachable_sections();
@@ -118,10 +125,11 @@ private:
     std::shared_ptr<const SceneHost> host_;
     std::optional<renderer::WindowSurface> surface_;
     renderer::Device device_;
+    std::optional<SessionSharing> sharing_;
     SceneLimits limits_;
     VkExtent2D extent_;
     renderer::RetirementQueue retirements_;
-    std::optional<renderer::FrameTargets> targets_;
+    std::optional<SessionTargets> targets_;
     renderer::SamplerCache samplers_;
     renderer::PipelineCache pipelines_;
     renderer::TerrainRenderer terrain_;

@@ -37,7 +37,7 @@ jint JNICALL create(
         .height = static_cast<std::uint32_t>(height),
         .max_textures = static_cast<std::uint32_t>(max_textures),
         .max_sections = static_cast<std::uint32_t>(max_sections),
-        .reserved = 0,
+        .flags = 0,
         .window_surface = static_cast<std::uint64_t>(window_surface),
         .upload_bytes_per_frame = static_cast<std::uint64_t>(upload_bytes_per_frame),
         .geometry_bytes_per_frame = static_cast<std::uint64_t>(geometry_bytes_per_frame),

@@ -11,6 +11,11 @@
 #define MINEMOD_SCENE_HOST_VALIDATION (UINT32_C(1) << 0)
 #define MINEMOD_SCENE_HOST_MAX_EXTENSIONS UINT32_C(32)
 
+#define MINEMOD_SCENE_SESSION_SHARED_ATTACHMENTS (UINT32_C(1) << 0)
+
+#define MINEMOD_SCENE_SHARING_SEMAPHORES (UINT32_C(1) << 0)
+#define MINEMOD_SCENE_DEVICE_UUID_BYTES 16
+
 #define MINEMOD_SCENE_MAX_EXTENT UINT32_C(16384)
 #define MINEMOD_SCENE_MIN_ARENA_BYTES (UINT64_C(1) << 12)
 #define MINEMOD_SCENE_MAX_ARENA_BYTES (UINT64_C(1) << 30)
@@ -33,6 +38,12 @@ enum {
     MINEMOD_PRESENT_PACING_IMMEDIATE = 1
 };
 
+enum {
+    MINEMOD_SHARED_ATTACHMENT_COLOR = 0,
+    MINEMOD_SHARED_ATTACHMENT_DEPTH_STENCIL = 1,
+    MINEMOD_SHARED_ATTACHMENT_COUNT = 2
+};
+
 typedef struct minemod_scene_host minemod_scene_host;
 typedef struct minemod_scene_session minemod_scene_session;
 
@@ -50,7 +61,7 @@ typedef struct minemod_scene_session_config {
     uint32_t height;
     uint32_t max_textures;
     uint32_t max_sections;
-    uint32_t reserved;
+    uint32_t flags;
     uint64_t window_surface;
     uint64_t upload_bytes_per_frame;
     uint64_t geometry_bytes_per_frame;
@@ -79,6 +90,22 @@ typedef struct minemod_scene_metrics {
     uint64_t retired_resources;
     uint64_t resource_generation;
 } minemod_scene_metrics;
+
+typedef struct minemod_shared_attachment {
+    uint64_t allocation_bytes;
+    uint32_t vulkan_format;
+    uint32_t vulkan_layout;
+    uint32_t width;
+    uint32_t height;
+} minemod_shared_attachment;
+
+typedef struct minemod_scene_sharing {
+    uint8_t device_uuid[MINEMOD_SCENE_DEVICE_UUID_BYTES];
+    uint8_t driver_uuid[MINEMOD_SCENE_DEVICE_UUID_BYTES];
+    minemod_shared_attachment attachments[MINEMOD_SHARED_ATTACHMENT_COUNT];
+    uint32_t flags;
+    uint32_t generation;
+} minemod_scene_sharing;
 
 MINEMOD_ABI_BEGIN
 
@@ -142,6 +169,15 @@ minemod_result minemod_scene_session_get_metrics(
 
 uint64_t minemod_scene_session_read_metrics_text(
     const minemod_scene_session* session, char* destination, uint64_t capacity) MINEMOD_ABI_NOEXCEPT;
+
+minemod_result minemod_scene_session_get_sharing(
+    const minemod_scene_session* session, minemod_scene_sharing* sharing) MINEMOD_ABI_NOEXCEPT;
+
+minemod_result minemod_scene_session_export_attachment(
+    const minemod_scene_session* session, uint32_t attachment, int64_t* handle) MINEMOD_ABI_NOEXCEPT;
+
+minemod_result minemod_scene_session_export_semaphores(
+    const minemod_scene_session* session, int64_t* renderer_done, int64_t* provider_done) MINEMOD_ABI_NOEXCEPT;
 
 MINEMOD_ABI_END
 
