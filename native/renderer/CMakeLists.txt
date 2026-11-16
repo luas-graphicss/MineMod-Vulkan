@@ -32,7 +32,9 @@ add_library(minemod_renderer STATIC
     src/resources/buffer.cpp
     src/resources/image.cpp
     src/resources/image_layout.cpp
-    src/resources/memory_type.cpp)
+    src/resources/memory_type.cpp
+    src/upload/arena_layout.cpp
+    src/upload/upload_arena.cpp)
 add_library(minemod::renderer ALIAS minemod_renderer)
 
 target_include_directories(minemod_renderer PUBLIC src)

@@ -28,19 +28,27 @@ target_link_libraries(minemod_render_graph_device_tests PRIVATE minemod_renderer
 minemod_configure_vulkan_target(minemod_render_graph_device_tests)
 
 add_executable(minemod_renderer_resource_tests
-    lifetime/retirement_queue_test.cpp)
+    lifetime/retirement_queue_test.cpp
+    upload/arena_layout_test.cpp)
 target_include_directories(minemod_renderer_resource_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(minemod_renderer_resource_tests
     PRIVATE minemod::renderer minemod_doctest_main)
 minemod_configure_vulkan_target(minemod_renderer_resource_tests)
+
+add_executable(minemod_renderer_resource_device_tests
+    upload/upload_arena_test.cpp)
+target_link_libraries(minemod_renderer_resource_device_tests
+    PRIVATE minemod_renderer_test_support minemod_doctest_main)
+minemod_configure_vulkan_target(minemod_renderer_resource_device_tests)
 
 add_test(NAME render_graph COMMAND minemod_render_graph_tests)
 add_test(NAME render_graph_device COMMAND minemod_render_graph_device_tests)
 add_test(NAME renderer_harness COMMAND minemod_renderer_tests)
 add_test(NAME renderer_harness_cli COMMAND minemod_harness --validation --frames 2)
 add_test(NAME renderer_resources COMMAND minemod_renderer_resource_tests)
+add_test(NAME renderer_resources_device COMMAND minemod_renderer_resource_device_tests)
 
-set(minemod_device_tests render_graph_device renderer_harness renderer_harness_cli)
+set(minemod_device_tests render_graph_device renderer_harness renderer_harness_cli renderer_resources_device)
 set_tests_properties(${minemod_device_tests} PROPERTIES LABELS vulkan-device)
 
 if(MINEMOD_ENABLE_SANITIZERS)

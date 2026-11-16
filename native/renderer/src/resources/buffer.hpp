@@ -22,7 +22,7 @@ public:
         return buffer_.get();
     }
 
-    void write(std::span<const std::byte> bytes) const;
+    void write(std::span<const std::byte> bytes, VkDeviceSize offset = 0) const;
     std::vector<std::byte> read() const;
 
 private:
