@@ -10,6 +10,29 @@ function(minemod_configure_vulkan_target target)
     endif()
 endfunction()
 
+function(minemod_add_shader_library target)
+    set(shader_headers "${CMAKE_CURRENT_BINARY_DIR}/${target}")
+    set(generated_headers "")
+    foreach(shader IN LISTS ARGN)
+        string(REPLACE "." "_" shader_symbol "${shader}")
+        set(shader_source "${PROJECT_SOURCE_DIR}/shaders/native/${shader}")
+        set(shader_header "${shader_headers}/${shader_symbol}.h")
+        add_custom_command(
+            OUTPUT "${shader_header}"
+            COMMAND "${CMAKE_COMMAND}" -E make_directory "${shader_headers}"
+            COMMAND "${Vulkan_GLSLANG_VALIDATOR_EXECUTABLE}" -V --quiet --target-env vulkan1.3
+                --vn "${shader_symbol}" -o "${shader_header}" "${shader_source}"
+            DEPENDS "${shader_source}"
+            VERBATIM)
+        list(APPEND generated_headers "${shader_header}")
+    endforeach()
+
+    add_custom_target(${target}_headers DEPENDS ${generated_headers})
+    add_library(${target} INTERFACE)
+    add_dependencies(${target} ${target}_headers)
+    target_include_directories(${target} INTERFACE "${shader_headers}")
+endfunction()
+
 add_library(minemod_renderer STATIC
     src/device/device.cpp
     src/device/instance.cpp
@@ -33,6 +56,9 @@ add_library(minemod_renderer STATIC
     src/resources/image.cpp
     src/resources/image_layout.cpp
     src/resources/memory_type.cpp
+    src/shaders/core_shader_contract.cpp
+    src/shaders/shader_interface.cpp
+    src/shaders/spirv_module.cpp
     src/upload/arena_layout.cpp
     src/upload/upload_arena.cpp)
 add_library(minemod::renderer ALIAS minemod_renderer)

@@ -28,8 +28,8 @@ VkPipelineShaderStageCreateInfo shader_stage(VkShaderStageFlagBits stage, VkShad
 }
 
 renderer::DeviceHandle<VkPipeline> create_proof_pipeline(const renderer::Device& device, VkPipelineLayout layout) {
-    const auto vertex_shader = renderer::create_shader_module(device, proof_scene_vert);
-    const auto fragment_shader = renderer::create_shader_module(device, proof_scene_frag);
+    const auto vertex_shader = renderer::create_shader_module(device, renderer::SpirvModule{proof_scene_vert});
+    const auto fragment_shader = renderer::create_shader_module(device, renderer::SpirvModule{proof_scene_frag});
     const std::array stages{
         shader_stage(VK_SHADER_STAGE_VERTEX_BIT, vertex_shader.get()),
         shader_stage(VK_SHADER_STAGE_FRAGMENT_BIT, fragment_shader.get()),

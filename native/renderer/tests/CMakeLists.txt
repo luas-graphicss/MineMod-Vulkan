@@ -27,12 +27,17 @@ add_executable(minemod_render_graph_device_tests graph/graph_frame_test.cpp)
 target_link_libraries(minemod_render_graph_device_tests PRIVATE minemod_renderer_test_support minemod_doctest_main)
 minemod_configure_vulkan_target(minemod_render_graph_device_tests)
 
+minemod_add_shader_library(minemod_sprite_shaders sprite.vert sprite.frag)
+
 add_executable(minemod_renderer_resource_tests
     lifetime/retirement_queue_test.cpp
+    shaders/core_shader_contract_test.cpp
+    shaders/shader_interface_test.cpp
+    shaders/spirv_module_test.cpp
     upload/arena_layout_test.cpp)
 target_include_directories(minemod_renderer_resource_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(minemod_renderer_resource_tests
-    PRIVATE minemod::renderer minemod_doctest_main)
+    PRIVATE minemod::renderer minemod_doctest_main minemod_sprite_shaders)
 minemod_configure_vulkan_target(minemod_renderer_resource_tests)
 
 add_executable(minemod_renderer_resource_device_tests
