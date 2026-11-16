@@ -108,9 +108,12 @@ target_link_libraries(minemod_scene_session_test_support
 minemod_configure_vulkan_target(minemod_scene_session_test_support)
 
 add_executable(minemod_scene_session_device_tests
+    session/scene_corpus_test.cpp
     session/scene_frames_test.cpp
     session/scene_presentation_test.cpp
     session/scene_resources_test.cpp)
+target_compile_definitions(minemod_scene_session_device_tests PRIVATE
+    MINEMOD_COMMAND_STREAM_CORPUS="${PROJECT_SOURCE_DIR}/tests/fixtures/command-streams")
 target_link_libraries(minemod_scene_session_device_tests
     PRIVATE minemod_scene_session_test_support minemod_doctest_main)
 minemod_configure_vulkan_target(minemod_scene_session_device_tests)
