@@ -20,7 +20,6 @@ public final class GameFrame {
     private static final float OPAQUE = 1.0f;
     private static final DrawRecorder RECORDER = new DrawRecorder(STREAM_BYTES, STREAM_RECORDS);
     private static final CapturedState STATE = new CapturedState();
-    private static volatile SceneTextures textures = SceneTextures.NONE;
     private static boolean drawsWorld;
     private static boolean leavesWorldOut;
     private static long leftOutDraws;
@@ -41,11 +40,7 @@ public final class GameFrame {
     }
 
     public static SceneTextures textures() {
-        return textures;
-    }
-
-    public static void findTexturesIn(SceneTextures published) {
-        textures = published;
+        return ClientRendering.renderer().textures();
     }
 
     public static boolean drawsIntoTheWindow() {
@@ -119,6 +114,6 @@ public final class GameFrame {
 
     private static Optional<TerrainState> terrainSeenFrom(Vec3 camera, Matrix4f frustum, Matrix4f projection) {
         return TerrainView.seenFrom(
-                camera, frustum, projection, textures, ClientRendering.renderer().lightmap());
+                camera, frustum, projection, textures(), ClientRendering.renderer().lightmap());
     }
 }

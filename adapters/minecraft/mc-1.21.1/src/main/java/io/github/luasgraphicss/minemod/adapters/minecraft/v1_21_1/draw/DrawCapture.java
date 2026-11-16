@@ -20,6 +20,7 @@ import org.joml.Matrix4f;
 public final class DrawCapture {
     private static final int MATRIX_VALUES = 16;
     private static final int SAMPLED_UNIT = 0;
+    private static final float VISIBLE_GLINT = 1.0f;
 
     private DrawCapture() {}
 
@@ -41,13 +42,16 @@ public final class DrawCapture {
 
     public static void record(
             Geometry geometry, boolean isSorted, Matrix4f modelView, Matrix4f projection, ShaderInstance shader) {
+        if (shader == null) {
+            GameFrame.leaveOut();
+            return;
+        }
         Optional<PrimitiveMode> primitives = PrimitiveModes.of(geometry.mode());
         Optional<GameVertexLayout> layout = VertexLayouts.of(geometry.format());
-        boolean isSampled = geometry.format().contains(VertexFormatElement.UV0);
+        boolean isSampled = geometry.format().contains(VertexFormatElement.UV0) && ShaderTraits.samplesATexture(shader);
         Optional<ResourceHandle> texture =
                 isSampled ? GameFrame.textures().find(RenderSystem.getShaderTexture(SAMPLED_UNIT)) : Optional.empty();
-        if (shader == null
-                || GameFrame.leavesTheWorldOut()
+        if (GameFrame.leavesTheWorldOut()
                 || !primitives.isPresent()
                 || !layout.isPresent()
                 || isSampled != texture.isPresent()
@@ -77,7 +81,8 @@ public final class DrawCapture {
     private static void tint(GameDraw.Builder draw, ShaderInstance shader) {
         if (shader.COLOR_MODULATOR != null) {
             float[] color = RenderSystem.getShaderColor();
-            draw.colorModulator(color[0], color[1], color[2], color[3]);
+            float glint = shader.GLINT_ALPHA == null ? VISIBLE_GLINT : RenderSystem.getShaderGlintAlpha();
+            draw.colorModulator(color[0] * glint, color[1] * glint, color[2] * glint, color[3]);
         }
     }
 
