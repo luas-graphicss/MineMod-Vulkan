@@ -71,6 +71,11 @@ add_executable(minemod_world_geometry_tests
 target_link_libraries(minemod_world_geometry_tests PRIVATE minemod_renderer_test_support minemod_doctest_main)
 minemod_configure_vulkan_target(minemod_world_geometry_tests)
 
+add_executable(minemod_world_geometry_device_tests
+    terrain/terrain_sections_test.cpp)
+target_link_libraries(minemod_world_geometry_device_tests PRIVATE minemod_renderer_test_support minemod_doctest_main)
+minemod_configure_vulkan_target(minemod_world_geometry_device_tests)
+
 add_test(NAME render_graph COMMAND minemod_render_graph_tests)
 add_test(NAME render_graph_device COMMAND minemod_render_graph_device_tests)
 add_test(NAME renderer_harness COMMAND minemod_renderer_tests)
@@ -78,8 +83,14 @@ add_test(NAME renderer_harness_cli COMMAND minemod_harness --validation --frames
 add_test(NAME renderer_resources COMMAND minemod_renderer_resource_tests)
 add_test(NAME renderer_resources_device COMMAND minemod_renderer_resource_device_tests)
 add_test(NAME world_geometry COMMAND minemod_world_geometry_tests)
+add_test(NAME world_geometry_device COMMAND minemod_world_geometry_device_tests)
 
-set(minemod_device_tests render_graph_device renderer_harness renderer_harness_cli renderer_resources_device)
+set(minemod_device_tests
+    render_graph_device
+    renderer_harness
+    renderer_harness_cli
+    renderer_resources_device
+    world_geometry_device)
 set_tests_properties(${minemod_device_tests} PROPERTIES LABELS vulkan-device)
 
 if(MINEMOD_ENABLE_SANITIZERS)
