@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstdint>
+#include <optional>
 #include <vector>
 
 #include "device/vulkan_error.hpp"
@@ -23,7 +24,19 @@ std::vector<VkVertexInputAttributeDescription> attribute_descriptions(const Vert
     std::vector<VkVertexInputAttributeDescription> descriptions;
     descriptions.reserve(layout.attributes.size());
     for (const VertexAttribute& attribute : layout.attributes) {
-        descriptions.push_back({attribute.location, 0, attribute.format, attribute.offset});
+        const std::uint32_t binding =
+            attribute.source == VertexSource::shared_constant ? shared_constant_binding : per_vertex_binding;
+        descriptions.push_back({attribute.location, binding, attribute.format, attribute.offset});
+    }
+    return descriptions;
+}
+
+std::vector<VkVertexInputBindingDescription> binding_descriptions(const VertexLayout& layout) {
+    std::vector<VkVertexInputBindingDescription> descriptions{
+        {per_vertex_binding, layout.stride, VK_VERTEX_INPUT_RATE_VERTEX},
+    };
+    if (layout.constant_stride != 0) {
+        descriptions.push_back({shared_constant_binding, layout.constant_stride, VK_VERTEX_INPUT_RATE_INSTANCE});
     }
     return descriptions;
 }
@@ -33,13 +46,14 @@ VkPipelineColorBlendAttachmentState blend_attachment(Blending blending) {
         .colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT
             | VK_COLOR_COMPONENT_A_BIT,
     };
-    if (blending == Blending::alpha) {
+    const std::optional<BlendFactors> factors = blend_factors(blending);
+    if (factors) {
         attachment.blendEnable = VK_TRUE;
-        attachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-        attachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+        attachment.srcColorBlendFactor = factors->source_color;
+        attachment.dstColorBlendFactor = factors->destination_color;
         attachment.colorBlendOp = VK_BLEND_OP_ADD;
-        attachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-        attachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+        attachment.srcAlphaBlendFactor = factors->source_alpha;
+        attachment.dstAlphaBlendFactor = factors->destination_alpha;
         attachment.alphaBlendOp = VK_BLEND_OP_ADD;
     }
     return attachment;
@@ -50,17 +64,13 @@ DeviceHandle<VkPipeline> create_pipeline(VkDevice device, const GraphicsPipeline
         shader_stage(VK_SHADER_STAGE_VERTEX_BIT, state.vertex_shader),
         shader_stage(VK_SHADER_STAGE_FRAGMENT_BIT, state.fragment_shader),
     };
-    const VkVertexInputBindingDescription vertex_binding{
-        .binding = 0,
-        .stride = state.vertex_layout.stride,
-        .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
-    };
+    const std::vector<VkVertexInputBindingDescription> vertex_bindings = binding_descriptions(state.vertex_layout);
     const std::vector<VkVertexInputAttributeDescription> vertex_attributes =
         attribute_descriptions(state.vertex_layout);
     const VkPipelineVertexInputStateCreateInfo vertex_input{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-        .vertexBindingDescriptionCount = 1,
-        .pVertexBindingDescriptions = &vertex_binding,
+        .vertexBindingDescriptionCount = static_cast<std::uint32_t>(vertex_bindings.size()),
+        .pVertexBindingDescriptions = vertex_bindings.data(),
         .vertexAttributeDescriptionCount = static_cast<std::uint32_t>(vertex_attributes.size()),
         .pVertexAttributeDescriptions = vertex_attributes.data(),
     };

@@ -35,7 +35,9 @@ std::size_t GraphicsPipelineStateHash::operator()(const GraphicsPipelineState& s
         digest.mix(attribute.location);
         digest.mix(attribute.format);
         digest.mix(attribute.offset);
+        digest.mix(attribute.source);
     }
+    digest.mix(state.vertex_layout.constant_stride);
     digest.mix(state.topology);
     digest.mix(state.cull_mode);
     digest.mix(state.depth.test);

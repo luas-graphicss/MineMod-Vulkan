@@ -6,12 +6,20 @@
 
 #include <vulkan/vulkan.h>
 
+#include "pipelines/blending.hpp"
+
 namespace minemod::renderer {
+
+enum class VertexSource : std::uint8_t { each_vertex, shared_constant };
+
+inline constexpr std::uint32_t per_vertex_binding = 0;
+inline constexpr std::uint32_t shared_constant_binding = 1;
 
 struct VertexAttribute {
     std::uint32_t location;
     VkFormat format;
     std::uint32_t offset;
+    VertexSource source = VertexSource::each_vertex;
 
     friend bool operator==(const VertexAttribute&, const VertexAttribute&) = default;
 };
@@ -19,6 +27,7 @@ struct VertexAttribute {
 struct VertexLayout {
     std::uint32_t stride;
     std::vector<VertexAttribute> attributes;
+    std::uint32_t constant_stride = 0;
 
     friend bool operator==(const VertexLayout&, const VertexLayout&) = default;
 };
@@ -30,8 +39,6 @@ struct DepthState {
 
     friend bool operator==(const DepthState&, const DepthState&) = default;
 };
-
-enum class Blending { disabled, alpha };
 
 struct GraphicsPipelineState {
     VkShaderModule vertex_shader;
