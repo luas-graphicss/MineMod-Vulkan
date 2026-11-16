@@ -21,6 +21,7 @@ public final class NativeSceneSession implements AutoCloseable {
                 setup.height(),
                 setup.maxTextures(),
                 setup.maxSections(),
+                setup.sharesAttachments(),
                 setup.windowSurface(),
                 setup.uploadBytesPerFrame(),
                 setup.geometryBytesPerFrame(),
@@ -74,6 +75,10 @@ public final class NativeSceneSession implements AutoCloseable {
         return new SceneDiagnostics(this);
     }
 
+    public SceneSharing sharing() {
+        return new SceneSharing(this);
+    }
+
     @Override
     public synchronized void close() {
         if (address == CLOSED) {
@@ -100,6 +105,7 @@ public final class NativeSceneSession implements AutoCloseable {
             int height,
             int maxTextures,
             int maxSections,
+            boolean sharesAttachments,
             long windowSurface,
             long uploadBytesPerFrame,
             long geometryBytesPerFrame,

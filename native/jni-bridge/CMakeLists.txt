@@ -15,7 +15,8 @@ if(TARGET minemod::scene_session)
         src/reload/scene_reload_calls.cpp
         src/scene/scene_calls.cpp
         src/scene/scene_host_calls.cpp
-        src/scene/scene_session_calls.cpp)
+        src/scene/scene_session_calls.cpp
+        src/sharing/scene_sharing_calls.cpp)
     target_link_libraries(minemod_jni PRIVATE minemod::scene_session)
 else()
     target_sources(minemod_jni PRIVATE src/scene/no_scene_calls.cpp)

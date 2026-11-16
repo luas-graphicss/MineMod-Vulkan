@@ -22,6 +22,7 @@ jint JNICALL create(
     jint height,
     jint max_textures,
     jint max_sections,
+    jboolean shares_attachments,
     jlong window_surface,
     jlong upload_bytes_per_frame,
     jlong geometry_bytes_per_frame,
@@ -37,7 +38,7 @@ jint JNICALL create(
         .height = static_cast<std::uint32_t>(height),
         .max_textures = static_cast<std::uint32_t>(max_textures),
         .max_sections = static_cast<std::uint32_t>(max_sections),
-        .flags = 0,
+        .flags = shares_attachments == JNI_TRUE ? MINEMOD_SCENE_SESSION_SHARED_ATTACHMENTS : 0,
         .window_surface = static_cast<std::uint64_t>(window_surface),
         .upload_bytes_per_frame = static_cast<std::uint64_t>(upload_bytes_per_frame),
         .geometry_bytes_per_frame = static_cast<std::uint64_t>(geometry_bytes_per_frame),
@@ -131,7 +132,7 @@ jint JNICALL read_counters(JNIEnv* env, jclass, jlong address, jlongArray fields
 
 bool register_scene_session_calls(JNIEnv& env) noexcept {
     const std::array methods{
-        native_method("nativeCreate", "(JIIIIJJJ[J)I", &create),
+        native_method("nativeCreate", "(JIIIIZJJJ[J)I", &create),
         native_method("nativeDestroy", "(J)V", &destroy),
         native_method("nativeSubmit", "(JLjava/nio/ByteBuffer;II[J)I", &submit),
         native_method("nativeResize", "(JII)I", &resize),
