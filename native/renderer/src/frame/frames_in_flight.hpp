@@ -25,6 +25,8 @@ public:
     ~FramesInFlight();
 
     Frame begin();
+    Frame submit_part(const SubmitSemaphores& semaphores = {});
+    void wait_for_submitted_parts();
     void submit(const SubmitSemaphores& semaphores = {});
 
     std::optional<std::uint64_t> completed_frame() const noexcept {
@@ -32,18 +34,29 @@ public:
     }
 
 private:
-    struct Slot {
-        DeviceHandle<VkCommandPool> pool;
+    struct Part {
         VkCommandBuffer commands = VK_NULL_HANDLE;
         DeviceHandle<VkFence> submitted;
+    };
+
+    struct Slot {
+        DeviceHandle<VkCommandPool> pool;
+        std::vector<Part> parts;
+        std::size_t submitted_parts = 0;
         std::optional<std::uint64_t> pending_frame;
     };
 
     static Slot create_slot(const Device& device);
+    static Part create_part(const Device& device, VkCommandPool pool);
 
     Slot& next_slot() noexcept {
         return slots_[next_frame_ % slots_.size()];
     }
+
+    Slot& recording_slot();
+    void wait_for_parts_of(const Slot& slot) const;
+    void recycle(Slot& slot);
+    void enqueue_part(Slot& slot, const SubmitSemaphores& semaphores);
 
     const Device& device_;
     std::vector<Slot> slots_;
