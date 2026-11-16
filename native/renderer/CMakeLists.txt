@@ -17,6 +17,11 @@ add_library(minemod_renderer STATIC
     src/device/vulkan_error.cpp
     src/frame/frame_readback.cpp
     src/frame/frame_targets.cpp
+    src/graph/graph_plan.cpp
+    src/graph/image_state.cpp
+    src/graph/pass_order.cpp
+    src/graph/render_graph.cpp
+    src/graph/transient_slots.cpp
     src/pipelines/shader_module.cpp
     src/presentation/headless_surface.cpp
     src/presentation/swapchain.cpp
