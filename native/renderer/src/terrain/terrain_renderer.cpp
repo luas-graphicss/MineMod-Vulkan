@@ -2,7 +2,9 @@
 
 #include <stdint.h>
 
+#include <algorithm>
 #include <array>
+#include <iterator>
 #include <span>
 #include <stdexcept>
 #include <vector>
@@ -52,6 +54,18 @@ DeviceHandle<VkPipelineLayout> create_pipeline_layout(const Device& device, VkDe
     };
     return create_device_handle<VkPipelineLayout>(
         device.get(), create_info, vkCreatePipelineLayout, vkDestroyPipelineLayout, "creating the terrain pipeline layout");
+}
+
+std::vector<SectionPosition> drawable_sections(const TerrainFrame& frame, const TerrainSections& sections) {
+    if (!frame.reachable_sections) {
+        return sections.positions();
+    }
+    std::vector<SectionPosition> published;
+    std::ranges::copy_if(
+        *frame.reachable_sections, std::back_inserter(published), [&sections](const SectionPosition& section) {
+            return sections.find(section) != nullptr;
+        });
+    return published;
 }
 
 class LayerRecorder {
@@ -136,7 +150,7 @@ std::uint32_t TerrainRenderer::record(
     }
 
     const std::vector<SectionPosition> visible =
-        visible_sections(sections.positions(), Frustum(frame.view_projection), frame.camera);
+        visible_sections(drawable_sections(frame, sections), Frustum(frame.view_projection), frame.camera);
 
     set_upright_viewport(commands, frame.extent);
     vkCmdBindDescriptorSets(

@@ -4,6 +4,7 @@ add_library(minemod_renderer_test_support STATIC
     support/presenting_device.cpp
     support/scene_vertices.cpp
     support/terrain_quads.cpp
+    support/terrain_stage.cpp
     support/validated_device.cpp)
 target_include_directories(minemod_renderer_test_support PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(minemod_renderer_test_support PUBLIC minemod::renderer)
@@ -37,6 +38,7 @@ add_executable(minemod_renderer_resource_tests
     lifetime/retirement_queue_test.cpp
     metrics/frame_metrics_test.cpp
     presentation/frame_lifecycle_test.cpp
+    presentation/present_pacing_test.cpp
     reload/resource_generations_test.cpp
     shaders/core_shader_contract_test.cpp
     shaders/shader_interface_test.cpp
@@ -67,15 +69,18 @@ minemod_configure_vulkan_target(minemod_renderer_resource_device_tests)
 add_executable(minemod_world_geometry_tests
     environment/fog_test.cpp
     math/matrix_test.cpp
+    terrain/section_containing_test.cpp
     terrain/section_mesh_test.cpp
     terrain/section_selection_test.cpp
     terrain/section_space_test.cpp
     terrain/terrain_layer_test.cpp
-    visibility/frustum_test.cpp)
+    visibility/frustum_test.cpp
+    visibility/section_occlusion_test.cpp)
 target_link_libraries(minemod_world_geometry_tests PRIVATE minemod_renderer_test_support minemod_doctest_main)
 minemod_configure_vulkan_target(minemod_world_geometry_tests)
 
 add_executable(minemod_world_geometry_device_tests
+    terrain/occluded_terrain_test.cpp
     terrain/terrain_scene_test.cpp
     terrain/terrain_sections_test.cpp)
 target_link_libraries(minemod_world_geometry_device_tests PRIVATE minemod_renderer_test_support minemod_doctest_main)

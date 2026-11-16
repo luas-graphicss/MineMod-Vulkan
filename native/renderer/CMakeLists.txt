@@ -68,8 +68,10 @@ add_library(minemod_renderer STATIC
     src/pipelines/graphics_pipeline_state.cpp
     src/pipelines/pipeline_cache.cpp
     src/pipelines/shader_module.cpp
+    src/presentation/binary_semaphore.cpp
     src/presentation/frame_lifecycle.cpp
     src/presentation/headless_surface.cpp
+    src/presentation/present_pacing.cpp
     src/presentation/presenter.cpp
     src/presentation/swapchain.cpp
     src/presentation/window_surface.cpp
@@ -96,6 +98,7 @@ add_library(minemod_renderer STATIC
     src/upload/arena_layout.cpp
     src/upload/upload_arena.cpp
     src/visibility/frustum.cpp
+    src/visibility/section_occlusion.cpp
     src/work/job_epochs.cpp)
 add_library(minemod::renderer ALIAS minemod_renderer)
 
