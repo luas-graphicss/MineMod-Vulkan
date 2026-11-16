@@ -42,7 +42,7 @@ abstract class FramebufferCallsMixin {
                 "_glRenderbufferStorage",
                 "_glFramebufferRenderbuffer",
                 "_glFramebufferTexture2D",
-                "_readPixels",
+                "_readPixels*",
                 "_glDrawPixels"
             },
             at = @At("HEAD"),
