@@ -5,17 +5,24 @@ target_include_directories(minemod_interop_test_support PUBLIC "${CMAKE_CURRENT_
 target_link_libraries(minemod_interop_test_support PUBLIC minemod::interop)
 minemod_configure_vulkan_target(minemod_interop_test_support)
 
-add_executable(minemod_interop_tests memory/owned_descriptor_test.cpp)
+add_executable(minemod_interop_tests
+    handoff/ownership_transfer_test.cpp
+    memory/owned_descriptor_test.cpp)
 target_link_libraries(minemod_interop_tests PRIVATE minemod::interop minemod_doctest_main)
 minemod_configure_vulkan_target(minemod_interop_tests)
 
 add_executable(minemod_interop_device_tests
     contexts/device_identity_test.cpp
+    handoff/shared_resource_handoff_test.cpp
     memory/shared_buffer_test.cpp
     memory/shared_image_test.cpp
     sync/shared_semaphore_test.cpp)
 target_link_libraries(minemod_interop_device_tests
-    PRIVATE minemod_interop_test_support minemod_renderer_test_support minemod_doctest_main)
+    PRIVATE
+        minemod::interop_harness
+        minemod_interop_test_support
+        minemod_renderer_test_support
+        minemod_doctest_main)
 minemod_configure_vulkan_target(minemod_interop_device_tests)
 
 add_test(NAME interop COMMAND minemod_interop_tests)

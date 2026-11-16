@@ -132,6 +132,13 @@
       ]
     },
     {
+      "name": "linux-scene-host",
+      "configurePreset": "linux-client",
+      "targets": [
+        "minemod_scene_host_jni"
+      ]
+    },
+    {
       "name": "windows-client",
       "configurePreset": "windows-client",
       "configuration": "RelWithDebInfo",
