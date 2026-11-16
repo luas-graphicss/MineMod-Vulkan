@@ -12,6 +12,8 @@ What runs today:
 - `native/abi` is the C ABI: version and capability negotiation, generational handles and command streams that are validated before they run.
 - `jvm/command-codec` writes and validates the same streams in Java 8 bytecode, and `jvm/native-bridge` drives native sessions over JNI on Java 8, 16, 17 and 21.
 - `native/renderer/src/graph` plans a frame from the passes it declares: their order, with cycles rejected by name, the lifetime of every image, with identical images sharing a slot once the first is no longer used, and the layout transitions between uses.
+- `native/renderer/src` holds the frame-side systems the graph relies on: frames in flight that are submitted without waiting for the GPU, resources retired until their last frame completes, a bounded upload arena, pipeline and sampler caches, descriptor pools that grow up to a limit, atlas packing, mip chains and texture uploads.
+- The same tree validates SPIR-V before a shader module is created and checks a core shader replacement against the interface it must keep, publishes resource generations at a frame boundary, marks section jobs stale when their world, section or resources change, tracks the frame lifecycle through resize, suspension and device loss, and records frame, pass, resource and queue metrics. No game adapter drives these systems yet.
 - `minemod_harness` creates a Vulkan 1.3 device, draws a textured and depth-tested scene through a planned frame, reads it back and presents it on a headless surface. `--validation` also checks synchronization.
 
 What does not exist yet: a game window or input on any Minecraft version, the Mesa/Zink OpenGL provider and its interop with the renderer, and any run on Windows or on a real GPU. `docs/architecture` says which decisions are backed by tests and which are still proposals.
@@ -43,7 +45,7 @@ cmake --build --preset linux-debug
 ctest --preset linux-debug
 ```
 
-Three tests carry the label `vulkan-device` and need a Vulkan driver. Without one, run `ctest --preset linux-debug -LE vulkan-device`.
+Four tests carry the label `vulkan-device` and need a Vulkan driver. Without one, run `ctest --preset linux-debug -LE vulkan-device`.
 
 The harness also runs on its own, here from the `linux-release` preset:
 
