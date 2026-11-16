@@ -46,6 +46,7 @@ add_library(minemod_renderer STATIC
     src/draw/batch_geometry.cpp
     src/draw/batch_renderer.cpp
     src/draw/primitive_mode.cpp
+    src/draw/static_mesh.cpp
     src/draw/vertex_format.cpp
     src/draw/view_constants.cpp
     src/frame/frame_readback.cpp

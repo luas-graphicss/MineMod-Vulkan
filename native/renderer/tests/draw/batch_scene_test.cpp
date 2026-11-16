@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <optional>
 #include <span>
+#include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
@@ -14,6 +15,7 @@
 #include "draw/batch_geometry.hpp"
 #include "draw/batch_renderer.hpp"
 #include "draw/material.hpp"
+#include "draw/static_mesh.hpp"
 #include "draw/view_constants.hpp"
 #include "environment/fog.hpp"
 #include "frame/frame_readback.hpp"
@@ -192,6 +194,21 @@ public:
         const std::vector<std::byte> bytes = encode_vertices(format, vertices);
         const BatchGeometry staged = stager_.stage({format, mode, bytes}).value();
         batches_.push_back(DrawBatch{format, staged, material, surface_set_, identity_matrix, color_modulator});
+    }
+
+    StaticMesh upload_mesh(const VertexFormat& format, std::span<const SceneVertex> quads) {
+        const std::vector<std::byte> bytes = encode_vertices(format, quads);
+        uploads_.reset();
+        BatchStager upload_stager(uploads_);
+        const BatchGeometry staged = upload_stager.stage({format, PrimitiveMode::quads, bytes}).value();
+        StaticMesh mesh(gpu_.device(), staged);
+        gpu_.device().submit([&](VkCommandBuffer commands) { mesh.record_upload(commands, staged); });
+        uploads_.reset();
+        return mesh;
+    }
+
+    void add_mesh(const VertexFormat& format, const StaticMesh& mesh, const Material& material) {
+        batches_.push_back(DrawBatch{format, mesh.geometry(), material, surface_set_, identity_matrix, untinted});
     }
 
     void add_line(const SceneVertex& start, const SceneVertex& end, const Material& material, float width) {
@@ -468,6 +485,26 @@ TEST_CASE("a batch that writes only depth hides what is drawn behind it afterwar
     check_pixel(pixels, left_center, {0, 0, 0});
     check_pixel(pixels, right_center, {255, 0, 0});
     CHECK(scene.validation_text() == "");
+}
+
+TEST_CASE("a mesh uploaded once is drawn in later frames after its staging memory was reused") {
+    BatchScene scene;
+    const StaticMesh dome = scene.upload_mesh(colored_format, quad_corners(whole_frame, colored(blue)));
+    scene.add_mesh(colored_format, dome, opaque);
+
+    check_pixel(scene.render(view_through(clear_air)), left_center, {0, 0, 255});
+    check_pixel(scene.render(view_through(clear_air)), right_center, {0, 0, 255});
+    CHECK(dome.size_bytes() == 4 * colored_format.stride() + 6 * sizeof(std::uint32_t));
+    CHECK(scene.validation_text() == "");
+}
+
+TEST_CASE("geometry staged for another mesh is rejected before anything is copied") {
+    const ValidatedDevice gpu;
+    const BatchGeometry sized_for{VK_NULL_HANDLE, {0, 64}, {64, 24}, 6};
+    const BatchGeometry larger{VK_NULL_HANDLE, {0, 128}, {128, 48}, 12};
+    const StaticMesh mesh(gpu.device(), sized_for);
+
+    CHECK_THROWS_AS(mesh.record_upload(VK_NULL_HANDLE, larger), std::invalid_argument);
 }
 
 TEST_CASE("fog fades a batch by the distance its shape measures") {
