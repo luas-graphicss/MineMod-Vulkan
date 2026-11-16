@@ -4,6 +4,7 @@
   "package": "io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "diagnostics.DebugScreenOverlayMixin",
     "diagnostics.MinecraftMixin",
     "draw.BufferUploaderMixin",
     "draw.GlStateManagerMixin",
