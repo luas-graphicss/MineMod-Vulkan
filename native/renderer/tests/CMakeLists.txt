@@ -31,6 +31,7 @@ minemod_add_shader_library(minemod_sprite_shaders sprite.vert sprite.frag)
 
 add_executable(minemod_renderer_resource_tests
     lifetime/retirement_queue_test.cpp
+    presentation/frame_lifecycle_test.cpp
     reload/resource_generations_test.cpp
     shaders/core_shader_contract_test.cpp
     shaders/shader_interface_test.cpp
@@ -48,6 +49,7 @@ minemod_configure_vulkan_target(minemod_renderer_resource_tests)
 
 add_executable(minemod_renderer_resource_device_tests
     descriptors/descriptor_pools_test.cpp
+    frame/frames_in_flight_test.cpp
     pipelines/pipeline_cache_test.cpp
     textures/sampler_cache_test.cpp
     textures/texture_upload_test.cpp

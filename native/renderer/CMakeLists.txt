@@ -42,6 +42,7 @@ add_library(minemod_renderer STATIC
     src/device/vulkan_error.cpp
     src/frame/frame_readback.cpp
     src/frame/frame_targets.cpp
+    src/frame/frames_in_flight.cpp
     src/graph/graph_images.cpp
     src/graph/graph_plan.cpp
     src/graph/image_state.cpp
@@ -54,6 +55,7 @@ add_library(minemod_renderer STATIC
     src/pipelines/graphics_pipeline_state.cpp
     src/pipelines/pipeline_cache.cpp
     src/pipelines/shader_module.cpp
+    src/presentation/frame_lifecycle.cpp
     src/presentation/headless_surface.cpp
     src/presentation/swapchain.cpp
     src/resources/buffer.cpp
