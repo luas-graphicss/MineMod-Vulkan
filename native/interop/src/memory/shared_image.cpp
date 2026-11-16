@@ -4,7 +4,7 @@
 
 #include "device/vulkan_error.hpp"
 #include "memory/external_support.hpp"
-#include "resources/memory_type.hpp"
+#include "textures/mip_chain.hpp"
 
 namespace minemod::interop {
 namespace {
@@ -12,33 +12,29 @@ namespace {
 std::string describe(const SharedImageDescription& description) {
     return std::to_string(description.extent.width) + "x" + std::to_string(description.extent.height)
         + " images of VkFormat " + std::to_string(description.format) + " with usage "
-        + std::to_string(description.usage);
+        + std::to_string(description.usage) + " and " + std::to_string(description.mip_levels) + " mip level(s)";
+}
+
+bool fits(const SharedImageDescription& description, const ExternalSupport& support) {
+    return description.extent.width <= support.max_extent.width
+        && description.extent.height <= support.max_extent.height
+        && description.mip_levels >= 1
+        && description.mip_levels <= support.max_mip_levels
+        && description.mip_levels <= renderer::full_mip_level_count(description.extent);
 }
 
 void require_exportable(VkPhysicalDevice device, const SharedImageDescription& description) {
     const ExternalSupport support = query_external_support(device, description.format, description.usage);
-    const bool fits = description.extent.width <= support.max_extent.width
-        && description.extent.height <= support.max_extent.height;
-    if (!support.exportable || !fits) {
+    if (!support.exportable || !fits(description, support)) {
         throw renderer::UnsupportedSystem(
             "the device cannot export " + describe(description) + " to the OpenGL provider");
     }
 }
 
-PFN_vkGetMemoryFdKHR find_memory_export(VkDevice device) {
-    const auto export_memory =
-        reinterpret_cast<PFN_vkGetMemoryFdKHR>(vkGetDeviceProcAddr(device, "vkGetMemoryFdKHR"));
-    if (export_memory == nullptr) {
-        throw renderer::UnsupportedSystem(
-            "the device was created without " VK_KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME ", so it cannot share images");
-    }
-    return export_memory;
-}
-
 }
 
 SharedImage::SharedImage(const renderer::Device& device, const SharedImageDescription& description)
-    : device_(device.get()), get_memory_descriptor_(find_memory_export(device.get())) {
+    : memory_export_(device.get()) {
     require_exportable(device.physical(), description);
 
     const VkExternalMemoryImageCreateInfo external_image{
@@ -51,7 +47,7 @@ SharedImage::SharedImage(const renderer::Device& device, const SharedImageDescri
         .imageType = VK_IMAGE_TYPE_2D,
         .format = description.format,
         .extent = {description.extent.width, description.extent.height, 1},
-        .mipLevels = 1,
+        .mipLevels = description.mip_levels,
         .arrayLayers = 1,
         .samples = VK_SAMPLE_COUNT_1_BIT,
         .tiling = VK_IMAGE_TILING_OPTIMAL,
@@ -60,43 +56,19 @@ SharedImage::SharedImage(const renderer::Device& device, const SharedImageDescri
         .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
     };
     image_ = renderer::create_device_handle<VkImage>(
-        device_, create_info, vkCreateImage, vkDestroyImage, "creating a shared image");
+        device.get(), create_info, vkCreateImage, vkDestroyImage, "creating a shared image");
 
     VkMemoryRequirements requirements{};
-    vkGetImageMemoryRequirements(device_, image_.get(), &requirements);
+    vkGetImageMemoryRequirements(device.get(), image_.get(), &requirements);
     allocation_size_ = requirements.size;
-
-    const VkMemoryDedicatedAllocateInfo dedicated{
-        .sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO,
-        .image = image_.get(),
-    };
-    const VkExportMemoryAllocateInfo exported{
-        .sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO,
-        .pNext = &dedicated,
-        .handleTypes = shared_handle_type,
-    };
-    const VkMemoryAllocateInfo allocation{
-        .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-        .pNext = &exported,
-        .allocationSize = requirements.size,
-        .memoryTypeIndex = renderer::find_memory_type(
-            device.physical(), requirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT),
-    };
-    memory_ = renderer::create_device_handle<VkDeviceMemory>(
-        device_, allocation, vkAllocateMemory, vkFreeMemory, "allocating shared image memory");
+    memory_ = allocate_exportable_memory(
+        device, requirements, {.sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO, .image = image_.get()});
     renderer::require_success(
-        vkBindImageMemory(device_, image_.get(), memory_.get(), 0), "binding shared image memory");
+        vkBindImageMemory(device.get(), image_.get(), memory_.get(), 0), "binding shared image memory");
 }
 
 OwnedDescriptor SharedImage::export_memory() const {
-    const VkMemoryGetFdInfoKHR request{
-        .sType = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR,
-        .memory = memory_.get(),
-        .handleType = shared_handle_type,
-    };
-    int descriptor = -1;
-    renderer::require_success(get_memory_descriptor_(device_, &request, &descriptor), "exporting shared image memory");
-    return OwnedDescriptor(descriptor);
+    return memory_export_.export_descriptor(memory_.get());
 }
 
 }

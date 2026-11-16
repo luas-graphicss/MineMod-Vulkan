@@ -1,11 +1,13 @@
 #pragma once
 
 #include <array>
+#include <cstdint>
 
 #include <vulkan/vulkan.h>
 
 #include "device/device.hpp"
 #include "device/device_handle.hpp"
+#include "memory/exportable_memory.hpp"
 #include "memory/owned_descriptor.hpp"
 
 namespace minemod::interop {
@@ -16,6 +18,7 @@ struct SharedImageDescription {
     VkExtent2D extent;
     VkFormat format;
     VkImageUsageFlags usage;
+    std::uint32_t mip_levels = 1;
 };
 
 class SharedImage {
@@ -33,8 +36,7 @@ public:
     OwnedDescriptor export_memory() const;
 
 private:
-    VkDevice device_;
-    PFN_vkGetMemoryFdKHR get_memory_descriptor_;
+    MemoryExport memory_export_;
     VkDeviceSize allocation_size_ = 0;
     renderer::DeviceHandle<VkDeviceMemory> memory_;
     renderer::DeviceHandle<VkImage> image_;

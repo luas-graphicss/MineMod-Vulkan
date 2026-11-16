@@ -34,6 +34,7 @@ ExternalSupport query_external_support(VkPhysicalDevice device, VkFormat format,
     return ExternalSupport{
         (features & VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT) != 0,
         {max_extent.width, max_extent.height},
+        answer.imageFormatProperties.maxMipLevels,
     };
 }
 
