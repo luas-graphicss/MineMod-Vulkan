@@ -16,7 +16,7 @@ val hostArchitecture = when (val reported = System.getProperty("os.arch")) {
     else -> reported
 }
 val nativePlatform = (if (isWindows) "windows" else "linux") + "-" + hostArchitecture
-val nativePreset = if (isWindows) "windows-jni" else "linux-jni"
+val nativePreset = if (isWindows) "windows-client" else "linux-client"
 val nativeLibraryName = if (isWindows) "minemod_jni.dll" else "libminemod_jni.so"
 
 version = modVersion

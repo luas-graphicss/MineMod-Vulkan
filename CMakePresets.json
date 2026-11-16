@@ -58,7 +58,8 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo",
         "MINEMOD_BUILD_JNI_BRIDGE": "ON",
-        "MINEMOD_BUILD_TESTS": "OFF"
+        "MINEMOD_BUILD_TESTS": "OFF",
+        "MINEMOD_BUILD_RENDERER": "OFF"
       }
     },
     {
@@ -68,6 +69,23 @@
         "MINEMOD_BUILD_JNI_BRIDGE": "ON",
         "MINEMOD_BUILD_TESTS": "OFF",
         "MINEMOD_BUILD_RENDERER": "OFF"
+      }
+    },
+    {
+      "name": "linux-client",
+      "inherits": "linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "MINEMOD_BUILD_JNI_BRIDGE": "ON",
+        "MINEMOD_BUILD_TESTS": "OFF"
+      }
+    },
+    {
+      "name": "windows-client",
+      "inherits": "windows",
+      "cacheVariables": {
+        "MINEMOD_BUILD_JNI_BRIDGE": "ON",
+        "MINEMOD_BUILD_TESTS": "OFF"
       }
     }
   ],
@@ -100,6 +118,21 @@
     {
       "name": "windows-jni",
       "configurePreset": "windows-jni",
+      "configuration": "RelWithDebInfo",
+      "targets": [
+        "minemod_jni"
+      ]
+    },
+    {
+      "name": "linux-client",
+      "configurePreset": "linux-client",
+      "targets": [
+        "minemod_jni"
+      ]
+    },
+    {
+      "name": "windows-client",
+      "configurePreset": "windows-client",
       "configuration": "RelWithDebInfo",
       "targets": [
         "minemod_jni"
