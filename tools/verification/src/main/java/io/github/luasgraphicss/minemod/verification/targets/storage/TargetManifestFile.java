@@ -34,6 +34,10 @@ public final class TargetManifestFile {
         return new TargetManifestFile(repositoryRoot.resolve(REPOSITORY_PATH));
     }
 
+    public static TargetManifestFile at(Path path) {
+        return new TargetManifestFile(path);
+    }
+
     public Path path() {
         return path;
     }
