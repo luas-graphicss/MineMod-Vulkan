@@ -98,6 +98,8 @@ add_executable(minemod_scene_drawing_tests
     draw/quad_order_test.cpp
     draw/texture_transform_test.cpp
     draw/vertex_format_test.cpp
+    interface/clip_rectangle_test.cpp
+    interface/hud_blending_test.cpp
     pipelines/blending_test.cpp
     shaders/scene_shader_contract_test.cpp)
 target_link_libraries(minemod_scene_drawing_tests
@@ -109,6 +111,8 @@ add_executable(minemod_scene_drawing_device_tests
     draw/batch_scene_test.cpp
     draw/quad_order_scene_test.cpp
     draw/texture_transform_scene_test.cpp
+    interface/clip_scene_test.cpp
+    interface/hud_blending_scene_test.cpp
     scene/scene_composition_test.cpp
     scene/scene_frames_test.cpp)
 target_link_libraries(minemod_scene_drawing_device_tests PRIVATE minemod_renderer_test_support minemod_doctest_main)

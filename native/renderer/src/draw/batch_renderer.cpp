@@ -125,6 +125,7 @@ VkDescriptorSet BatchRenderer::bind_texture(DescriptorPools& pools, VkImageView 
 void BatchRenderer::record(VkCommandBuffer commands, const BatchPass& pass, std::span<const DrawBatch> batches) {
     set_upright_viewport(commands, pass.extent);
     VkDescriptorSet bound_view = VK_NULL_HANDLE;
+    const VkRect2D whole_frame{{0, 0}, pass.extent};
 
     const std::array frame_size{static_cast<float>(pass.extent.width), static_cast<float>(pass.extent.height)};
     for (const DrawBatch& batch : batches) {
@@ -151,6 +152,9 @@ void BatchRenderer::record(VkCommandBuffer commands, const BatchPass& pass, std:
             batch.texture_transform,
         };
         vkCmdPushConstants(commands, pipeline_layout_.get(), constant_stages, 0, sizeof(constants), &constants);
+
+        const VkRect2D clip = batch.clip.value_or(whole_frame);
+        vkCmdSetScissor(commands, 0, 1, &clip);
 
         const std::array vertex_buffers{batch.geometry.buffer, element_defaults_.get()};
         const std::array<VkDeviceSize, 2> first_bytes{batch.geometry.vertices.offset, 0};

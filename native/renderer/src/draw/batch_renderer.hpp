@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <optional>
 #include <span>
 #include <utility>
 #include <vector>
@@ -39,6 +40,7 @@ struct DrawBatch {
     float line_width = 1.0f;
     VkDescriptorSet view = VK_NULL_HANDLE;
     TextureTransform texture_transform{};
+    std::optional<VkRect2D> clip{};
 };
 
 struct BatchPass {

@@ -63,6 +63,7 @@ add_library(minemod_renderer STATIC
     src/graph/render_graph.cpp
     src/graph/transient_images.cpp
     src/graph/transient_slots.cpp
+    src/interface/clip_rectangle.cpp
     src/lifetime/retirement_queue.cpp
     src/math/matrix.cpp
     src/metrics/frame_metrics.cpp

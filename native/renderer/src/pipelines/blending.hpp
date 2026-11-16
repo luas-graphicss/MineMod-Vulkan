@@ -6,7 +6,7 @@
 
 namespace minemod::renderer {
 
-enum class Blending { disabled, alpha, additive, lightning, glint, crumbling };
+enum class Blending { disabled, alpha, additive, lightning, glint, crumbling, inversion, darkening };
 
 struct BlendFactors {
     VkBlendFactor source_color;
@@ -37,6 +37,16 @@ constexpr std::optional<BlendFactors> blend_factors(Blending blending) noexcept 
     case Blending::crumbling:
         return BlendFactors{
             VK_BLEND_FACTOR_DST_COLOR, VK_BLEND_FACTOR_SRC_COLOR, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO};
+    case Blending::inversion:
+        return BlendFactors{
+            VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR,
+            VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR,
+            VK_BLEND_FACTOR_ONE,
+            VK_BLEND_FACTOR_ZERO,
+        };
+    case Blending::darkening:
+        return BlendFactors{
+            VK_BLEND_FACTOR_ZERO, VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR, VK_BLEND_FACTOR_ONE, VK_BLEND_FACTOR_ZERO};
     case Blending::disabled:
         break;
     }
