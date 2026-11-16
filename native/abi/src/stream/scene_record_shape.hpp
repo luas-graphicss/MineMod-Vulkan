@@ -29,6 +29,10 @@ inline constexpr std::array scene_record_shapes{
     SceneRecordShape{MINEMOD_OPCODE_SET_TERRAIN, MINEMOD_SET_TERRAIN_BYTES, RecordTail::none},
     SceneRecordShape{MINEMOD_OPCODE_DRAW_BATCH, MINEMOD_DRAW_BATCH_BYTES, RecordTail::blob},
     SceneRecordShape{MINEMOD_OPCODE_END_FRAME, MINEMOD_END_FRAME_BYTES, RecordTail::none},
+    SceneRecordShape{MINEMOD_OPCODE_SET_CLIP, MINEMOD_SET_CLIP_BYTES, RecordTail::none},
+    SceneRecordShape{MINEMOD_OPCODE_CLEAR_CLIP, MINEMOD_CLEAR_CLIP_BYTES, RecordTail::none},
+    SceneRecordShape{MINEMOD_OPCODE_SET_TEXTURE_TRANSFORM, MINEMOD_SET_TEXTURE_TRANSFORM_BYTES, RecordTail::none},
+    SceneRecordShape{MINEMOD_OPCODE_SET_QUAD_ORDER, MINEMOD_SET_QUAD_ORDER_BYTES, RecordTail::none},
 };
 
 constexpr const SceneRecordShape* find_scene_record_shape(std::uint16_t opcode) noexcept {
