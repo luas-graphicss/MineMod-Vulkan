@@ -34,6 +34,8 @@ function(minemod_add_shader_library target)
 endfunction()
 
 add_library(minemod_renderer STATIC
+    src/descriptors/descriptor_layout.cpp
+    src/descriptors/descriptor_pools.cpp
     src/device/device.cpp
     src/device/instance.cpp
     src/device/physical_device.cpp
@@ -49,6 +51,8 @@ add_library(minemod_renderer STATIC
     src/graph/transient_images.cpp
     src/graph/transient_slots.cpp
     src/lifetime/retirement_queue.cpp
+    src/pipelines/graphics_pipeline_state.cpp
+    src/pipelines/pipeline_cache.cpp
     src/pipelines/shader_module.cpp
     src/presentation/headless_surface.cpp
     src/presentation/swapchain.cpp

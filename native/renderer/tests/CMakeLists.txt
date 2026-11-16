@@ -41,9 +41,11 @@ target_link_libraries(minemod_renderer_resource_tests
 minemod_configure_vulkan_target(minemod_renderer_resource_tests)
 
 add_executable(minemod_renderer_resource_device_tests
+    descriptors/descriptor_pools_test.cpp
+    pipelines/pipeline_cache_test.cpp
     upload/upload_arena_test.cpp)
 target_link_libraries(minemod_renderer_resource_device_tests
-    PRIVATE minemod_renderer_test_support minemod_doctest_main)
+    PRIVATE minemod_renderer_test_support minemod_doctest_main minemod_sprite_shaders)
 minemod_configure_vulkan_target(minemod_renderer_resource_device_tests)
 
 add_test(NAME render_graph COMMAND minemod_render_graph_tests)

@@ -1,0 +1,144 @@
+#include "pipelines/pipeline_cache.hpp"
+
+#include <array>
+#include <cstdint>
+#include <vector>
+
+#include "device/vulkan_error.hpp"
+
+namespace minemod::renderer {
+
+namespace {
+
+VkPipelineShaderStageCreateInfo shader_stage(VkShaderStageFlagBits stage, VkShaderModule shader) {
+    return VkPipelineShaderStageCreateInfo{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+        .stage = stage,
+        .module = shader,
+        .pName = "main",
+    };
+}
+
+std::vector<VkVertexInputAttributeDescription> attribute_descriptions(const VertexLayout& layout) {
+    std::vector<VkVertexInputAttributeDescription> descriptions;
+    descriptions.reserve(layout.attributes.size());
+    for (const VertexAttribute& attribute : layout.attributes) {
+        descriptions.push_back({attribute.location, 0, attribute.format, attribute.offset});
+    }
+    return descriptions;
+}
+
+VkPipelineColorBlendAttachmentState blend_attachment(Blending blending) {
+    VkPipelineColorBlendAttachmentState attachment{
+        .colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT
+            | VK_COLOR_COMPONENT_A_BIT,
+    };
+    if (blending == Blending::alpha) {
+        attachment.blendEnable = VK_TRUE;
+        attachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+        attachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+        attachment.colorBlendOp = VK_BLEND_OP_ADD;
+        attachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+        attachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+        attachment.alphaBlendOp = VK_BLEND_OP_ADD;
+    }
+    return attachment;
+}
+
+DeviceHandle<VkPipeline> create_pipeline(VkDevice device, const GraphicsPipelineState& state) {
+    const std::array stages{
+        shader_stage(VK_SHADER_STAGE_VERTEX_BIT, state.vertex_shader),
+        shader_stage(VK_SHADER_STAGE_FRAGMENT_BIT, state.fragment_shader),
+    };
+    const VkVertexInputBindingDescription vertex_binding{
+        .binding = 0,
+        .stride = state.vertex_layout.stride,
+        .inputRate = VK_VERTEX_INPUT_RATE_VERTEX,
+    };
+    const std::vector<VkVertexInputAttributeDescription> vertex_attributes =
+        attribute_descriptions(state.vertex_layout);
+    const VkPipelineVertexInputStateCreateInfo vertex_input{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+        .vertexBindingDescriptionCount = 1,
+        .pVertexBindingDescriptions = &vertex_binding,
+        .vertexAttributeDescriptionCount = static_cast<std::uint32_t>(vertex_attributes.size()),
+        .pVertexAttributeDescriptions = vertex_attributes.data(),
+    };
+    const VkPipelineInputAssemblyStateCreateInfo input_assembly{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
+        .topology = state.topology,
+    };
+    const VkPipelineViewportStateCreateInfo viewport{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
+        .viewportCount = 1,
+        .scissorCount = 1,
+    };
+    const VkPipelineRasterizationStateCreateInfo rasterization{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+        .polygonMode = VK_POLYGON_MODE_FILL,
+        .cullMode = state.cull_mode,
+        .frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE,
+        .lineWidth = 1.0f,
+    };
+    const VkPipelineMultisampleStateCreateInfo multisample{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+        .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
+    };
+    const VkPipelineDepthStencilStateCreateInfo depth{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
+        .depthTestEnable = state.depth.test ? VK_TRUE : VK_FALSE,
+        .depthWriteEnable = state.depth.write ? VK_TRUE : VK_FALSE,
+        .depthCompareOp = state.depth.compare,
+    };
+    const VkPipelineColorBlendAttachmentState color_attachment = blend_attachment(state.blending);
+    const VkPipelineColorBlendStateCreateInfo color_blend{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+        .attachmentCount = 1,
+        .pAttachments = &color_attachment,
+    };
+    const std::array dynamic_states{VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR};
+    const VkPipelineDynamicStateCreateInfo dynamic_state{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
+        .dynamicStateCount = static_cast<std::uint32_t>(dynamic_states.size()),
+        .pDynamicStates = dynamic_states.data(),
+    };
+    const VkPipelineRenderingCreateInfo rendering{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO,
+        .colorAttachmentCount = 1,
+        .pColorAttachmentFormats = &state.color_format,
+        .depthAttachmentFormat = state.depth_format,
+    };
+    const VkGraphicsPipelineCreateInfo create_info{
+        .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+        .pNext = &rendering,
+        .stageCount = static_cast<std::uint32_t>(stages.size()),
+        .pStages = stages.data(),
+        .pVertexInputState = &vertex_input,
+        .pInputAssemblyState = &input_assembly,
+        .pViewportState = &viewport,
+        .pRasterizationState = &rasterization,
+        .pMultisampleState = &multisample,
+        .pDepthStencilState = &depth,
+        .pColorBlendState = &color_blend,
+        .pDynamicState = &dynamic_state,
+        .layout = state.layout,
+    };
+
+    VkPipeline pipeline = VK_NULL_HANDLE;
+    require_success(
+        vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &create_info, nullptr, &pipeline),
+        "creating a graphics pipeline");
+    return DeviceHandle<VkPipeline>(device, pipeline, vkDestroyPipeline);
+}
+
+}
+
+VkPipeline PipelineCache::pipeline_for(const GraphicsPipelineState& state) {
+    const auto cached = pipelines_.find(state);
+    if (cached != pipelines_.end()) {
+        return cached->second.get();
+    }
+    return pipelines_.emplace(state, create_pipeline(device_, state)).first->second.get();
+}
+
+}
