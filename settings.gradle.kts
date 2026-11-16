@@ -20,4 +20,5 @@ rootProject.name = "minemod-vulkan"
 
 include(":jvm:render-contract")
 include(":jvm:command-codec")
+include(":jvm:native-bridge")
 include(":tools:verification")

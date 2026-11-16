@@ -11,11 +11,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-final class CommandStreamCorpus {
-    static final class Entry {
-        final String name;
-        final AbiResult expected;
-        final byte[] bytes;
+public final class CommandStreamCorpus {
+    public static final class Entry {
+        public final String name;
+        public final AbiResult expected;
+        public final byte[] bytes;
 
         Entry(String name, AbiResult expected, byte[] bytes) {
             this.name = name;
@@ -23,7 +23,7 @@ final class CommandStreamCorpus {
             this.bytes = bytes;
         }
 
-        ByteBuffer stream() {
+        public ByteBuffer stream() {
             return ByteBuffer.wrap(bytes);
         }
     }
@@ -32,7 +32,7 @@ final class CommandStreamCorpus {
 
     private CommandStreamCorpus() {}
 
-    static List<Entry> load() throws IOException {
+    public static List<Entry> load() throws IOException {
         Path directory = Paths.get(System.getProperty("minemod.commandStreamCorpus"));
         List<Entry> entries = new ArrayList<>();
         try (DirectoryStream<Path> files = Files.newDirectoryStream(directory, "*.stream")) {
@@ -43,7 +43,7 @@ final class CommandStreamCorpus {
         return entries;
     }
 
-    static Entry named(String name) throws IOException {
+    public static Entry named(String name) throws IOException {
         for (Entry entry : load()) {
             if (entry.name.equals(name)) {
                 return entry;

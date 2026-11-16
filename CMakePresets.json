@@ -51,6 +51,23 @@
     {
       "name": "windows-release",
       "inherits": "windows"
+    },
+    {
+      "name": "linux-jni",
+      "inherits": "linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "MINEMOD_BUILD_JNI_BRIDGE": "ON",
+        "MINEMOD_BUILD_TESTS": "OFF"
+      }
+    },
+    {
+      "name": "windows-jni",
+      "inherits": "windows",
+      "cacheVariables": {
+        "MINEMOD_BUILD_JNI_BRIDGE": "ON",
+        "MINEMOD_BUILD_TESTS": "OFF"
+      }
     }
   ],
   "buildPresets": [
@@ -71,6 +88,21 @@
       "name": "windows-release",
       "configurePreset": "windows-release",
       "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "linux-jni",
+      "configurePreset": "linux-jni",
+      "targets": [
+        "minemod_jni"
+      ]
+    },
+    {
+      "name": "windows-jni",
+      "configurePreset": "windows-jni",
+      "configuration": "RelWithDebInfo",
+      "targets": [
+        "minemod_jni"
+      ]
     }
   ],
   "testPresets": [

@@ -10,10 +10,10 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 
-final class CommandSequenceGenerator {
-    static final class Sequence {
-        final ByteBuffer stream;
-        final int commandCount;
+public final class CommandSequenceGenerator {
+    public static final class Sequence {
+        public final ByteBuffer stream;
+        public final int commandCount;
 
         Sequence(ByteBuffer stream, int commandCount) {
             this.stream = stream;
@@ -32,11 +32,11 @@ final class CommandSequenceGenerator {
     private final List<ResourceHandle> liveBuffers = new ArrayList<>();
     private final List<Integer> liveSizes = new ArrayList<>();
 
-    CommandSequenceGenerator(Random random) {
+    public CommandSequenceGenerator(Random random) {
         this.random = random;
     }
 
-    Sequence next() {
+    public Sequence next() {
         CommandStreamWriter writer = new CommandStreamWriter(ByteBuffer.allocate(STREAM_CAPACITY));
         int commandCount = 1 + random.nextInt(MAX_COMMANDS);
         for (int command = 0; command < commandCount; command++) {
@@ -45,7 +45,7 @@ final class CommandSequenceGenerator {
         return new Sequence(writer.finish(), commandCount);
     }
 
-    static ByteBuffer mutate(ByteBuffer stream, Random random) {
+    public static ByteBuffer mutate(ByteBuffer stream, Random random) {
         byte[] bytes = new byte[stream.remaining()];
         stream.duplicate().get(bytes);
         ByteBuffer mutated = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
