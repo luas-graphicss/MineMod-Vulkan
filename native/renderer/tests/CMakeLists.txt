@@ -133,6 +133,7 @@ minemod_configure_vulkan_target(minemod_scene_session_test_support)
 add_executable(minemod_scene_session_device_tests
     session/scene_batch_options_test.cpp
     session/scene_corpus_test.cpp
+    session/scene_frame_effects_test.cpp
     session/scene_frames_test.cpp
     session/scene_metrics_test.cpp
     session/scene_presentation_test.cpp

@@ -187,7 +187,8 @@ public:
           sections_(retirements_),
           terrain_(gpu_.device(), pipelines_),
           batches_(gpu_.device(), pipelines_),
-          scene_(terrain_, batches_),
+          blur_(gpu_.device(), pipelines_, samplers_.sampler_for(nearest_sampler)),
+          scene_(terrain_, batches_, blur_),
           world_constants_(gpu_.device()),
           hand_constants_(gpu_.device()),
           interface_constants_(gpu_.device()) {
@@ -288,6 +289,7 @@ private:
     TerrainSections sections_;
     TerrainRenderer terrain_;
     BatchRenderer batches_;
+    FrameBlurRenderer blur_;
     SceneRenderer scene_;
     ViewConstants world_constants_;
     ViewConstants hand_constants_;

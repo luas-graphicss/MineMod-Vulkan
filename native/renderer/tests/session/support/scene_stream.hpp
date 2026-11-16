@@ -104,6 +104,8 @@ public:
     SceneStream& set_texture_transform(const std::array<float, 3>& u_row, const std::array<float, 3>& v_row);
     SceneStream& set_quad_order(std::uint32_t order);
     SceneStream& connect_section_faces(const SectionKey& section, std::uint64_t connections);
+    SceneStream& clear_depth();
+    SceneStream& blur_frame(float radius, std::uint32_t repeats);
 
     std::vector<std::uint8_t> build() const {
         return builder_.build();

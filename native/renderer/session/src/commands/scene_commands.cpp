@@ -289,4 +289,15 @@ Decoded<BatchSubmission> decode_batch_submission(std::span<const std::byte> payl
     };
 }
 
+Decoded<renderer::FrameBlur> decode_frame_blur(std::span<const std::byte> payload) {
+    ByteReader fields(payload);
+    const float radius = fields.read_float();
+    const auto repeats = fields.read<std::uint32_t>();
+    const bool is_measured = radius >= 0.0f && radius <= MINEMOD_BLUR_MAX_RADIUS;
+    if (!is_measured || repeats < 1 || repeats > MINEMOD_BLUR_MAX_REPEATS) {
+        return MINEMOD_RESULT_MALFORMED_STREAM;
+    }
+    return renderer::FrameBlur{radius, repeats};
+}
+
 }

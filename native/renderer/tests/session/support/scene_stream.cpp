@@ -191,4 +191,14 @@ SceneStream& SceneStream::connect_section_faces(const SectionKey& section, std::
     return *this;
 }
 
+SceneStream& SceneStream::clear_depth() {
+    builder_.command(MINEMOD_OPCODE_CLEAR_DEPTH, {});
+    return *this;
+}
+
+SceneStream& SceneStream::blur_frame(float radius, std::uint32_t repeats) {
+    builder_.command(MINEMOD_OPCODE_BLUR_FRAME, Payload().f32(radius).u32(repeats).bytes());
+    return *this;
+}
+
 }

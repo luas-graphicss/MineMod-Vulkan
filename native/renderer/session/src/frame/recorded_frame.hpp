@@ -10,6 +10,7 @@
 #include <vulkan/vulkan.h>
 
 #include "draw/batch_renderer.hpp"
+#include "effects/frame_blur.hpp"
 #include "frame/batch_options.hpp"
 #include "minemod/abi/handle.h"
 #include "minemod/abi/scene_commands.h"
@@ -28,11 +29,18 @@ struct StagedTextureWrite {
     renderer::ArenaRegion staged;
 };
 
+struct BackdropBlur {
+    renderer::FrameBlur blur;
+    std::size_t interface_batches;
+};
+
 struct RecordedFrame {
     void clear() {
         is_open = false;
         draws_world = false;
         uploaded_sections = false;
+        clears_depth = false;
+        backdrop_blur.reset();
         views.fill(VK_NULL_HANDLE);
         terrain.reset();
         batch_options = BatchOptions{};
@@ -47,6 +55,8 @@ struct RecordedFrame {
     bool is_open = false;
     bool draws_world = false;
     bool uploaded_sections = false;
+    bool clears_depth = false;
+    std::optional<BackdropBlur> backdrop_blur;
     std::array<float, 4> clear_color{};
     std::array<VkDescriptorSet, MINEMOD_FRAME_MAX_VIEWS> views{};
     std::optional<renderer::TerrainFrame> terrain;

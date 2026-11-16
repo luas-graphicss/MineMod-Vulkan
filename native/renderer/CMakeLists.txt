@@ -35,6 +35,7 @@ endfunction()
 
 minemod_add_shader_library(minemod_terrain_shaders terrain.vert terrain.frag)
 minemod_add_shader_library(minemod_scene_shaders scene.vert scene.frag)
+minemod_add_shader_library(minemod_effect_shaders blur.vert blur.frag)
 
 add_library(minemod_renderer STATIC
     src/descriptors/descriptor_layout.cpp
@@ -50,6 +51,7 @@ add_library(minemod_renderer STATIC
     src/draw/static_mesh.cpp
     src/draw/vertex_format.cpp
     src/draw/view_constants.cpp
+    src/effects/frame_blur.cpp
     src/frame/frame_readback.cpp
     src/frame/frame_rendering.cpp
     src/frame/frame_targets.cpp
@@ -113,7 +115,7 @@ add_library(minemod::renderer ALIAS minemod_renderer)
 target_include_directories(minemod_renderer PUBLIC src)
 target_link_libraries(minemod_renderer
     PUBLIC Vulkan::Vulkan
-    PRIVATE minemod_scene_shaders minemod_terrain_shaders)
+    PRIVATE minemod_effect_shaders minemod_scene_shaders minemod_terrain_shaders)
 minemod_configure_vulkan_target(minemod_renderer)
 
 add_subdirectory(harness)
