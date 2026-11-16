@@ -20,6 +20,9 @@ add_subdirectory(native/abi)
 
 if(MINEMOD_BUILD_RENDERER)
     add_subdirectory(native/renderer)
+    if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        add_subdirectory(native/interop)
+    endif()
 endif()
 
 if(MINEMOD_BUILD_JNI_BRIDGE)
