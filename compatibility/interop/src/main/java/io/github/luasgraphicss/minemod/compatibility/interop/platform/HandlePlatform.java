@@ -9,16 +9,22 @@ public enum HandlePlatform {
     WINDOWS_NT_HANDLE(false, "GL_EXT_memory_object_win32", "GL_EXT_semaphore_win32");
 
     private final boolean importTakesOwnership;
+    private final List<String> memoryExtensions;
     private final List<String> requiredExtensions;
 
     HandlePlatform(boolean importTakesOwnership, String memoryExtension, String semaphoreExtension) {
         this.importTakesOwnership = importTakesOwnership;
+        this.memoryExtensions = Collections.unmodifiableList(Arrays.asList("GL_EXT_memory_object", memoryExtension));
         this.requiredExtensions = Collections.unmodifiableList(
                 Arrays.asList("GL_EXT_memory_object", memoryExtension, "GL_EXT_semaphore", semaphoreExtension));
     }
 
     public boolean importTakesOwnership() {
         return importTakesOwnership;
+    }
+
+    public List<String> memoryExtensions() {
+        return memoryExtensions;
     }
 
     public List<String> requiredExtensions() {
