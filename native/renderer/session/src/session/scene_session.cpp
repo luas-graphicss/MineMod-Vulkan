@@ -24,6 +24,7 @@ namespace minemod::scene {
 namespace {
 
 constexpr std::array presentation_extensions{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+constexpr std::string_view texture_write_pass = "write textures";
 constexpr VkExtent2D white_extent{1, 1};
 constexpr std::array white_texel{std::byte{0xFF}, std::byte{0xFF}, std::byte{0xFF}, std::byte{0xFF}};
 constexpr renderer::SamplerDescription white_sampling{
@@ -121,6 +122,7 @@ SceneSession::SceneSession(std::shared_ptr<const SceneHost> host, const SessionS
       terrain_(device_, pipelines_),
       batches_(device_, pipelines_),
       scene_(terrain_, batches_),
+      reload_(device_),
       sections_(retirements_),
       intake_(device_, sections_, setup.limits),
       textures_(device_, samplers_, setup.limits.max_textures),
@@ -333,6 +335,7 @@ minemod_result SceneSession::begin_frame(std::span<const std::byte> payload) {
         return MINEMOD_RESULT_INVALID_ARGUMENT;
     }
     recording();
+    metrics_.start_frame();
     frame_.is_open = true;
     frame_.draws_world = start.command().draws_world;
     frame_.clear_color = start.command().clear_color;
@@ -426,6 +429,7 @@ minemod_result SceneSession::draw_batch(std::span<const std::byte> payload) {
         batch.line_width,
         frame_.views[batch.view],
     });
+    frame_.batches[batch.slot].back().program = reload_.published(batch.program);
     frame_.batch_options.apply_to(frame_.batches[batch.slot].back());
     return MINEMOD_RESULT_OK;
 }
@@ -503,7 +507,7 @@ minemod_result SceneSession::end_frame() {
     scene_.add_passes(graph, renderer::SceneTargets{color, depth, std::move(written_textures)}, scene, sections_);
 
     slot.planned = std::make_unique<renderer::PlannedFrame>(device_, std::move(graph));
-    slot.planned->record(frame.commands);
+    std::vector<renderer::PassSample> passes = pass_samples(slot.planned->record_timed(frame.commands));
     submit_frame(frame);
 
     for (const std::vector<renderer::DrawBatch>& batches : frame_.batches) {
@@ -513,8 +517,45 @@ minemod_result SceneSession::end_frame() {
     counters_.peak_geometry_bytes = std::max<std::uint64_t>(counters_.peak_geometry_bytes, slot.geometry.used());
     ++counters_.frames_drawn;
     has_drawn_frame_ = true;
+    metrics_.finish_frame(usage_of(frame.number, slot), std::move(passes));
     frame_.clear();
     return MINEMOD_RESULT_OK;
+}
+
+minemod_result SceneSession::begin_reload() {
+    return reload_.begin();
+}
+
+minemod_result SceneSession::stage_program(
+    std::uint32_t program, std::span<const std::uint32_t> vertex, std::span<const std::uint32_t> fragment) {
+    return reload_.stage(program, vertex, fragment);
+}
+
+minemod_result SceneSession::commit_reload() {
+    if (frame_.is_open) {
+        return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+    const minemod_result committed = reload_.commit(last_frame_using_removed_resources(), batches_, retirements_);
+    if (committed == MINEMOD_RESULT_OK) {
+        epochs_.reload_resources();
+    }
+    return committed;
+}
+
+minemod_result SceneSession::abort_reload() {
+    return reload_.abort();
+}
+
+const std::string& SceneSession::reload_report() const noexcept {
+    return reload_.report();
+}
+
+minemod_scene_metrics SceneSession::metrics() const {
+    return metrics_.numbers(state());
+}
+
+std::string SceneSession::metrics_report() const {
+    return metrics_.report(state(), limits_);
 }
 
 void SceneSession::upload_waiting_sections() {
@@ -623,7 +664,7 @@ std::vector<renderer::ImageId> SceneSession::add_texture_writes(renderer::Render
     }
     const VkBuffer staging = slot.uploads.buffer();
     graph.add_pass(
-        "write textures",
+        std::string(texture_write_pass),
         std::move(accesses),
         [staging, copies = std::move(copies)](VkCommandBuffer commands, const renderer::GraphImages&) {
             for (const Copy& copy : copies) {
@@ -648,6 +689,50 @@ void SceneSession::submit_frame(const renderer::FramesInFlight::Frame& frame) {
         presenter_->present(*target);
         ++counters_.frames_presented;
     }
+}
+
+std::vector<renderer::PassSample> SceneSession::pass_samples(std::span<const renderer::PassTiming> timings) const {
+    std::vector<renderer::PassSample> samples;
+    samples.reserve(timings.size());
+    for (const renderer::PassTiming& timing : timings) {
+        samples.push_back(renderer::PassSample{std::string(timing.name), timing.cpu_time, draws_in(timing.name)});
+    }
+    return samples;
+}
+
+std::uint32_t SceneSession::draws_in(std::string_view pass) const noexcept {
+    const auto batches_in = [this](std::size_t slot) {
+        return static_cast<std::uint32_t>(frame_.batches[slot].size());
+    };
+    if (pass == renderer::world_pass) {
+        return batches_in(MINEMOD_BATCH_SKY) + batches_in(MINEMOD_BATCH_SOLID) + batches_in(MINEMOD_BATCH_BLENDED)
+            + scene_.recorded_terrain_draws();
+    }
+    if (pass == renderer::hand_pass) {
+        return batches_in(MINEMOD_BATCH_HAND);
+    }
+    if (pass == renderer::interface_pass) {
+        return batches_in(MINEMOD_BATCH_INTERFACE);
+    }
+    return pass == texture_write_pass ? static_cast<std::uint32_t>(frame_.texture_writes.size()) : 0;
+}
+
+FrameUsage SceneSession::usage_of(std::uint64_t frame, const FrameSlot& slot) const noexcept {
+    const std::optional<std::uint64_t> completed = frames_.completed_frame();
+    const std::uint64_t unfinished = completed ? frame - *completed : frame + 1;
+    return FrameUsage{
+        frame,
+        textures_.texel_bytes(),
+        static_cast<std::uint32_t>(textures_.size()),
+        slot.uploads.used() + slot.geometry.used(),
+        static_cast<std::uint32_t>(pipelines_.pipeline_count()),
+        static_cast<std::size_t>(std::min<std::uint64_t>(unfinished, frames_in_flight)),
+        frames_in_flight,
+    };
+}
+
+SessionState SceneSession::state() const noexcept {
+    return SessionState{retirements_.pending_count(), reload_.generation()};
 }
 
 }

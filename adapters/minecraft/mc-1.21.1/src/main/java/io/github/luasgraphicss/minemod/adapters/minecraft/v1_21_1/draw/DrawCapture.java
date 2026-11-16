@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import com.mojang.blaze3d.vertex.VertexSorting;
 import io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.frame.GameFrame;
+import io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.shaders.ReplacedShaders;
 import io.github.luasgraphicss.minemod.client.draw.frame.GameDraw;
 import io.github.luasgraphicss.minemod.client.draw.vertex.GameVertexLayout;
 import io.github.luasgraphicss.minemod.codec.scene.PrimitiveMode;
@@ -46,6 +47,7 @@ public final class DrawCapture {
         Optional<ResourceHandle> texture =
                 isSampled ? GameFrame.textures().find(RenderSystem.getShaderTexture(SAMPLED_UNIT)) : Optional.empty();
         if (shader == null
+                || GameFrame.leavesTheWorldOut()
                 || !primitives.isPresent()
                 || !layout.isPresent()
                 || isSampled != texture.isPresent()
@@ -58,6 +60,7 @@ public final class DrawCapture {
                 .view(SceneViews.seenThrough(projection, shader, geometry.format()))
                 .state(GameFrame.state().renderState())
                 .shading(ShaderTraits.shadingOf(shader))
+                .program(ReplacedShaders.programOf(shader))
                 .alphaCutoff(ShaderTraits.alphaCutoffOf(shader))
                 .modelView(modelView.get(new float[MATRIX_VALUES]))
                 .lineWidth(RenderSystem.getShaderLineWidth());

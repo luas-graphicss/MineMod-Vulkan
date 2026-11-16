@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,7 +27,7 @@ abstract class LevelStagesMixin {
             Matrix4f frustum,
             Matrix4f projection,
             CallbackInfo callback) {
-        GameFrame.enterWorld();
+        GameFrame.enterWorld(camera.getPosition(), frustum, projection);
     }
 
     @Inject(method = "renderSectionLayer", at = @At("HEAD"), cancellable = true)
@@ -42,6 +43,7 @@ abstract class LevelStagesMixin {
             return;
         }
         if (layer == RenderType.solid()) {
+            GameFrame.seeTerrain(new Vec3(cameraX, cameraY, cameraZ), frustum, projection);
             GameFrame.enter(BatchSlot.SOLID);
         } else if (layer == RenderType.translucent()) {
             GameFrame.enter(BatchSlot.BLENDED);

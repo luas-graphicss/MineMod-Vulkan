@@ -5,6 +5,8 @@ add_library(minemod_scene_session STATIC
     src/commands/section_face_commands.cpp
     src/frame/frame_slot.cpp
     src/host/scene_host.cpp
+    src/metrics/session_metrics.cpp
+    src/reload/program_reload.cpp
     src/resources/texture_registry.cpp
     src/session/scene_session.cpp
     src/terrain/reachable_sections.cpp

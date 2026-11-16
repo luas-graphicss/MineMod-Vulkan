@@ -5,6 +5,8 @@ import io.github.luasgraphicss.minemod.codec.scene.PrimitiveMode;
 import java.util.Optional;
 
 final class PrimitiveModes {
+    private static final PrimitiveMode STRIP_OF_WIDENED_LINES = PrimitiveMode.TRIANGLE_STRIP;
+
     private PrimitiveModes() {}
 
     static Optional<PrimitiveMode> of(VertexFormat.Mode mode) {
@@ -19,6 +21,8 @@ final class PrimitiveModes {
                 return Optional.of(PrimitiveMode.TRIANGLE_FAN);
             case LINES:
                 return Optional.of(PrimitiveMode.LINES);
+            case LINE_STRIP:
+                return Optional.of(STRIP_OF_WIDENED_LINES);
             default:
                 return Optional.empty();
         }
