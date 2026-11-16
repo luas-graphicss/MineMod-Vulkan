@@ -37,7 +37,7 @@ std::vector<std::uint8_t> terrain_textures() {
         .build();
 }
 
-std::vector<std::uint8_t> world_frame(SceneStream stream, const std::array<double, 3>& camera) {
+TerrainState terrain_seen_from(const std::array<double, 3>& camera) {
     TerrainState terrain;
     terrain.view_projection = renderer::perspective(
                                   {2.0f * std::atan(view_reach / view_distance), 1.0f, nearest_drawn, farthest_drawn})
@@ -45,7 +45,14 @@ std::vector<std::uint8_t> world_frame(SceneStream stream, const std::array<doubl
     terrain.camera = camera;
     terrain.atlas = texture_handle(atlas_index);
     terrain.lightmap = texture_handle(lightmap_index);
-    return stream.begin_frame(terrain_backdrop, MINEMOD_FRAME_DRAWS_WORLD).set_terrain(terrain).end_frame().build();
+    return terrain;
+}
+
+std::vector<std::uint8_t> world_frame(SceneStream stream, const std::array<double, 3>& camera) {
+    return stream.begin_frame(terrain_backdrop, MINEMOD_FRAME_DRAWS_WORLD)
+        .set_terrain(terrain_seen_from(camera))
+        .end_frame()
+        .build();
 }
 
 }

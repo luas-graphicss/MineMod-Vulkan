@@ -4,6 +4,7 @@ add_library(minemod_scene_session STATIC
     src/commands/batch_option_commands.cpp
     src/commands/scene_commands.cpp
     src/commands/section_face_commands.cpp
+    src/frame/frame_part.cpp
     src/frame/frame_slot.cpp
     src/host/scene_host.cpp
     src/metrics/session_metrics.cpp

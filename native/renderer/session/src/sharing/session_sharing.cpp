@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <utility>
 
 namespace minemod::scene {
 
@@ -37,13 +38,44 @@ minemod_scene_sharing SessionSharing::describe(const SharedTargets& targets, VkE
     for (const SharedAttachment which : {SharedAttachment::color, SharedAttachment::depth_stencil}) {
         sharing.attachments[static_cast<std::size_t>(which)] = describe_attachment(targets.attachment(which), extent);
     }
-    sharing.flags = provider_->shares_semaphores() ? MINEMOD_SCENE_SHARING_SEMAPHORES : 0;
+    sharing.flags = provider_->semaphores() ? MINEMOD_SCENE_SHARING_SEMAPHORES : 0;
     sharing.generation = generation_;
     return sharing;
 }
 
-ExportedSemaphores SessionSharing::export_semaphores() const {
-    return provider_->export_semaphores();
+ExportedSemaphores SessionSharing::export_semaphores() {
+    const ExportedSemaphores exported = provider_->export_semaphores();
+    has_exported_semaphores_ = true;
+    return exported;
+}
+
+minemod_result SessionSharing::check_release(HandoffSynchronization synchronization) const noexcept {
+    if (synchronization == HandoffSynchronization::blocking) {
+        return MINEMOD_RESULT_OK;
+    }
+    if (!provider_->semaphores()) {
+        return MINEMOD_RESULT_UNSUPPORTED_CAPABILITY;
+    }
+    return has_exported_semaphores_ ? MINEMOD_RESULT_OK : MINEMOD_RESULT_INVALID_ARGUMENT;
+}
+
+renderer::SubmitSemaphores SessionSharing::release_to_provider(HandoffSynchronization synchronization) noexcept {
+    handoff_ = synchronization;
+    if (synchronization == HandoffSynchronization::blocking) {
+        return renderer::SubmitSemaphores{};
+    }
+    return renderer::SubmitSemaphores{.signal = provider_->semaphores()->renderer_done};
+}
+
+std::optional<renderer::SubmitSemaphores> SessionSharing::reclaim_for_renderer() noexcept {
+    const HandoffSynchronization synchronization = *std::exchange(handoff_, std::nullopt);
+    if (synchronization == HandoffSynchronization::blocking) {
+        return std::nullopt;
+    }
+    return renderer::SubmitSemaphores{
+        .wait = provider_->semaphores()->provider_done,
+        .wait_stage = VK_PIPELINE_STAGE_2_ALL_COMMANDS_BIT,
+    };
 }
 
 }

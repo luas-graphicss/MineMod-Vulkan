@@ -35,7 +35,7 @@ struct FrameSlot {
     renderer::BatchStager stager;
     std::vector<renderer::ViewConstants> views;
     renderer::DescriptorPools descriptors;
-    std::unique_ptr<renderer::PlannedFrame> planned;
+    std::vector<std::unique_ptr<renderer::PlannedFrame>> planned;
 };
 
 }

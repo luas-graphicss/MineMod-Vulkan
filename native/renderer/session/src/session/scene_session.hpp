@@ -15,6 +15,7 @@
 #include "device/device.hpp"
 #include "draw/batch_renderer.hpp"
 #include "effects/frame_blur.hpp"
+#include "frame/frame_part.hpp"
 #include "frame/frame_slot.hpp"
 #include "frame/frames_in_flight.hpp"
 #include "frame/recorded_frame.hpp"
@@ -80,7 +81,9 @@ public:
 
     minemod_result describe_sharing(minemod_scene_sharing& sharing) const;
     minemod_result export_attachment(SharedAttachment attachment, std::int64_t& handle) const;
-    minemod_result export_semaphores(ExportedSemaphores& semaphores) const;
+    minemod_result export_semaphores(ExportedSemaphores& semaphores);
+    minemod_result release_to_provider(HandoffSynchronization synchronization);
+    minemod_result reclaim_for_renderer();
 
 private:
     struct SampledTexture {
@@ -105,6 +108,9 @@ private:
     minemod_result end_frame();
 
     SessionTargets create_targets(VkExtent2D extent);
+    bool is_with_provider() const noexcept;
+    void record_part(PartEnding ending);
+    void draw_part(PartEnding ending, const PartBatches& batches, bool draws_terrain);
     void upload_waiting_sections();
     void order_translucent_terrain();
     void select_reachable_sections();
@@ -114,11 +120,11 @@ private:
     std::optional<SampledTexture> sampled(minemod_handle texture);
     VkDescriptorSet bound_texture(minemod_handle texture, const SampledTexture& sampled);
     std::vector<renderer::ImageId> add_texture_writes(renderer::RenderGraph& graph, const FrameSlot& slot);
-    std::optional<renderer::BlurredBackdrop> blurred_backdrop(FrameSlot& slot) const;
-    std::size_t blurred_interface_batches() const noexcept;
+    std::optional<renderer::BlurredBackdrop> blurred_backdrop(
+        FrameSlot& slot, std::span<const renderer::DrawBatch> batches) const;
     void submit_frame(const renderer::FramesInFlight::Frame& frame);
-    std::vector<renderer::PassSample> pass_samples(std::span<const renderer::PassTiming> timings) const;
-    std::uint32_t draws_in(std::string_view pass) const noexcept;
+    std::uint32_t draws_in(
+        std::string_view pass, const PartBatches& batches, std::size_t texture_writes) const noexcept;
     FrameUsage usage_of(std::uint64_t frame, const FrameSlot& slot) const noexcept;
     SessionState state() const noexcept;
 

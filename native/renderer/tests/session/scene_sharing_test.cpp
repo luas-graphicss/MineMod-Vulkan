@@ -11,6 +11,7 @@
 #include "session/support/running_session.hpp"
 #include "session/support/scene_shapes.hpp"
 #include "session/support/scene_stream.hpp"
+#include "session/support/shared_session.hpp"
 #include "session/support/terrain_frames.hpp"
 #include "support/descriptor_count.hpp"
 #include "support/terrain_quads.hpp"
@@ -34,24 +35,6 @@ constexpr Color white{255, 255, 255, 255};
 constexpr SectionKey wall_section{0, 0, -3, 0};
 constexpr QuadPlacement wall_in_the_middle{5.4f, 0.0f, 10.6f, 16.0f, 8.0f};
 constexpr VkRect2D upper_left_badge{{0, 0}, {16, 16}};
-
-minemod_scene_session_config shared_config(VkExtent2D extent) {
-    minemod_scene_session_config config = offscreen_config(extent.width, extent.height);
-    config.flags = MINEMOD_SCENE_SESSION_SHARED_ATTACHMENTS;
-    return config;
-}
-
-minemod_scene_sharing sharing_of(const RunningSession& session) {
-    minemod_scene_sharing sharing{};
-    REQUIRE(minemod_scene_session_get_sharing(session.get(), &sharing) == MINEMOD_RESULT_OK);
-    return sharing;
-}
-
-OwnedDescriptor exported_memory(const RunningSession& session, std::uint32_t attachment) {
-    std::int64_t handle = -1;
-    REQUIRE(minemod_scene_session_export_attachment(session.get(), attachment, &handle) == MINEMOD_RESULT_OK);
-    return OwnedDescriptor(static_cast<int>(handle));
-}
 
 bool names_a_device(std::span<const std::uint8_t> uuid) {
     return std::ranges::any_of(uuid, [](std::uint8_t byte) { return byte != 0; });

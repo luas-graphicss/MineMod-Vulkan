@@ -36,8 +36,11 @@ public:
         return std::make_unique<InteropSharedTargets>(device_, extent);
     }
 
-    bool shares_semaphores() const noexcept override {
-        return signals_.has_value();
+    std::optional<HandoffSemaphores> semaphores() const noexcept override {
+        if (!signals_) {
+            return std::nullopt;
+        }
+        return HandoffSemaphores{signals_->renderer_done.get(), signals_->provider_done.get()};
     }
 
     ExportedSemaphores export_semaphores() const override {

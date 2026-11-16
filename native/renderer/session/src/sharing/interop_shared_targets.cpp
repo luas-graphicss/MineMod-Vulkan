@@ -45,7 +45,9 @@ InteropSharedTargets::Attachment::Attachment(
       described{image.get(), view.get(), role.format, role.aspect, role.handoff_layout, image.allocation_size()} {}
 
 InteropSharedTargets::InteropSharedTargets(const renderer::Device& device, VkExtent2D extent)
-    : attachments_{Attachment(device, extent, color_role), Attachment(device, extent, depth_stencil_role)} {}
+    : attachments_{Attachment(device, extent, color_role), Attachment(device, extent, depth_stencil_role)},
+      release_(interop::OwnershipTransfer::release_from(device.queue_family(), handed_over())),
+      reclaim_(interop::OwnershipTransfer::acquire_for(device.queue_family(), handed_over())) {}
 
 const AttachmentImage& InteropSharedTargets::attachment(SharedAttachment which) const noexcept {
     return owned(which).described;
@@ -55,8 +57,25 @@ std::int64_t InteropSharedTargets::export_memory(SharedAttachment which) const {
     return owned(which).image.export_memory().release();
 }
 
+void InteropSharedTargets::record_release(VkCommandBuffer commands) const {
+    release_.record(commands);
+}
+
+void InteropSharedTargets::record_reclaim(VkCommandBuffer commands) const {
+    reclaim_.record(commands);
+}
+
 const InteropSharedTargets::Attachment& InteropSharedTargets::owned(SharedAttachment which) const noexcept {
     return attachments_[static_cast<std::size_t>(which)];
+}
+
+interop::HandoffResources InteropSharedTargets::handed_over() const {
+    interop::HandoffResources resources;
+    for (const Attachment& attachment : attachments_) {
+        const AttachmentImage& image = attachment.described;
+        resources.images.push_back({image.image, image.aspect, image.handoff_layout});
+    }
+    return resources;
 }
 
 }

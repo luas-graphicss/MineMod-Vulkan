@@ -41,7 +41,7 @@ FrameSlot::FrameSlot(const renderer::Device& device, const SceneLimits& limits)
           }) {}
 
 void FrameSlot::reuse() {
-    planned.reset();
+    planned.clear();
     uploads.reset();
     geometry.reset();
     descriptors.reset();

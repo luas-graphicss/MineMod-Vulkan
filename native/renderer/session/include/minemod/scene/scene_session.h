@@ -44,6 +44,11 @@ enum {
     MINEMOD_SHARED_ATTACHMENT_COUNT = 2
 };
 
+enum {
+    MINEMOD_HANDOFF_BLOCKING = 0,
+    MINEMOD_HANDOFF_SEMAPHORES = 1
+};
+
 typedef struct minemod_scene_host minemod_scene_host;
 typedef struct minemod_scene_session minemod_scene_session;
 
@@ -177,7 +182,12 @@ minemod_result minemod_scene_session_export_attachment(
     const minemod_scene_session* session, uint32_t attachment, int64_t* handle) MINEMOD_ABI_NOEXCEPT;
 
 minemod_result minemod_scene_session_export_semaphores(
-    const minemod_scene_session* session, int64_t* renderer_done, int64_t* provider_done) MINEMOD_ABI_NOEXCEPT;
+    minemod_scene_session* session, int64_t* renderer_done, int64_t* provider_done) MINEMOD_ABI_NOEXCEPT;
+
+minemod_result minemod_scene_session_release_to_provider(
+    minemod_scene_session* session, uint32_t synchronization) MINEMOD_ABI_NOEXCEPT;
+
+minemod_result minemod_scene_session_reclaim_for_renderer(minemod_scene_session* session) MINEMOD_ABI_NOEXCEPT;
 
 MINEMOD_ABI_END
 

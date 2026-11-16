@@ -169,7 +169,11 @@ set(minemod_device_tests
     world_geometry_device)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    add_executable(minemod_scene_sharing_device_tests session/scene_sharing_test.cpp)
+    add_executable(minemod_scene_sharing_device_tests
+        session/scene_handoff_test.cpp
+        session/scene_sharing_test.cpp
+        session/support/provider_stand_in.cpp
+        session/support/shared_session.cpp)
     target_link_libraries(minemod_scene_sharing_device_tests
         PRIVATE minemod_scene_session_test_support minemod_interop_test_support minemod_doctest_main)
     minemod_configure_vulkan_target(minemod_scene_sharing_device_tests)

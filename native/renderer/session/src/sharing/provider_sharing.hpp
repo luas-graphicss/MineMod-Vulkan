@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <optional>
 #include <span>
 
 #include <vulkan/vulkan.h>
@@ -31,6 +32,13 @@ public:
 
     virtual const AttachmentImage& attachment(SharedAttachment which) const noexcept = 0;
     virtual std::int64_t export_memory(SharedAttachment which) const = 0;
+    virtual void record_release(VkCommandBuffer commands) const = 0;
+    virtual void record_reclaim(VkCommandBuffer commands) const = 0;
+};
+
+struct HandoffSemaphores {
+    VkSemaphore renderer_done;
+    VkSemaphore provider_done;
 };
 
 struct ExportedSemaphores {
@@ -49,7 +57,7 @@ public:
 
     virtual DeviceUuids device_identity() const = 0;
     virtual std::unique_ptr<SharedTargets> create_targets(VkExtent2D extent) const = 0;
-    virtual bool shares_semaphores() const noexcept = 0;
+    virtual std::optional<HandoffSemaphores> semaphores() const noexcept = 0;
     virtual ExportedSemaphores export_semaphores() const = 0;
 };
 
