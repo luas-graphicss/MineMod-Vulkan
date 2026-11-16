@@ -13,6 +13,7 @@
 #include "graph/planned_frame.hpp"
 #include "graph/render_graph.hpp"
 #include "presentation/frame_lifecycle.hpp"
+#include "presentation/present_pacing.hpp"
 #include "presentation/presenter.hpp"
 #include "support/presenting_device.hpp"
 
@@ -153,5 +154,40 @@ TEST_CASE("hundreds of resizes with frames in flight leave no validation message
         check_extent(frames.present_frame(), extent);
     }
 
+    CHECK(frames.validation_text() == "");
+}
+
+TEST_CASE("a change of pacing replaces the swapchain and keeps presenting") {
+    PresentedFrames frames;
+    check_extent(frames.present_frame(), window_extent);
+
+    frames.presenter().set_pacing(PresentPacing::immediate);
+    CHECK(frames.presenter().state() == FrameState::awaiting_swapchain);
+    check_extent(frames.present_frame(), window_extent);
+    check_extent(frames.present_frame(), window_extent);
+
+    frames.presenter().set_pacing(PresentPacing::vsync);
+    check_extent(frames.present_frame(), window_extent);
+    CHECK(frames.presenter().state() == FrameState::running);
+    CHECK(frames.validation_text() == "");
+}
+
+TEST_CASE("the pacing already in use keeps the swapchain") {
+    PresentedFrames frames;
+
+    frames.presenter().set_pacing(PresentPacing::vsync);
+
+    CHECK(frames.presenter().state() == FrameState::running);
+}
+
+TEST_CASE("a pacing chosen while the surface has no area applies once it has area again") {
+    PresentedFrames frames;
+    frames.presenter().resize(minimized_extent);
+
+    frames.presenter().set_pacing(PresentPacing::immediate);
+    CHECK(frames.presenter().state() == FrameState::suspended);
+
+    frames.presenter().resize(window_extent);
+    check_extent(frames.present_frame(), window_extent);
     CHECK(frames.validation_text() == "");
 }

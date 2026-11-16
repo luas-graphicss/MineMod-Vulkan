@@ -1,18 +1,14 @@
 #include "presentation/presenter.hpp"
 
 #include <stdexcept>
+#include <utility>
 
+#include "presentation/binary_semaphore.hpp"
 #include "resources/image_layout.hpp"
 
 namespace minemod::renderer {
 
 namespace {
-
-DeviceHandle<VkSemaphore> create_semaphore(VkDevice device) {
-    const VkSemaphoreCreateInfo create_info{.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO};
-    return create_device_handle<VkSemaphore>(
-        device, create_info, vkCreateSemaphore, vkDestroySemaphore, "creating a presentation semaphore");
-}
 
 VkOffset3D far_corner(VkExtent2D extent) noexcept {
     return VkOffset3D{static_cast<std::int32_t>(extent.width), static_cast<std::int32_t>(extent.height), 1};
@@ -46,9 +42,9 @@ Presenter::Presenter(const Device& device, VkSurfaceKHR surface, VkExtent2D surf
     if (frame_slots == 0) {
         throw std::invalid_argument("a presenter needs at least one frame slot");
     }
-    slots_.reserve(frame_slots);
+    acquired_.reserve(frame_slots);
     for (std::size_t slot = 0; slot < frame_slots; ++slot) {
-        slots_.push_back({create_semaphore(device.get()), create_semaphore(device.get())});
+        acquired_.push_back(create_binary_semaphore(device.get()));
     }
     if (lifecycle_.state() == FrameState::awaiting_swapchain) {
         replace_swapchain();
@@ -67,6 +63,14 @@ void Presenter::resize(VkExtent2D surface_extent) {
     lifecycle_.resize(surface_extent);
 }
 
+void Presenter::set_pacing(PresentPacing pacing) noexcept {
+    if (pacing == pacing_) {
+        return;
+    }
+    pacing_ = pacing;
+    lifecycle_.swapchain_outdated();
+}
+
 std::optional<PresentationTarget> Presenter::acquire(std::size_t frame_slot) {
     if (lifecycle_.state() == FrameState::awaiting_swapchain) {
         replace_swapchain();
@@ -74,9 +78,9 @@ std::optional<PresentationTarget> Presenter::acquire(std::size_t frame_slot) {
     if (lifecycle_.state() != FrameState::running) {
         return std::nullopt;
     }
-    const SlotSemaphores& slot = slots_.at(frame_slot);
+    const VkSemaphore image_acquired = acquired_.at(frame_slot).get();
     std::uint32_t image_index = 0;
-    const VkResult acquired = swapchain_->acquire(slot.image_acquired.get(), image_index);
+    const VkResult acquired = swapchain_->acquire(image_acquired, image_index);
     if (lifecycle_.acquired(acquired) == AcquiredFrame::skip) {
         return std::nullopt;
     }
@@ -84,9 +88,9 @@ std::optional<PresentationTarget> Presenter::acquire(std::size_t frame_slot) {
         swapchain_->image(image_index),
         swapchain_->extent(),
         SubmitSemaphores{
-            .wait = slot.image_acquired.get(),
+            .wait = image_acquired,
             .wait_stage = VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT,
-            .signal = slot.frame_copied.get(),
+            .signal = swapchain_->copied_semaphore(image_index),
         },
         image_index,
     };
@@ -100,13 +104,14 @@ void Presenter::record_copy(
 }
 
 void Presenter::present(const PresentationTarget& target) {
-    lifecycle_.presented(swapchain_->present(device_.queue(), target.semaphores.signal, target.image_index));
+    lifecycle_.presented(swapchain_->present(device_.queue(), target.image_index));
 }
 
 void Presenter::replace_swapchain() {
-    swapchain_.reset();
-    swapchain_.emplace(device_, surface_, surface_extent_);
-    lifecycle_.swapchain_created();
+    swapchain_ = Swapchain::create(device_, surface_, surface_extent_, pacing_, std::move(swapchain_));
+    if (swapchain_) {
+        lifecycle_.swapchain_created();
+    }
 }
 
 }

@@ -95,6 +95,22 @@ TEST_CASE("a frame presented after the surface was resized keeps the pending sta
     CHECK(lifecycle.state() == FrameState::suspended);
 }
 
+TEST_CASE("a running frame loop awaits a swapchain once its own is declared outdated") {
+    FrameLifecycle lifecycle = running_lifecycle();
+
+    lifecycle.swapchain_outdated();
+
+    CHECK(lifecycle.state() == FrameState::awaiting_swapchain);
+}
+
+TEST_CASE("a suspended frame loop stays suspended when its swapchain is declared outdated") {
+    FrameLifecycle lifecycle(minimized_extent);
+
+    lifecycle.swapchain_outdated();
+
+    CHECK(lifecycle.state() == FrameState::suspended);
+}
+
 TEST_CASE("a stopped frame loop ignores later surface and device events") {
     FrameLifecycle lifecycle = running_lifecycle();
 

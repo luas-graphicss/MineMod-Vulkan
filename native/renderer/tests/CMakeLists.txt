@@ -39,6 +39,7 @@ add_executable(minemod_renderer_resource_tests
     lifetime/retirement_queue_test.cpp
     metrics/frame_metrics_test.cpp
     presentation/frame_lifecycle_test.cpp
+    presentation/present_pacing_test.cpp
     reload/resource_generations_test.cpp
     shaders/core_shader_contract_test.cpp
     shaders/shader_interface_test.cpp

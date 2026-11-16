@@ -4,8 +4,10 @@
 #include <array>
 #include <cstdint>
 #include <string>
+#include <utility>
 
 #include "device/vulkan_error.hpp"
+#include "presentation/binary_semaphore.hpp"
 
 namespace minemod::renderer {
 
@@ -28,6 +30,16 @@ VkSurfaceFormatKHR choose_surface_format(VkPhysicalDevice device, VkSurfaceKHR s
         return candidate.format == VK_FORMAT_B8G8R8A8_UNORM || candidate.format == VK_FORMAT_R8G8B8A8_UNORM;
     });
     return unorm == formats.end() ? formats.front() : *unorm;
+}
+
+std::vector<VkPresentModeKHR> list_present_modes(VkPhysicalDevice device, VkSurfaceKHR surface) {
+    std::uint32_t count = 0;
+    require_success(
+        vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &count, nullptr), "counting the present modes");
+    std::vector<VkPresentModeKHR> modes(count);
+    require_success(
+        vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &count, modes.data()), "listing the present modes");
+    return modes;
 }
 
 void require_blit_target(VkPhysicalDevice device, VkFormat format, const VkSurfaceCapabilitiesKHR& capabilities) {
@@ -73,17 +85,28 @@ VkCompositeAlphaFlagBitsKHR choose_composite_alpha(const VkSurfaceCapabilitiesKH
     return *supported;
 }
 
+bool has_area(VkExtent2D extent) noexcept {
+    return extent.width != 0 && extent.height != 0;
 }
 
-Swapchain::Swapchain(const Device& device, VkSurfaceKHR surface, VkExtent2D desired_extent) : device_(device.get()) {
+}
+
+std::unique_ptr<Swapchain> Swapchain::create(
+    const Device& device,
+    VkSurfaceKHR surface,
+    VkExtent2D desired_extent,
+    PresentPacing pacing,
+    std::unique_ptr<Swapchain> replaced) {
     VkSurfaceCapabilitiesKHR capabilities{};
     require_success(
         vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device.physical(), surface, &capabilities),
         "querying the surface capabilities");
+    const VkExtent2D extent = choose_extent(capabilities, desired_extent);
+    if (!has_area(extent)) {
+        return nullptr;
+    }
     const VkSurfaceFormatKHR surface_format = choose_surface_format(device.physical(), surface);
     require_blit_target(device.physical(), surface_format.format, capabilities);
-    format_ = surface_format.format;
-    extent_ = choose_extent(capabilities, desired_extent);
 
     const VkSwapchainCreateInfoKHR create_info{
         .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
@@ -91,25 +114,36 @@ Swapchain::Swapchain(const Device& device, VkSurfaceKHR surface, VkExtent2D desi
         .minImageCount = choose_image_count(capabilities),
         .imageFormat = surface_format.format,
         .imageColorSpace = surface_format.colorSpace,
-        .imageExtent = extent_,
+        .imageExtent = extent,
         .imageArrayLayers = 1,
         .imageUsage = VK_IMAGE_USAGE_TRANSFER_DST_BIT,
         .imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
         .preTransform = capabilities.currentTransform,
         .compositeAlpha = choose_composite_alpha(capabilities),
-        .presentMode = VK_PRESENT_MODE_FIFO_KHR,
+        .presentMode = choose_present_mode(list_present_modes(device.physical(), surface), pacing),
         .clipped = VK_TRUE,
+        .oldSwapchain = replaced ? replaced->swapchain_.get() : VK_NULL_HANDLE,
     };
+    return std::unique_ptr<Swapchain>(new Swapchain(device.get(), create_info));
+}
+
+Swapchain::Swapchain(VkDevice device, const VkSwapchainCreateInfoKHR& create_info)
+    : device_(device), format_(create_info.imageFormat), extent_(create_info.imageExtent) {
     swapchain_ = create_device_handle<VkSwapchainKHR>(
-        device.get(), create_info, vkCreateSwapchainKHR, vkDestroySwapchainKHR, "creating the swapchain");
+        device, create_info, vkCreateSwapchainKHR, vkDestroySwapchainKHR, "creating the swapchain");
 
     std::uint32_t image_count = 0;
     require_success(
-        vkGetSwapchainImagesKHR(device.get(), swapchain_.get(), &image_count, nullptr), "counting the swapchain images");
+        vkGetSwapchainImagesKHR(device, swapchain_.get(), &image_count, nullptr), "counting the swapchain images");
     images_.resize(image_count);
     require_success(
-        vkGetSwapchainImagesKHR(device.get(), swapchain_.get(), &image_count, images_.data()),
+        vkGetSwapchainImagesKHR(device, swapchain_.get(), &image_count, images_.data()),
         "listing the swapchain images");
+
+    copied_.reserve(image_count);
+    for (std::uint32_t image = 0; image < image_count; ++image) {
+        copied_.push_back(create_binary_semaphore(device));
+    }
 }
 
 Swapchain::~Swapchain() {
@@ -121,12 +155,13 @@ VkResult Swapchain::acquire(VkSemaphore signaled_on_acquisition, std::uint32_t& 
         device_, swapchain_.get(), UINT64_MAX, signaled_on_acquisition, VK_NULL_HANDLE, &image_index);
 }
 
-VkResult Swapchain::present(VkQueue queue, VkSemaphore awaited, std::uint32_t image_index) const {
+VkResult Swapchain::present(VkQueue queue, std::uint32_t image_index) const {
     const VkSwapchainKHR swapchain = swapchain_.get();
+    const VkSemaphore copied = copied_semaphore(image_index);
     const VkPresentInfoKHR presentation{
         .sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
         .waitSemaphoreCount = 1,
-        .pWaitSemaphores = &awaited,
+        .pWaitSemaphores = &copied,
         .swapchainCount = 1,
         .pSwapchains = &swapchain,
         .pImageIndices = &image_index,

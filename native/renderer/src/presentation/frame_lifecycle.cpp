@@ -36,6 +36,12 @@ void FrameLifecycle::swapchain_created() {
     is_suboptimal_ = false;
 }
 
+void FrameLifecycle::swapchain_outdated() noexcept {
+    if (state_ == FrameState::running) {
+        state_ = FrameState::awaiting_swapchain;
+    }
+}
+
 AcquiredFrame FrameLifecycle::acquired(VkResult result) {
     if (state_ != FrameState::running) {
         throw std::logic_error("a swapchain image is only acquired while the frame loop runs");

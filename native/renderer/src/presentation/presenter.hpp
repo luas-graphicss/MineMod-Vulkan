@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <optional>
 #include <vector>
 
@@ -10,6 +11,7 @@
 #include "device/device.hpp"
 #include "device/device_handle.hpp"
 #include "presentation/frame_lifecycle.hpp"
+#include "presentation/present_pacing.hpp"
 #include "presentation/swapchain.hpp"
 #include "resources/image.hpp"
 
@@ -33,24 +35,21 @@ public:
     VkFormat format() const;
 
     void resize(VkExtent2D surface_extent);
+    void set_pacing(PresentPacing pacing) noexcept;
     std::optional<PresentationTarget> acquire(std::size_t frame_slot);
     void record_copy(VkCommandBuffer commands, const Image& transfer_source, const PresentationTarget& target) const;
     void present(const PresentationTarget& target);
 
 private:
-    struct SlotSemaphores {
-        DeviceHandle<VkSemaphore> image_acquired;
-        DeviceHandle<VkSemaphore> frame_copied;
-    };
-
     void replace_swapchain();
 
     const Device& device_;
     VkSurfaceKHR surface_;
     VkExtent2D surface_extent_;
+    PresentPacing pacing_ = PresentPacing::vsync;
     FrameLifecycle lifecycle_;
-    std::vector<SlotSemaphores> slots_;
-    std::optional<Swapchain> swapchain_;
+    std::vector<DeviceHandle<VkSemaphore>> acquired_;
+    std::unique_ptr<Swapchain> swapchain_;
 };
 
 }

@@ -18,6 +18,7 @@ public:
 
     void resize(VkExtent2D surface_extent) noexcept;
     void swapchain_created();
+    void swapchain_outdated() noexcept;
     AcquiredFrame acquired(VkResult result);
     void presented(VkResult result);
     void stop() noexcept;
