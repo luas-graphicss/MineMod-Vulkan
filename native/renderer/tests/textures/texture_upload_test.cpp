@@ -1,11 +1,16 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
+#include <optional>
 #include <stdexcept>
+#include <utility>
 #include <vector>
 
 #include <doctest.h>
 
+#include "graph/image_use.hpp"
+#include "graph/planned_frame.hpp"
+#include "graph/render_graph.hpp"
 #include "resources/buffer.hpp"
 #include "resources/image_layout.hpp"
 #include "support/validated_device.hpp"
@@ -85,6 +90,73 @@ TEST_CASE("every level of a staged mip chain reaches the texture") {
         CHECK(std::ranges::equal(stored, chain.level_bytes(level)));
     }
     CHECK(gpu.validation_text() == "");
+}
+
+TEST_CASE("updating a region keeps every texel outside it") {
+    constexpr SpriteRegion center{1, 1, 2, 2};
+    constexpr std::byte updated_shade{0x7f};
+    const ValidatedDevice gpu;
+    const std::vector<std::byte> original = gradient_texels(texture_extent);
+    const MipChain chain = build_mip_chain(texture_extent, original, 1);
+    const Texture texture(gpu.device(), texture_extent, 1);
+    UploadArena arena(gpu.device(), 256);
+    const ArenaRegion uploaded = arena.stage(chain.rgba, 4).value();
+    gpu.device().submit([&](VkCommandBuffer commands) {
+        texture.record_upload(commands, arena.buffer(), uploaded, chain);
+    });
+    const std::vector<std::byte> replacement(std::size_t{center.width} * center.height * 4, updated_shade);
+    const ArenaRegion staged = arena.stage(replacement, 4).value();
+
+    RenderGraph graph;
+    const Image& image = texture.image();
+    const ImageId target = graph.import_image(
+        "dynamic texture",
+        ImportedImage{
+            image.get(),
+            image.view(),
+            image.extent(),
+            VK_IMAGE_ASPECT_COLOR_BIT,
+            uses::sampled_by_shaders,
+            uses::sampled_by_shaders,
+        });
+    graph.add_pass(
+        "update region",
+        {{target, uses::transfer_destination}},
+        [&](VkCommandBuffer commands, const GraphImages&) {
+            texture.record_region_update(commands, arena.buffer(), staged, 0, center);
+        });
+    const PlannedFrame planned(gpu.device(), std::move(graph));
+    gpu.device().submit([&planned](VkCommandBuffer commands) { planned.record(commands); });
+
+    const std::vector<std::byte> stored = read_level(gpu.device(), texture, chain.levels[0], 0);
+    for (std::uint32_t y = 0; y < texture_extent.height; ++y) {
+        for (std::uint32_t x = 0; x < texture_extent.width; ++x) {
+            const bool is_updated = x >= center.x && x < center.x + center.width && y >= center.y
+                && y < center.y + center.height;
+            const std::size_t texel = (std::size_t{y} * texture_extent.width + x) * 4;
+            CHECK(stored[texel] == (is_updated ? updated_shade : original[texel]));
+        }
+    }
+    CHECK(gpu.validation_text() == "");
+}
+
+TEST_CASE("a region update outside the texture level or with the wrong texel count is rejected") {
+    const ValidatedDevice gpu;
+    const Texture texture(gpu.device(), texture_extent, texture_levels);
+    const ArenaRegion four_texels{0, 16};
+
+    CHECK_THROWS_AS(
+        texture.record_region_update(VK_NULL_HANDLE, VK_NULL_HANDLE, four_texels, 0, {3, 3, 2, 2}),
+        std::invalid_argument);
+    CHECK_THROWS_AS(
+        texture.record_region_update(VK_NULL_HANDLE, VK_NULL_HANDLE, four_texels, 1, {1, 1, 2, 2}),
+        std::invalid_argument);
+    CHECK_THROWS_AS(
+        texture.record_region_update(VK_NULL_HANDLE, VK_NULL_HANDLE, four_texels, texture_levels, {0, 0, 1, 1}),
+        std::invalid_argument);
+    CHECK_THROWS_AS(
+        texture.record_region_update(VK_NULL_HANDLE, VK_NULL_HANDLE, four_texels, 0, {0, 0, 3, 1}),
+        std::invalid_argument);
 }
 
 TEST_CASE("a mip chain that does not match the texture is rejected before anything is recorded") {

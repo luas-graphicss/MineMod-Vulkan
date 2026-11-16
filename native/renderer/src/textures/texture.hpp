@@ -6,6 +6,7 @@
 
 #include "device/device.hpp"
 #include "resources/image.hpp"
+#include "textures/atlas_layout.hpp"
 #include "textures/mip_chain.hpp"
 #include "upload/arena_layout.hpp"
 
@@ -23,6 +24,12 @@ public:
 
     void record_upload(
         VkCommandBuffer commands, VkBuffer staging, const ArenaRegion& staged, const MipChain& chain) const;
+    void record_region_update(
+        VkCommandBuffer commands,
+        VkBuffer staging,
+        const ArenaRegion& staged,
+        std::uint32_t level,
+        const SpriteRegion& region) const;
 
 private:
     Image image_;

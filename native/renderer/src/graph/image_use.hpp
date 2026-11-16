@@ -34,6 +34,12 @@ inline constexpr ImageUse sampled_by_fragment_shader{
     VK_ACCESS_2_SHADER_SAMPLED_READ_BIT,
 };
 
+inline constexpr ImageUse sampled_by_shaders{
+    VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+    VK_PIPELINE_STAGE_2_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT,
+    VK_ACCESS_2_SHADER_SAMPLED_READ_BIT,
+};
+
 inline constexpr ImageUse transfer_source{
     VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
     VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT,
