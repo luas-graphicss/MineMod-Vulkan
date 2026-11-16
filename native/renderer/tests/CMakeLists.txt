@@ -74,6 +74,8 @@ add_executable(minemod_world_geometry_tests
     terrain/section_selection_test.cpp
     terrain/section_space_test.cpp
     terrain/terrain_layer_test.cpp
+    terrain/translucent_order_test.cpp
+    terrain/translucent_sections_test.cpp
     visibility/frustum_test.cpp
     visibility/section_occlusion_test.cpp)
 target_link_libraries(minemod_world_geometry_tests PRIVATE minemod_renderer_test_support minemod_doctest_main)
@@ -82,7 +84,8 @@ minemod_configure_vulkan_target(minemod_world_geometry_tests)
 add_executable(minemod_world_geometry_device_tests
     terrain/occluded_terrain_test.cpp
     terrain/terrain_scene_test.cpp
-    terrain/terrain_sections_test.cpp)
+    terrain/terrain_sections_test.cpp
+    terrain/translucent_scene_test.cpp)
 target_link_libraries(minemod_world_geometry_device_tests PRIVATE minemod_renderer_test_support minemod_doctest_main)
 minemod_configure_vulkan_target(minemod_world_geometry_device_tests)
 

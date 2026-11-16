@@ -26,6 +26,7 @@ public:
     SectionBuffers(const Device& device, const SectionMesh& mesh);
 
     void record_upload(VkCommandBuffer commands, VkBuffer staging, const StagedSection& staged) const;
+    void record_translucent_order(VkCommandBuffer commands, VkBuffer staging, const ArenaRegion& staged) const;
 
     VkBuffer vertices() const noexcept {
         return vertices_.get();

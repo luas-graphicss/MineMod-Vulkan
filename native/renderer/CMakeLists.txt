@@ -90,6 +90,8 @@ add_library(minemod_renderer STATIC
     src/terrain/terrain_renderer.cpp
     src/terrain/terrain_sections.cpp
     src/terrain/terrain_vertex.cpp
+    src/terrain/translucent_order.cpp
+    src/terrain/translucent_sections.cpp
     src/textures/atlas_layout.cpp
     src/textures/mip_chain.cpp
     src/textures/sampler_cache.cpp

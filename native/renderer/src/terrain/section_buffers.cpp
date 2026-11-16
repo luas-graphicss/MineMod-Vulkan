@@ -58,4 +58,15 @@ void SectionBuffers::record_upload(VkCommandBuffer commands, VkBuffer staging, c
     copy_region(commands, staging, staged.indices, indices_.get());
 }
 
+void SectionBuffers::record_translucent_order(
+    VkCommandBuffer commands, VkBuffer staging, const ArenaRegion& staged) const {
+    const IndexRange& translucent = range(TerrainLayer::translucent);
+    const VkDeviceSize order_bytes = VkDeviceSize{translucent.index_count} * sizeof(std::uint32_t);
+    if (order_bytes == 0 || staged.size != order_bytes) {
+        throw std::invalid_argument("the staged order does not match the translucent indices of the section");
+    }
+    const VkBufferCopy copy{staged.offset, VkDeviceSize{translucent.first_index} * sizeof(std::uint32_t), order_bytes};
+    vkCmdCopyBuffer(commands, staging, indices_.get(), 1, &copy);
+}
+
 }
