@@ -6,6 +6,7 @@ import io.github.luasgraphicss.minemod.client.frame.FrameContent;
 import io.github.luasgraphicss.minemod.client.frame.StreamBudget;
 import io.github.luasgraphicss.minemod.codec.scene.BatchSlot;
 import io.github.luasgraphicss.minemod.codec.scene.BatchState;
+import io.github.luasgraphicss.minemod.codec.scene.FrameBlur;
 import io.github.luasgraphicss.minemod.codec.scene.SceneCommandWriter;
 import io.github.luasgraphicss.minemod.codec.scene.SceneOpcode;
 import io.github.luasgraphicss.minemod.codec.scene.TerrainState;
@@ -23,11 +24,13 @@ public final class DrawRecorder implements FrameContent {
     private static final long TERRAIN_BYTES = SceneOpcode.SET_TERRAIN.fixedBytes();
     private static final long BATCH_BYTES = SceneOpcode.DRAW_BATCH.fixedBytes();
     private static final float[] OPAQUE_BLACK = {0.0f, 0.0f, 0.0f, 1.0f};
+    private static final int NEVER = -1;
 
     private final long streamBytes;
     private final long streamRecords;
     private final FrameViews views = new FrameViews();
     private final List<RecordedDraw> draws = new ArrayList<>();
+    private final List<FrameMark> marks = new ArrayList<>();
     private ByteBuffer vertices = ByteBuffer.allocateDirect(FIRST_ARENA_BYTES);
     private StreamBudget budget;
     private BatchOptions lastOptions;
@@ -35,6 +38,7 @@ public final class DrawRecorder implements FrameContent {
     private TerrainState terrain;
     private boolean drawsWorld;
     private float[] clearColor;
+    private int drawsBeforeTheDepthClear;
     private long droppedDraws;
     private long approximatedDraws;
 
@@ -52,16 +56,33 @@ public final class DrawRecorder implements FrameContent {
         }
         views.clear();
         draws.clear();
+        marks.clear();
         vertices.clear();
         lastOptions = BatchOptions.UNCHANGED;
         slot = BatchSlot.INTERFACE;
         terrain = null;
         drawsWorld = false;
         clearColor = OPAQUE_BLACK;
+        drawsBeforeTheDepthClear = NEVER;
     }
 
     public void clearColor(float red, float green, float blue, float alpha) {
         clearColor = new float[] {red, green, blue, alpha};
+    }
+
+    public void clearDepth() {
+        boolean isAlreadyClear = draws.isEmpty() || drawsBeforeTheDepthClear == draws.size();
+        if (!isAlreadyClear && mark(new DepthClear(draws.size()))) {
+            drawsBeforeTheDepthClear = draws.size();
+        }
+    }
+
+    public boolean blur(FrameBlur blur) {
+        boolean isRecorded = mark(new BlurredBackdrop(draws.size(), blur));
+        if (!isRecorded) {
+            droppedDraws++;
+        }
+        return isRecorded;
     }
 
     public void enterWorld() {
@@ -117,12 +138,33 @@ public final class DrawRecorder implements FrameContent {
             frame.setTerrain(terrain);
         }
         BatchOptions written = BatchOptions.UNCHANGED;
-        for (RecordedDraw draw : draws) {
+        int writtenMarks = 0;
+        for (int drawn = 0; drawn < draws.size(); drawn++) {
+            RecordedDraw draw = draws.get(drawn);
+            writtenMarks = writeMarks(writtenMarks, drawn, frame);
             draw.options().writeChangesFrom(written, frame);
             written = draw.options();
             frame.drawBatch(draw.state(), verticesOf(draw));
         }
+        writeMarks(writtenMarks, draws.size(), frame);
         frame.endFrame();
+    }
+
+    private boolean mark(FrameMark mark) {
+        boolean hasRoom = budget.take(mark.streamBytes());
+        if (hasRoom) {
+            marks.add(mark);
+        }
+        return hasRoom;
+    }
+
+    private int writeMarks(int firstMark, int drawsBefore, SceneCommandWriter frame) {
+        int mark = firstMark;
+        while (mark < marks.size() && marks.get(mark).drawsBefore() <= drawsBefore) {
+            marks.get(mark).write(frame);
+            mark++;
+        }
+        return mark;
     }
 
     private boolean record(GameDraw draw) {
