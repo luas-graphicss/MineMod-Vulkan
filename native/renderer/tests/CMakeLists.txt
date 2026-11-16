@@ -72,6 +72,7 @@ target_link_libraries(minemod_world_geometry_tests PRIVATE minemod_renderer_test
 minemod_configure_vulkan_target(minemod_world_geometry_tests)
 
 add_executable(minemod_world_geometry_device_tests
+    terrain/terrain_scene_test.cpp
     terrain/terrain_sections_test.cpp)
 target_link_libraries(minemod_world_geometry_device_tests PRIVATE minemod_renderer_test_support minemod_doctest_main)
 minemod_configure_vulkan_target(minemod_world_geometry_device_tests)

@@ -33,6 +33,8 @@ function(minemod_add_shader_library target)
     target_include_directories(${target} INTERFACE "${shader_headers}")
 endfunction()
 
+minemod_add_shader_library(minemod_terrain_shaders terrain.vert terrain.frag)
+
 add_library(minemod_renderer STATIC
     src/descriptors/descriptor_layout.cpp
     src/descriptors/descriptor_pools.cpp
@@ -71,6 +73,7 @@ add_library(minemod_renderer STATIC
     src/terrain/section_mesh.cpp
     src/terrain/section_selection.cpp
     src/terrain/section_space.cpp
+    src/terrain/terrain_renderer.cpp
     src/terrain/terrain_sections.cpp
     src/terrain/terrain_vertex.cpp
     src/textures/atlas_layout.cpp
@@ -85,7 +88,7 @@ add_library(minemod_renderer STATIC
 add_library(minemod::renderer ALIAS minemod_renderer)
 
 target_include_directories(minemod_renderer PUBLIC src)
-target_link_libraries(minemod_renderer PUBLIC Vulkan::Vulkan)
+target_link_libraries(minemod_renderer PUBLIC Vulkan::Vulkan PRIVATE minemod_terrain_shaders)
 minemod_configure_vulkan_target(minemod_renderer)
 
 add_subdirectory(harness)
