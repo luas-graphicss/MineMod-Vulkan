@@ -418,7 +418,7 @@ TEST_CASE("a frame drawn in two parts shows the world of the first under the bat
     const std::array blended{scene.batch(quad_corners(particle_in_fourth_strip, colored(half_green)), translucent)};
     const std::array interface{scene.batch(interface_quad(badge_in_upper_left_corner, white), opaque)};
     WorldStage world_after_the_terrain = scene.world({}, {}, blended);
-    world_after_the_terrain.draws_terrain = false;
+    world_after_the_terrain.terrain.reset();
 
     CHECK(scene.draw_part(scene.world(sky, solid, {}), {}, {}, handed_over) == SceneStage::world);
     CHECK(scene.pass_count() == 1);
@@ -430,6 +430,22 @@ TEST_CASE("a frame drawn in two parts shows the world of the first under the bat
     check_pixel(pixels, entity_strip, {0, 127, 128});
     check_pixel(pixels, particle_strip, {63, 128, 64});
     check_pixel(pixels, upper_left_badge, {255, 255, 255});
+    CHECK(scene.validation_text() == "");
+}
+
+TEST_CASE("a world whose terrain is only known later draws it in the part that brings it") {
+    ComposedScene scene;
+    scene.add_section(wall_section, terrain_quad(TerrainLayer::solid, wall_right_of_first_strip, red));
+    const std::array sky{scene.batch(quad_corners(sky_dome, colored(cyan)), backdrop)};
+    WorldStage world_before_the_terrain = scene.world(sky, {}, {});
+    world_before_the_terrain.terrain.reset();
+
+    CHECK(scene.draw_part(world_before_the_terrain, {}, {}, handed_over) == SceneStage::world);
+    scene.draw_part(scene.world({}, {}, {}), {}, {}, resumed_in(SceneStage::world));
+    const FramePixels pixels = scene.read_frame();
+
+    check_pixel(pixels, sky_strip, {0, 255, 255});
+    check_pixel(pixels, wall_strip, {255, 0, 0});
     CHECK(scene.validation_text() == "");
 }
 

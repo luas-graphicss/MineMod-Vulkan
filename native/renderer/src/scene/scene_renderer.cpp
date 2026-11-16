@@ -83,7 +83,7 @@ std::optional<SceneStage> SceneRenderer::add_passes(
             const WorldStage& world = *frame.world;
             const BatchPass pass{frame.extent, world.view};
             const auto record_terrain = [&](std::span<const TerrainLayer> layers) {
-                return world.draws_terrain ? terrain_.record(commands, world.terrain, sections, layers) : 0u;
+                return world.terrain ? terrain_.record(commands, *world.terrain, sections, layers) : 0u;
             };
             batches_.record(commands, pass, world.sky);
             recorded_terrain_draws_ = record_terrain(opaque_terrain_layers);

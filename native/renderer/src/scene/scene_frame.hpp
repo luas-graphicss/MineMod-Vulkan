@@ -16,11 +16,10 @@ enum class SceneStage { world, hand, interface };
 
 struct WorldStage {
     VkDescriptorSet view;
-    TerrainFrame terrain;
+    std::optional<TerrainFrame> terrain;
     std::span<const DrawBatch> sky;
     std::span<const DrawBatch> solid;
     std::span<const DrawBatch> blended;
-    bool draws_terrain = true;
 };
 
 struct OverlayStage {
