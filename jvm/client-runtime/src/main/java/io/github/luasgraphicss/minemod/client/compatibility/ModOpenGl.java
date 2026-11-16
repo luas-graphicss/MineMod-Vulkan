@@ -9,25 +9,31 @@ import io.github.luasgraphicss.minemod.compatibility.dispatch.install.DispatchIn
 import io.github.luasgraphicss.minemod.compatibility.layer.CompatibilityLayer;
 import io.github.luasgraphicss.minemod.compatibility.natives.binding.NativeBinding;
 import io.github.luasgraphicss.minemod.compatibility.natives.gate.CallGate;
+import io.github.luasgraphicss.minemod.compatibility.provider.diagnosis.ProviderDiagnosis;
 import io.github.luasgraphicss.minemod.compatibility.provider.load.ProviderLoadException;
 import io.github.luasgraphicss.minemod.compatibility.runtime.CompatibilitySession;
 import io.github.luasgraphicss.minemod.compatibility.runtime.ContextPlan;
 import io.github.luasgraphicss.minemod.compatibility.runtime.SessionContext;
 import io.github.luasgraphicss.minemod.compatibility.runtime.provider.ProviderRejectedException;
 import java.io.IOException;
+import java.util.Objects;
 
 public final class ModOpenGl implements AutoCloseable {
     private final CompatibilitySession session;
+    private final RecordedFrame recorded;
     private final SharedScene scene;
     private final SessionContext context;
     private final CompatibilityLayer layer;
     private final MixedFrame frame;
     private long presentedFrames;
 
-    private ModOpenGl(CompatibilitySession session, SharedScene scene, SessionContext context) {
+    private ModOpenGl(
+            CompatibilitySession session, ModOpenGlSetup setup, SceneSharing sharing, RecordedFrame recorded) {
         this.session = session;
-        this.scene = scene;
-        this.context = context;
+        this.recorded = Objects.requireNonNull(recorded, "recorded");
+        this.scene = new SharedScene(sharing, this::submitPart);
+        this.context = session.createContext(
+                new ContextPlan(scene, scene::handoffThrough, setup.origins(), setup.wrapperState()));
         this.layer = context.layer();
         this.frame = new MixedFrame(layer);
         CallGate.bind(this::call);
@@ -38,13 +44,15 @@ public final class ModOpenGl implements AutoCloseable {
         NativeBinding.load(setup.providerNatives());
         CompatibilitySession session = openSession(setup);
         try {
-            SharedScene scene = new SharedScene(sharing, recorded);
-            ContextPlan plan = new ContextPlan(scene, scene::handoffThrough, setup.origins(), setup.wrapperState());
-            return new ModOpenGl(session, scene, session.createContext(plan));
+            return new ModOpenGl(session, setup, sharing, recorded);
         } catch (RuntimeException failure) {
             session.close();
             throw failure;
         }
+    }
+
+    public ProviderDiagnosis provider() {
+        return session.diagnosis();
     }
 
     public void install(DispatchInstaller installer, BindingGeneration generation) {
@@ -79,6 +87,14 @@ public final class ModOpenGl implements AutoCloseable {
         scene.close();
         context.close();
         session.close();
+    }
+
+    private boolean submitPart() {
+        if (!recorded.submitPart()) {
+            return false;
+        }
+        followSession();
+        return true;
     }
 
     private long call(String function, long[] words) {
