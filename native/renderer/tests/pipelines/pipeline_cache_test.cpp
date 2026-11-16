@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstddef>
+#include <vector>
 
 #include <doctest.h>
 
@@ -99,5 +100,23 @@ TEST_CASE("a state with another blending gets its own pipeline") {
 
     CHECK(opaque != translucent);
     CHECK(cache.pipeline_count() == 2);
+    CHECK(gpu.validation_text() == "");
+}
+
+TEST_CASE("pipelines built from a shader leave the cache with it and are built again when asked for") {
+    const ValidatedDevice gpu;
+    const SpriteProgram program(gpu.device());
+    PipelineCache cache(gpu.device());
+    const GraphicsPipelineState opaque = program.state(Blending::disabled);
+    cache.pipeline_for(opaque);
+    cache.pipeline_for(program.state(Blending::alpha));
+
+    const std::vector<DeviceHandle<VkPipeline>> taken = cache.take_pipelines_using(opaque.vertex_shader);
+
+    CHECK(taken.size() == 2);
+    CHECK(cache.pipeline_count() == 0);
+    CHECK(cache.take_pipelines_using(opaque.fragment_shader).empty());
+    CHECK(cache.pipeline_for(opaque) != VK_NULL_HANDLE);
+    CHECK(cache.pipeline_count() == 1);
     CHECK(gpu.validation_text() == "");
 }

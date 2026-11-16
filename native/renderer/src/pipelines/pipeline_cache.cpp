@@ -3,6 +3,7 @@
 #include <array>
 #include <cstdint>
 #include <optional>
+#include <utility>
 #include <vector>
 
 #include "device/vulkan_error.hpp"
@@ -158,6 +159,19 @@ VkPipeline PipelineCache::pipeline_for(const GraphicsPipelineState& state) {
         return cached->second.get();
     }
     return pipelines_.emplace(state, create_pipeline(device_, state)).first->second.get();
+}
+
+std::vector<DeviceHandle<VkPipeline>> PipelineCache::take_pipelines_using(VkShaderModule shader) {
+    std::vector<DeviceHandle<VkPipeline>> taken;
+    for (auto cached = pipelines_.begin(); cached != pipelines_.end();) {
+        if (cached->first.vertex_shader == shader || cached->first.fragment_shader == shader) {
+            taken.push_back(std::move(cached->second));
+            cached = pipelines_.erase(cached);
+        } else {
+            ++cached;
+        }
+    }
+    return taken;
 }
 
 }

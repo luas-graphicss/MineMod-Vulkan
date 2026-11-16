@@ -30,6 +30,13 @@ struct ViewTextures {
     VkSampler overlay_sampler;
 };
 
+struct BatchProgram {
+    VkShaderModule vertex;
+    VkShaderModule fragment;
+
+    friend bool operator==(const BatchProgram&, const BatchProgram&) = default;
+};
+
 struct DrawBatch {
     VertexFormat format;
     BatchGeometry geometry;
@@ -41,6 +48,7 @@ struct DrawBatch {
     VkDescriptorSet view = VK_NULL_HANDLE;
     TextureTransform texture_transform{};
     std::optional<VkRect2D> clip{};
+    std::optional<BatchProgram> program{};
 };
 
 struct BatchPass {
@@ -57,9 +65,11 @@ public:
     VkDescriptorSet bind_texture(DescriptorPools& pools, VkImageView texture, VkSampler sampler) const;
 
     void record(VkCommandBuffer commands, const BatchPass& pass, std::span<const DrawBatch> batches);
+    std::vector<DeviceHandle<VkPipeline>> take_pipelines_of(const BatchProgram& program);
 
 private:
     struct PipelineKey {
+        BatchProgram program;
         VertexFormat format;
         Blending blending;
         DepthState depth;

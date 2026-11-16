@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <unordered_map>
+#include <vector>
 
 #include <vulkan/vulkan.h>
 
@@ -16,6 +17,7 @@ public:
     explicit PipelineCache(const Device& device) noexcept : device_(device.get()) {}
 
     VkPipeline pipeline_for(const GraphicsPipelineState& state);
+    std::vector<DeviceHandle<VkPipeline>> take_pipelines_using(VkShaderModule shader);
 
     std::size_t pipeline_count() const noexcept {
         return pipelines_.size();

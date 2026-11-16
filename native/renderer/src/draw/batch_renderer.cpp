@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <iterator>
 
 #include "descriptors/descriptor_layout.hpp"
 #include "draw/element_defaults.hpp"
@@ -137,7 +138,14 @@ void BatchRenderer::record(VkCommandBuffer commands, const BatchPass& pass, std:
             bound_view = view;
         }
         const PipelineKey key{
-            batch.format, material.blending, material.depth, material.culling, material.depth_bias, material.writes_color};
+            batch.program.value_or(BatchProgram{vertex_shader_.get(), fragment_shader_.get()}),
+            batch.format,
+            material.blending,
+            material.depth,
+            material.culling,
+            material.depth_bias,
+            material.writes_color,
+        };
         vkCmdBindPipeline(commands, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_for(key));
         vkCmdBindDescriptorSets(
             commands, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_layout_.get(), texture_set, 1, &batch.texture, 0, nullptr);
@@ -171,8 +179,8 @@ VkPipeline BatchRenderer::pipeline_for(const PipelineKey& key) {
     }
 
     const VkPipeline pipeline = pipelines_.pipeline_for(GraphicsPipelineState{
-        .vertex_shader = vertex_shader_.get(),
-        .fragment_shader = fragment_shader_.get(),
+        .vertex_shader = key.program.vertex,
+        .fragment_shader = key.program.fragment,
         .layout = pipeline_layout_.get(),
         .vertex_layout = key.format.layout(),
         .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
@@ -186,6 +194,19 @@ VkPipeline BatchRenderer::pipeline_for(const PipelineKey& key) {
     });
     used_pipelines_.emplace_back(key, pipeline);
     return pipeline;
+}
+
+std::vector<DeviceHandle<VkPipeline>> BatchRenderer::take_pipelines_of(const BatchProgram& program) {
+    std::erase_if(used_pipelines_, [&program](const std::pair<PipelineKey, VkPipeline>& used) {
+        return used.first.program == program;
+    });
+    std::vector<DeviceHandle<VkPipeline>> taken = pipelines_.take_pipelines_using(program.vertex);
+    std::vector<DeviceHandle<VkPipeline>> sharing_fragment = pipelines_.take_pipelines_using(program.fragment);
+    taken.insert(
+        taken.end(),
+        std::make_move_iterator(sharing_fragment.begin()),
+        std::make_move_iterator(sharing_fragment.end()));
+    return taken;
 }
 
 }
