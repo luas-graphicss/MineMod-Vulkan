@@ -10,6 +10,7 @@
 #include "library/native_registration.hpp"
 #include "minemod/scene/scene_session.h"
 #include "scene/scene_addresses.hpp"
+#include "sharing/exported_handles.hpp"
 
 namespace minemod::jni {
 
@@ -96,6 +97,10 @@ jint JNICALL reclaim_for_renderer(JNIEnv*, jclass, jlong session) {
     return minemod_scene_session_reclaim_for_renderer(object_at<minemod_scene_session>(session));
 }
 
+jint JNICALL close_exported(JNIEnv*, jclass, jlong handle) {
+    return close_exported_handle(handle) ? MINEMOD_RESULT_OK : MINEMOD_RESULT_INVALID_ARGUMENT;
+}
+
 }
 
 bool register_scene_sharing_calls(JNIEnv& env) noexcept {
@@ -105,6 +110,7 @@ bool register_scene_sharing_calls(JNIEnv& env) noexcept {
         native_method("nativeExportSemaphores", "(J[J)I", &export_semaphores),
         native_method("nativeRelease", "(JI)I", &release_to_provider),
         native_method("nativeReclaim", "(J)I", &reclaim_for_renderer),
+        native_method("nativeCloseExported", "(J)I", &close_exported),
     };
     return register_natives(env, "io/github/luasgraphicss/minemod/bridge/SceneSharing", methods);
 }

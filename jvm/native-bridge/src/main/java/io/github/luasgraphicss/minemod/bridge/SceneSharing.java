@@ -41,6 +41,10 @@ public final class SceneSharing {
         return new HandoffSemaphores(handles[RENDERER_DONE], handles[PROVIDER_DONE]);
     }
 
+    public void closeExported(long handle) {
+        NativeResults.requireOk(nativeCloseExported(handle), "closing the exported handle " + handle);
+    }
+
     public void releaseToProvider(HandoffSynchronization synchronization) {
         NativeResults.requireOk(
                 session.withOpenAddress(address -> nativeRelease(address, synchronization.code())),
@@ -61,4 +65,6 @@ public final class SceneSharing {
     private static native int nativeRelease(long session, int synchronization);
 
     private static native int nativeReclaim(long session);
+
+    private static native int nativeCloseExported(long handle);
 }

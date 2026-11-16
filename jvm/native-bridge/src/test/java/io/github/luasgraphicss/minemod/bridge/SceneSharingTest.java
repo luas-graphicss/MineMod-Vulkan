@@ -30,6 +30,7 @@ class SceneSharingTest {
     private static final int VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL = 2;
     private static final int VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL = 3;
     private static final byte OPAQUE = (byte) 0xFF;
+    private static final long NO_HANDLE = -1;
 
     private NativeSceneHost host;
     private NativeSceneSession session;
@@ -95,6 +96,17 @@ class SceneSharingTest {
         assertTrue(color >= 0, "color handle " + color);
         assertTrue(depthStencil >= 0, "depth-stencil handle " + depthStencil);
         assertNotEquals(color, depthStencil);
+    }
+
+    @Test
+    void closesAnExportedHandleTheProviderNeverImported() {
+        SceneSharing sharing = session.sharing();
+        long color = sharing.exportMemory(SharedAttachment.COLOR);
+
+        sharing.closeExported(color);
+
+        AbiException refused = assertThrows(AbiException.class, () -> sharing.closeExported(NO_HANDLE));
+        assertEquals(AbiResult.INVALID_ARGUMENT, refused.result());
     }
 
     @Test
