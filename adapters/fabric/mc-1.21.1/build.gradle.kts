@@ -44,22 +44,41 @@ dependencies {
     bundledRuntime("minemod-vulkan.jvm:client-runtime")
 }
 
+val builtNativeLibrary = repositoryRoot.resolve("build/$nativePreset/jni/$nativeLibraryName")
+val jniJavaHome = javaToolchains.compilerFor(java.toolchain).map { it.metadata.installationPath.asFile.absolutePath }
+
+val configureNativeLibrary by tasks.registering(Exec::class) {
+    group = LifecycleBasePlugin.BUILD_GROUP
+    description = "Configures the CMake build of the JNI library with the renderer in it."
+    workingDir = repositoryRoot
+    executable = "cmake"
+    args("--preset", nativePreset)
+    argumentProviders.add(CommandLineArgumentProvider { listOf("-DMINEMOD_JAVA_HOME=${jniJavaHome.get()}") })
+}
+
+val buildNativeLibrary by tasks.registering(Exec::class) {
+    group = LifecycleBasePlugin.BUILD_GROUP
+    description = "Builds the JNI library that the mod bundles."
+    dependsOn(configureNativeLibrary)
+    workingDir = repositoryRoot
+    commandLine("cmake", "--build", "--preset", nativePreset)
+    outputs.file(builtNativeLibrary)
+    outputs.upToDateWhen { false }
+}
+
 val stageNativeLibrary by tasks.registering {
     group = LifecycleBasePlugin.BUILD_GROUP
-    description = "Stages the JNI library built by the $nativePreset preset next to its SHA-256."
-    val builtLibrary = repositoryRoot.resolve("build/$nativePreset/jni/$nativeLibraryName")
+    description = "Stages the JNI library next to its SHA-256."
+    val builtLibrary = builtNativeLibrary
     val stagedDirectory = layout.buildDirectory.dir("native-library")
     val platformDirectory = "natives/$nativePlatform"
     val libraryName = nativeLibraryName
-    inputs.files(builtLibrary).withPropertyName("builtLibrary").optional()
+    inputs.files(buildNativeLibrary).withPropertyName("builtLibrary")
     inputs.property("platformDirectory", platformDirectory)
     outputs.dir(stagedDirectory)
     doLast {
         val target = stagedDirectory.get().dir(platformDirectory).asFile
         target.deleteRecursively()
-        if (!builtLibrary.isFile) {
-            throw GradleException("The mod bundles the JNI library and found none at $builtLibrary")
-        }
         target.mkdirs()
         val contents = builtLibrary.readBytes()
         val digest = MessageDigest.getInstance("SHA-256").digest(contents)
