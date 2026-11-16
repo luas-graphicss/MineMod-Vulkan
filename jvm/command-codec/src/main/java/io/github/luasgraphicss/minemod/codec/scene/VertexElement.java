@@ -18,6 +18,10 @@ public enum VertexElement {
         this.bytes = bytes;
     }
 
+    public int bytes() {
+        return bytes;
+    }
+
     static int maskOf(Set<VertexElement> elements) {
         int mask = 0;
         for (VertexElement element : elements) {
