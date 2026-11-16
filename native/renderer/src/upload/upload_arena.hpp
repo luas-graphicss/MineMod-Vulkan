@@ -14,7 +14,8 @@ namespace minemod::renderer {
 
 class UploadArena {
 public:
-    UploadArena(const Device& device, VkDeviceSize capacity);
+    UploadArena(
+        const Device& device, VkDeviceSize capacity, VkBufferUsageFlags usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
 
     std::optional<ArenaRegion> stage(std::span<const std::byte> bytes, VkDeviceSize alignment);
 

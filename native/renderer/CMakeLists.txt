@@ -34,6 +34,7 @@ function(minemod_add_shader_library target)
 endfunction()
 
 minemod_add_shader_library(minemod_terrain_shaders terrain.vert terrain.frag)
+minemod_add_shader_library(minemod_scene_shaders scene.vert scene.frag)
 
 add_library(minemod_renderer STATIC
     src/descriptors/descriptor_layout.cpp
@@ -42,7 +43,13 @@ add_library(minemod_renderer STATIC
     src/device/instance.cpp
     src/device/physical_device.cpp
     src/device/vulkan_error.cpp
+    src/draw/batch_geometry.cpp
+    src/draw/batch_renderer.cpp
+    src/draw/primitive_mode.cpp
+    src/draw/vertex_format.cpp
+    src/draw/view_constants.cpp
     src/frame/frame_readback.cpp
+    src/frame/frame_rendering.cpp
     src/frame/frame_targets.cpp
     src/frame/frames_in_flight.cpp
     src/frame/viewport.cpp
@@ -89,7 +96,9 @@ add_library(minemod_renderer STATIC
 add_library(minemod::renderer ALIAS minemod_renderer)
 
 target_include_directories(minemod_renderer PUBLIC src)
-target_link_libraries(minemod_renderer PUBLIC Vulkan::Vulkan PRIVATE minemod_terrain_shaders)
+target_link_libraries(minemod_renderer
+    PUBLIC Vulkan::Vulkan
+    PRIVATE minemod_scene_shaders minemod_terrain_shaders)
 minemod_configure_vulkan_target(minemod_renderer)
 
 add_subdirectory(harness)

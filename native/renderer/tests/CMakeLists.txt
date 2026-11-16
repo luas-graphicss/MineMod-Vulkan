@@ -1,5 +1,7 @@
 add_library(minemod_renderer_test_support STATIC
     support/graph_passes.cpp
+    support/pixel_colors.cpp
+    support/scene_vertices.cpp
     support/terrain_quads.cpp
     support/validated_device.cpp)
 target_include_directories(minemod_renderer_test_support PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -77,12 +79,30 @@ add_executable(minemod_world_geometry_device_tests
 target_link_libraries(minemod_world_geometry_device_tests PRIVATE minemod_renderer_test_support minemod_doctest_main)
 minemod_configure_vulkan_target(minemod_world_geometry_device_tests)
 
+add_executable(minemod_scene_drawing_tests
+    draw/material_test.cpp
+    draw/primitive_mode_test.cpp
+    draw/vertex_format_test.cpp
+    pipelines/blending_test.cpp
+    shaders/scene_shader_contract_test.cpp)
+target_link_libraries(minemod_scene_drawing_tests
+    PRIVATE minemod_renderer_test_support minemod_doctest_main minemod_scene_shaders)
+minemod_configure_vulkan_target(minemod_scene_drawing_tests)
+
+add_executable(minemod_scene_drawing_device_tests
+    draw/batch_geometry_test.cpp
+    draw/batch_scene_test.cpp)
+target_link_libraries(minemod_scene_drawing_device_tests PRIVATE minemod_renderer_test_support minemod_doctest_main)
+minemod_configure_vulkan_target(minemod_scene_drawing_device_tests)
+
 add_test(NAME render_graph COMMAND minemod_render_graph_tests)
 add_test(NAME render_graph_device COMMAND minemod_render_graph_device_tests)
 add_test(NAME renderer_harness COMMAND minemod_renderer_tests)
 add_test(NAME renderer_harness_cli COMMAND minemod_harness --validation --frames 2)
 add_test(NAME renderer_resources COMMAND minemod_renderer_resource_tests)
 add_test(NAME renderer_resources_device COMMAND minemod_renderer_resource_device_tests)
+add_test(NAME scene_drawing COMMAND minemod_scene_drawing_tests)
+add_test(NAME scene_drawing_device COMMAND minemod_scene_drawing_device_tests)
 add_test(NAME world_geometry COMMAND minemod_world_geometry_tests)
 add_test(NAME world_geometry_device COMMAND minemod_world_geometry_device_tests)
 
@@ -91,6 +111,7 @@ set(minemod_device_tests
     renderer_harness
     renderer_harness_cli
     renderer_resources_device
+    scene_drawing_device
     world_geometry_device)
 set_tests_properties(${minemod_device_tests} PROPERTIES LABELS vulkan-device)
 
