@@ -11,7 +11,8 @@ What runs today:
 - `manifests/minecraft-targets.json` pins the 37 supported releases and their 73 loader combinations, with official download hashes, launch arguments, Java runtime and LWJGL version. `tools/verification` checks it.
 - `native/abi` is the C ABI: version and capability negotiation, generational handles and command streams that are validated before they run.
 - `jvm/command-codec` writes and validates the same streams in Java 8 bytecode, and `jvm/native-bridge` drives native sessions over JNI on Java 8, 16, 17 and 21.
-- `minemod_harness` creates a Vulkan 1.3 device, draws a textured and depth-tested scene, reads it back and presents it on a headless surface.
+- `native/renderer/src/graph` plans a frame from the passes it declares: their order, with cycles rejected by name, the lifetime of every image, with identical images sharing a slot once the first is no longer used, and the layout transitions between uses.
+- `minemod_harness` creates a Vulkan 1.3 device, draws a textured and depth-tested scene through a planned frame, reads it back and presents it on a headless surface. `--validation` also checks synchronization.
 
 What does not exist yet: a game window or input on any Minecraft version, the Mesa/Zink OpenGL provider and its interop with the renderer, and any run on Windows or on a real GPU. `docs/architecture` says which decisions are backed by tests and which are still proposals.
 
@@ -42,7 +43,7 @@ cmake --build --preset linux-debug
 ctest --preset linux-debug
 ```
 
-Two tests carry the label `vulkan-device` and need a Vulkan driver. Without one, run `ctest --preset linux-debug -LE vulkan-device`.
+Three tests carry the label `vulkan-device` and need a Vulkan driver. Without one, run `ctest --preset linux-debug -LE vulkan-device`.
 
 The harness also runs on its own, here from the `linux-release` preset:
 
