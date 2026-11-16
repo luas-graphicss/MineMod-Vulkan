@@ -23,6 +23,16 @@ public final class FaceConnections {
         return new FaceConnections(pairs | pairBit(first, second) | pairBit(second, first));
     }
 
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof FaceConnections && pairs == ((FaceConnections) other).pairs;
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(pairs);
+    }
+
     long pairs() {
         return pairs;
     }
