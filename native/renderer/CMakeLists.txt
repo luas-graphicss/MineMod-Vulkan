@@ -83,6 +83,8 @@ add_library(minemod_renderer STATIC
     src/resources/memory_type.cpp
     src/scene/scene_renderer.cpp
     src/shaders/core_shader_contract.cpp
+    src/shaders/program_check.cpp
+    src/shaders/scene_shader_contract.cpp
     src/shaders/shader_interface.cpp
     src/shaders/spirv_module.cpp
     src/terrain/pending_sections.cpp
