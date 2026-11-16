@@ -86,3 +86,51 @@ jobs:
 
       - name: Verify the compatibility layer
         run: sh ./gradlew :tools:verification:run --args="check --profile compatibility"
+
+  provider:
+    name: Compatibility layer on Mesa/Zink
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      SYSTEM_PROVIDER: /usr/lib/x86_64-linux-gnu
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install the Java runtimes
+        uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+        with:
+          distribution: temurin
+          java-version: |
+            8
+            16
+            17
+            21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
+
+      - name: Install Mesa with Zink, the lavapipe driver and the Vulkan toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            glslang-tools libegl1 libegl-mesa0 libgl1-mesa-dri libvulkan-dev mesa-vulkan-drivers ninja-build \
+            vulkan-validationlayers
+
+      - name: Build the renderer stand-in that shares its attachments
+        run: |
+          cmake --preset linux-client
+          cmake --build --preset linux-scene-host
+
+      - name: Test the layer against the installed Mesa
+        run: >
+          sh ./gradlew
+          :compatibility:runtime:check
+          :compatibility:lwjgl2:check
+          :compatibility:lwjgl3:check
+          -Pminemod.systemProvider="$SYSTEM_PROVIDER"
+          -Pminemod.sceneHost="$GITHUB_WORKSPACE/build/linux-client/jni/libminemod_scene_host_jni.so"
+          -Porg.gradle.java.installations.auto-download=false
+          -Porg.gradle.java.installations.fromEnv=JAVA_HOME_8_X64,JAVA_HOME_16_X64,JAVA_HOME_17_X64,JAVA_HOME_21_X64
