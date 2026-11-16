@@ -122,7 +122,8 @@ minemod_configure_vulkan_target(minemod_scene_drawing_device_tests)
 add_library(minemod_scene_session_test_support STATIC
     session/support/running_session.cpp
     session/support/scene_shapes.cpp
-    session/support/scene_stream.cpp)
+    session/support/scene_stream.cpp
+    session/support/terrain_frames.cpp)
 target_link_libraries(minemod_scene_session_test_support
     PUBLIC minemod::scene_session minemod_abi_test_support minemod_renderer_test_support)
 minemod_configure_vulkan_target(minemod_scene_session_test_support)
@@ -132,7 +133,8 @@ add_executable(minemod_scene_session_device_tests
     session/scene_corpus_test.cpp
     session/scene_frames_test.cpp
     session/scene_presentation_test.cpp
-    session/scene_resources_test.cpp)
+    session/scene_resources_test.cpp
+    session/scene_terrain_intake_test.cpp)
 target_compile_definitions(minemod_scene_session_device_tests PRIVATE
     MINEMOD_COMMAND_STREAM_CORPUS="${PROJECT_SOURCE_DIR}/tests/fixtures/command-streams")
 target_link_libraries(minemod_scene_session_device_tests

@@ -28,6 +28,7 @@
 #include "presentation/window_surface.hpp"
 #include "resources/texture_registry.hpp"
 #include "scene/scene_renderer.hpp"
+#include "terrain/section_intake.hpp"
 #include "terrain/terrain_renderer.hpp"
 #include "terrain/terrain_sections.hpp"
 #include "textures/sampler_cache.hpp"
@@ -78,6 +79,8 @@ private:
     minemod_result set_batch_option(std::uint16_t opcode, std::span<const std::byte> payload);
     minemod_result end_frame();
 
+    void upload_waiting_sections();
+    void order_translucent_terrain();
     const renderer::FramesInFlight::Frame& recording();
     FrameSlot& recording_slot();
     std::uint64_t last_frame_using_removed_resources() const noexcept;
@@ -100,6 +103,7 @@ private:
     renderer::SceneRenderer scene_;
     renderer::JobEpochs epochs_;
     renderer::TerrainSections sections_;
+    SectionIntake intake_;
     TextureRegistry textures_;
     renderer::Texture white_;
     VkSampler white_sampler_;
@@ -109,6 +113,7 @@ private:
     std::optional<renderer::FramesInFlight::Frame> recording_;
     std::optional<std::uint64_t> last_submitted_frame_;
     RecordedFrame frame_;
+    renderer::WorldPosition camera_{};
     std::uint32_t world_ = 0;
     bool has_drawn_frame_ = false;
     minemod_scene_counters counters_{};

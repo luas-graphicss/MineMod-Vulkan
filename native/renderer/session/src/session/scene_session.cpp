@@ -14,7 +14,6 @@
 #include "minemod/abi/command_stream.h"
 #include "minemod/abi/scene_commands.h"
 #include "scene/scene_frame.hpp"
-#include "terrain/section_buffers.hpp"
 #include "textures/mip_chain.hpp"
 #include "upload/upload_arena.hpp"
 
@@ -121,6 +120,7 @@ SceneSession::SceneSession(std::shared_ptr<const SceneHost> host, const SessionS
       batches_(device_, pipelines_),
       scene_(terrain_, batches_),
       sections_(retirements_),
+      intake_(device_, sections_, setup.limits),
       textures_(device_, samplers_, setup.limits.max_textures),
       white_(create_white_texture(device_)),
       white_sampler_(samplers_.sampler_for(white_sampling)),
@@ -291,23 +291,12 @@ minemod_result SceneSession::publish_section(std::span<const std::byte> payload)
         ++counters_.sections_dropped;
         return MINEMOD_RESULT_OK;
     }
-    const bool is_new_section = sections_.find(publication.section) == nullptr;
-    if (is_new_section && sections_.size() >= limits_.max_sections) {
-        return MINEMOD_RESULT_LIMIT_EXCEEDED;
+    const bool is_first_in_line = !intake_.is_waiting();
+    const minemod_result accepted = intake_.accept(epochs_, publication);
+    if (accepted == MINEMOD_RESULT_OK && is_first_in_line) {
+        upload_waiting_sections();
     }
-    renderer::SectionBuffers buffers(device_, publication.mesh);
-    const renderer::FramesInFlight::Frame& frame = recording();
-    FrameSlot& slot = recording_slot();
-    const std::optional<renderer::StagedSection> staged = renderer::stage_section(slot.uploads, publication.mesh);
-    if (!staged) {
-        return MINEMOD_RESULT_LIMIT_EXCEEDED;
-    }
-    buffers.record_upload(frame.commands, slot.uploads.buffer(), *staged);
-    const renderer::SectionJob job{publication.section, epochs_.schedule(publication.section)};
-    sections_.publish(epochs_, job, std::move(buffers), frame.number);
-    frame_.uploaded_sections = true;
-    ++counters_.sections_published;
-    return MINEMOD_RESULT_OK;
+    return accepted;
 }
 
 minemod_result SceneSession::unload_section(std::span<const std::byte> payload) {
@@ -317,12 +306,14 @@ minemod_result SceneSession::unload_section(std::span<const std::byte> payload) 
     }
     epochs_.unload(section.command());
     sections_.unload(section.command(), last_frame_using_removed_resources());
+    counters_.sections_dropped += intake_.forget(epochs_, section.command());
     return MINEMOD_RESULT_OK;
 }
 
 minemod_result SceneSession::change_world() {
     epochs_.change_world();
     sections_.unload_all(last_frame_using_removed_resources());
+    counters_.sections_dropped += intake_.forget_all(epochs_);
     ++world_;
     return MINEMOD_RESULT_OK;
 }
@@ -390,6 +381,7 @@ minemod_result SceneSession::set_terrain(std::span<const std::byte> payload) {
         });
     frame_.terrain =
         renderer::TerrainFrame{extent_, definition.view_projection, definition.camera, definition.fog, textures};
+    camera_ = definition.camera;
     return MINEMOD_RESULT_OK;
 }
 
@@ -445,6 +437,8 @@ minemod_result SceneSession::end_frame() {
     }
     const renderer::FramesInFlight::Frame frame = recording();
     FrameSlot& slot = recording_slot();
+    upload_waiting_sections();
+    order_translucent_terrain();
     if (frame_.uploaded_sections) {
         make_uploads_readable_by_draws(frame.commands);
     }
@@ -498,6 +492,25 @@ minemod_result SceneSession::end_frame() {
     has_drawn_frame_ = true;
     frame_.clear();
     return MINEMOD_RESULT_OK;
+}
+
+void SceneSession::upload_waiting_sections() {
+    const renderer::FramesInFlight::Frame& frame = recording();
+    const renderer::UploadedSections uploaded =
+        intake_.upload({frame.commands, frame.number, camera_}, recording_slot().uploads, epochs_);
+    frame_.uploaded_sections = frame_.uploaded_sections || uploaded.published != 0;
+    counters_.sections_published += uploaded.published;
+    counters_.sections_dropped += uploaded.discarded;
+}
+
+void SceneSession::order_translucent_terrain() {
+    if (!frame_.terrain) {
+        return;
+    }
+    const renderer::FramesInFlight::Frame& frame = recording();
+    const std::size_t reordered =
+        intake_.reorder_translucent({frame.commands, frame.number, camera_}, recording_slot().uploads);
+    frame_.uploaded_sections = frame_.uploaded_sections || reordered != 0;
 }
 
 const renderer::FramesInFlight::Frame& SceneSession::recording() {
