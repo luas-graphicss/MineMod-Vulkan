@@ -123,12 +123,17 @@ VkDescriptorSet BatchRenderer::bind_texture(DescriptorPools& pools, VkImageView 
 
 void BatchRenderer::record(VkCommandBuffer commands, const BatchPass& pass, std::span<const DrawBatch> batches) {
     set_upright_viewport(commands, pass.extent);
-    vkCmdBindDescriptorSets(
-        commands, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_layout_.get(), view_set, 1, &pass.view, 0, nullptr);
+    VkDescriptorSet bound_view = VK_NULL_HANDLE;
 
     const std::array frame_size{static_cast<float>(pass.extent.width), static_cast<float>(pass.extent.height)};
     for (const DrawBatch& batch : batches) {
         const Material& material = batch.material;
+        const VkDescriptorSet view = batch.view == VK_NULL_HANDLE ? pass.view : batch.view;
+        if (view != bound_view) {
+            vkCmdBindDescriptorSets(
+                commands, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_layout_.get(), view_set, 1, &view, 0, nullptr);
+            bound_view = view;
+        }
         const PipelineKey key{
             batch.format, material.blending, material.depth, material.culling, material.depth_bias, material.writes_color};
         vkCmdBindPipeline(commands, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_for(key));

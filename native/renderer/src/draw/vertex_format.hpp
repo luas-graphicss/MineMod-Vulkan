@@ -32,7 +32,10 @@ constexpr std::uint32_t element_bytes(VertexElement element) noexcept {
 
 class VertexFormat {
 public:
-    constexpr VertexFormat(std::initializer_list<VertexElement> elements) {
+    constexpr VertexFormat(std::initializer_list<VertexElement> elements)
+        : VertexFormat(std::span<const VertexElement>(elements.begin(), elements.size())) {}
+
+    constexpr explicit VertexFormat(std::span<const VertexElement> elements) {
         for (const VertexElement element : elements) {
             if (has(element)) {
                 throw std::invalid_argument("a vertex format lists each element once");

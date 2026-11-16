@@ -99,6 +99,22 @@ add_executable(minemod_scene_drawing_device_tests
 target_link_libraries(minemod_scene_drawing_device_tests PRIVATE minemod_renderer_test_support minemod_doctest_main)
 minemod_configure_vulkan_target(minemod_scene_drawing_device_tests)
 
+add_library(minemod_scene_session_test_support STATIC
+    session/support/running_session.cpp
+    session/support/scene_shapes.cpp
+    session/support/scene_stream.cpp)
+target_link_libraries(minemod_scene_session_test_support
+    PUBLIC minemod::scene_session minemod_abi_test_support minemod_renderer_test_support)
+minemod_configure_vulkan_target(minemod_scene_session_test_support)
+
+add_executable(minemod_scene_session_device_tests
+    session/scene_frames_test.cpp
+    session/scene_presentation_test.cpp
+    session/scene_resources_test.cpp)
+target_link_libraries(minemod_scene_session_device_tests
+    PRIVATE minemod_scene_session_test_support minemod_doctest_main)
+minemod_configure_vulkan_target(minemod_scene_session_device_tests)
+
 add_test(NAME render_graph COMMAND minemod_render_graph_tests)
 add_test(NAME render_graph_device COMMAND minemod_render_graph_device_tests)
 add_test(NAME renderer_harness COMMAND minemod_renderer_tests)
@@ -107,6 +123,7 @@ add_test(NAME renderer_resources COMMAND minemod_renderer_resource_tests)
 add_test(NAME renderer_resources_device COMMAND minemod_renderer_resource_device_tests)
 add_test(NAME scene_drawing COMMAND minemod_scene_drawing_tests)
 add_test(NAME scene_drawing_device COMMAND minemod_scene_drawing_device_tests)
+add_test(NAME scene_session_device COMMAND minemod_scene_session_device_tests)
 add_test(NAME world_geometry COMMAND minemod_world_geometry_tests)
 add_test(NAME world_geometry_device COMMAND minemod_world_geometry_device_tests)
 
@@ -116,6 +133,7 @@ set(minemod_device_tests
     renderer_harness_cli
     renderer_resources_device
     scene_drawing_device
+    scene_session_device
     world_geometry_device)
 set_tests_properties(${minemod_device_tests} PROPERTIES LABELS vulkan-device)
 

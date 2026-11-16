@@ -72,6 +72,7 @@ add_library(minemod_renderer STATIC
     src/presentation/headless_surface.cpp
     src/presentation/presenter.cpp
     src/presentation/swapchain.cpp
+    src/presentation/window_surface.cpp
     src/resources/buffer.cpp
     src/resources/image.cpp
     src/resources/image_layout.cpp
@@ -105,6 +106,7 @@ target_link_libraries(minemod_renderer
 minemod_configure_vulkan_target(minemod_renderer)
 
 add_subdirectory(harness)
+add_subdirectory(session)
 
 if(MINEMOD_BUILD_TESTS)
     add_subdirectory(tests)

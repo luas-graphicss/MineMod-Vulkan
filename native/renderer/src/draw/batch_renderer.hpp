@@ -36,6 +36,7 @@ struct DrawBatch {
     Matrix4 model_view;
     std::array<float, 4> color_modulator;
     float line_width = 1.0f;
+    VkDescriptorSet view = VK_NULL_HANDLE;
 };
 
 struct BatchPass {
