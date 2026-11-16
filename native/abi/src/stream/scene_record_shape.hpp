@@ -33,6 +33,7 @@ inline constexpr std::array scene_record_shapes{
     SceneRecordShape{MINEMOD_OPCODE_CLEAR_CLIP, MINEMOD_CLEAR_CLIP_BYTES, RecordTail::none},
     SceneRecordShape{MINEMOD_OPCODE_SET_TEXTURE_TRANSFORM, MINEMOD_SET_TEXTURE_TRANSFORM_BYTES, RecordTail::none},
     SceneRecordShape{MINEMOD_OPCODE_SET_QUAD_ORDER, MINEMOD_SET_QUAD_ORDER_BYTES, RecordTail::none},
+    SceneRecordShape{MINEMOD_OPCODE_CONNECT_SECTION_FACES, MINEMOD_CONNECT_SECTION_FACES_BYTES, RecordTail::none},
 };
 
 constexpr const SceneRecordShape* find_scene_record_shape(std::uint16_t opcode) noexcept {
