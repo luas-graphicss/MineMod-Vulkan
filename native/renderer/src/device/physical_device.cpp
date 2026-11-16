@@ -39,18 +39,6 @@ DeviceDescription describe(VkPhysicalDevice device) {
     };
 }
 
-bool has_extension(VkPhysicalDevice device, std::string_view name) {
-    std::uint32_t count = 0;
-    require_success(
-        vkEnumerateDeviceExtensionProperties(device, nullptr, &count, nullptr), "counting the device extensions");
-    std::vector<VkExtensionProperties> extensions(count);
-    require_success(
-        vkEnumerateDeviceExtensionProperties(device, nullptr, &count, extensions.data()),
-        "listing the device extensions");
-    return std::ranges::any_of(
-        extensions, [&](const VkExtensionProperties& extension) { return name == extension.extensionName; });
-}
-
 std::optional<std::uint32_t> find_queue_family(VkPhysicalDevice device, VkSurfaceKHR presentation_surface) {
     std::uint32_t count = 0;
     vkGetPhysicalDeviceQueueFamilyProperties(device, &count, nullptr);
@@ -91,7 +79,7 @@ std::optional<std::string> missing_requirement(
     }
 
     for (const char* extension : requirements.extensions) {
-        if (!has_extension(device, extension)) {
+        if (!supports_extension(device, extension)) {
             return std::string("lacks the device extension ") + extension;
         }
     }
@@ -139,6 +127,18 @@ SelectedDevice select_device(VkInstance instance, const DeviceRequirements& requ
         throw UnsupportedSystem("no Vulkan device qualifies" + joined(rejections));
     }
     return *selected;
+}
+
+bool supports_extension(VkPhysicalDevice device, std::string_view name) {
+    std::uint32_t count = 0;
+    require_success(
+        vkEnumerateDeviceExtensionProperties(device, nullptr, &count, nullptr), "counting the device extensions");
+    std::vector<VkExtensionProperties> extensions(count);
+    require_success(
+        vkEnumerateDeviceExtensionProperties(device, nullptr, &count, extensions.data()),
+        "listing the device extensions");
+    return std::ranges::any_of(
+        extensions, [&](const VkExtensionProperties& extension) { return name == extension.extensionName; });
 }
 
 std::string device_type_name(VkPhysicalDeviceType type) {

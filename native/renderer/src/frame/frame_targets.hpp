@@ -10,6 +10,8 @@ namespace minemod::renderer {
 inline constexpr VkFormat frame_color_format = VK_FORMAT_R8G8B8A8_UNORM;
 inline constexpr VkFormat frame_depth_format = VK_FORMAT_D32_SFLOAT;
 
+Image create_frame_scratch(const Device& device, VkExtent2D extent);
+
 class FrameTargets {
 public:
     FrameTargets(const Device& device, VkExtent2D extent);

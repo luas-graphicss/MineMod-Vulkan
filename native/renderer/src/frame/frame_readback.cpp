@@ -33,7 +33,10 @@ Pixel FramePixels::at(std::uint32_t x, std::uint32_t y) const {
 }
 
 FramePixels read_back_color(const Device& device, const Image& transfer_source) {
-    const VkExtent2D extent = transfer_source.extent();
+    return read_back_color(device, transfer_source.get(), transfer_source.extent());
+}
+
+FramePixels read_back_color(const Device& device, VkImage transfer_source, VkExtent2D extent) {
     const VkDeviceSize byte_count = VkDeviceSize{extent.width} * extent.height * bytes_per_pixel;
     const Buffer staging(device, byte_count, VK_BUFFER_USAGE_TRANSFER_DST_BIT, host_memory);
 
@@ -43,7 +46,7 @@ FramePixels read_back_color(const Device& device, const Image& transfer_source) 
             .imageExtent = {extent.width, extent.height, 1},
         };
         vkCmdCopyImageToBuffer(
-            commands, transfer_source.get(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, staging.get(), 1, &region);
+            commands, transfer_source, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, staging.get(), 1, &region);
     });
     return FramePixels(extent, staging.read());
 }

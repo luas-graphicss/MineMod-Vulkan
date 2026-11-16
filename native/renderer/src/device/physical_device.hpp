@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <span>
 #include <string>
+#include <string_view>
 
 #include <vulkan/vulkan.h>
 
@@ -27,6 +28,8 @@ struct DeviceRequirements {
 };
 
 SelectedDevice select_device(VkInstance instance, const DeviceRequirements& requirements);
+
+bool supports_extension(VkPhysicalDevice device, std::string_view name);
 
 std::string device_type_name(VkPhysicalDeviceType type);
 
