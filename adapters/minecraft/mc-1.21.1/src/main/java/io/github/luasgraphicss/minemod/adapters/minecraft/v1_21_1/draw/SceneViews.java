@@ -8,6 +8,7 @@ import io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.mixin.draw.Ren
 import io.github.luasgraphicss.minemod.client.draw.frame.ClipSpace;
 import io.github.luasgraphicss.minemod.client.draw.frame.GameView;
 import io.github.luasgraphicss.minemod.client.lightmap.LightmapPublisher;
+import io.github.luasgraphicss.minemod.client.overlay.OverlayPublisher;
 import io.github.luasgraphicss.minemod.codec.scene.FogShape;
 import net.minecraft.client.renderer.ShaderInstance;
 import org.joml.Matrix4f;
@@ -34,6 +35,10 @@ public final class SceneViews {
         LightmapPublisher lightmap = ClientRendering.renderer().lightmap();
         if (format.contains(VertexFormatElement.UV2) && lightmap.isDefined()) {
             view.lightmap(lightmap.texture());
+        }
+        OverlayPublisher overlay = ClientRendering.renderer().overlay();
+        if (format.contains(VertexFormatElement.UV1) && overlay.isDefined()) {
+            view.overlay(overlay.texture());
         }
         return view.build();
     }

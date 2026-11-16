@@ -1,5 +1,6 @@
 package io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.draw;
 
+import io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.mixin.draw.ShaderInstanceAccessor;
 import io.github.luasgraphicss.minemod.codec.scene.Shading;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -11,6 +12,7 @@ final class ShaderTraits {
     private static final float CUTOUT = 0.1f;
     private static final float INVISIBLE = 0.001f;
     private static final float KEEP_ALL = 0.0f;
+    private static final String OVERLAY_SAMPLER = "Sampler1";
     private static final Set<String> CUTS_FAINT_TEXELS = new HashSet<>(Arrays.asList(
             "particle",
             "position_color_tex_lightmap",
@@ -54,6 +56,9 @@ final class ShaderTraits {
 
     static Set<Shading> shadingOf(ShaderInstance shader) {
         Set<Shading> steps = EnumSet.of(Shading.TEXTURE, Shading.LIGHTMAP);
+        if (((ShaderInstanceAccessor) shader).minemod$samplerNames().contains(OVERLAY_SAMPLER)) {
+            steps.add(Shading.OVERLAY);
+        }
         if (shader.LIGHT0_DIRECTION != null) {
             steps.add(Shading.NORMAL);
         }
