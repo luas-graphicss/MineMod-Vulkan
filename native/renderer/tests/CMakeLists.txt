@@ -114,7 +114,8 @@ add_executable(minemod_scene_drawing_device_tests
     interface/clip_scene_test.cpp
     interface/hud_blending_scene_test.cpp
     scene/scene_composition_test.cpp
-    scene/scene_frames_test.cpp)
+    scene/scene_frames_test.cpp
+    sky/cloud_passes_test.cpp)
 target_link_libraries(minemod_scene_drawing_device_tests PRIVATE minemod_renderer_test_support minemod_doctest_main)
 minemod_configure_vulkan_target(minemod_scene_drawing_device_tests)
 
