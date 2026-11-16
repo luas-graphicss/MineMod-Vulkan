@@ -128,7 +128,8 @@
       "name": "linux-client",
       "configurePreset": "linux-client",
       "targets": [
-        "minemod_jni"
+        "minemod_jni",
+        "minemod_gl_provider_jni"
       ]
     },
     {
