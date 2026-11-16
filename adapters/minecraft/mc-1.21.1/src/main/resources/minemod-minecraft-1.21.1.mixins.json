@@ -16,6 +16,7 @@
     "lightmap.LightTextureMixin",
     "overlay.OverlayTextureMixin",
     "presentation.RenderSystemMixin",
+    "reload.ReloadableResourceManagerMixin",
     "terrain.CompileTaskAccessor",
     "terrain.LevelRendererMixin",
     "terrain.RebuildTaskMixin",
