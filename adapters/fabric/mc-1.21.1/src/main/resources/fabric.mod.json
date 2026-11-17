@@ -7,6 +7,7 @@
   "license": "GPL-3.0-only",
   "environment": "client",
   "entrypoints": {
+    "preLaunch": ["io.github.luasgraphicss.minemod.adapters.fabric.v1_21_1.ownership.RendererOwnershipCheck"],
     "client": ["io.github.luasgraphicss.minemod.adapters.fabric.v1_21_1.MineModClient"]
   },
   "mixins": ["minemod-minecraft-1.21.1.mixins.json"],
