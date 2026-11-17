@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "fabric-1.21.1-unbridged-renderer",
+  "release": "1.21.1",
+  "loader": "fabric",
+  "mods": [
+    {
+      "id": "minemod-fixture-chunk-renderer",
+      "version": "2.0.0",
+      "role": "renderer-replacement"
+    },
+    {
+      "id": "minemod-fixture-overlay",
+      "version": "1.0.0",
+      "role": "interface-overlay"
+    }
+  ],
+  "expectation": "refused-before-world"
+}

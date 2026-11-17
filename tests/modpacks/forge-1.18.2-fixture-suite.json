@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "id": "forge-1.18.2-fixture-suite",
+  "release": "1.18.2",
+  "loader": "forge",
+  "mods": [
+    {
+      "id": "minemod-fixture-inventory",
+      "version": "1.0.0",
+      "role": "gameplay"
+    },
+    {
+      "id": "minemod-fixture-overlay",
+      "version": "1.0.0",
+      "role": "interface-overlay"
+    },
+    {
+      "id": "minemod-fixture-minimap",
+      "version": "1.0.0",
+      "role": "map"
+    },
+    {
+      "id": "minemod-fixture-models",
+      "version": "1.0.0",
+      "role": "custom-models"
+    },
+    {
+      "id": "minemod-fixture-machines",
+      "version": "1.0.0",
+      "role": "technical-content"
+    },
+    {
+      "id": "minemod-fixture-scheduler",
+      "version": "1.0.0",
+      "role": "cpu-optimization"
+    },
+    {
+      "id": "minemod-fixture-chunk-renderer",
+      "version": "1.0.0",
+      "role": "renderer-replacement"
+    },
+    {
+      "id": "minemod-fixture-shader-loader",
+      "version": "1.0.0",
+      "role": "shader-loader"
+    },
+    {
+      "id": "minemod-fixture-recorder",
+      "version": "1.0.0",
+      "role": "capture"
+    }
+  ],
+  "expectation": "runs"
+}
