@@ -176,6 +176,14 @@
         "minemod_jni",
         "minemod_gl_provider_jni"
       ]
+    },
+    {
+      "name": "windows-scene-host",
+      "configurePreset": "windows-client",
+      "configuration": "RelWithDebInfo",
+      "targets": [
+        "minemod_scene_host_jni"
+      ]
     }
   ],
   "testPresets": [
