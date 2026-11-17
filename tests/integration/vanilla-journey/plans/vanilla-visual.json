@@ -1,0 +1,445 @@
+{
+  "name": "vanilla-visual",
+  "timeoutMinutes": 45,
+  "stepTimeoutSeconds": 300,
+  "world": {
+    "name": "journey",
+    "seed": 20240808
+  },
+  "options": {
+    "version": "3955",
+    "onboardAccessibility": "false",
+    "skipMultiplayerWarning": "true",
+    "joinedFirstServer": "true",
+    "tutorialStep": "none",
+    "narrator": "0",
+    "pauseOnLostFocus": "false",
+    "reducedDebugInfo": "true",
+    "overrideWidth": "854",
+    "overrideHeight": "480",
+    "fullscreen": "false",
+    "enableVsync": "false",
+    "maxFps": "60",
+    "renderDistance": "6",
+    "simulationDistance": "6",
+    "guiScale": "2",
+    "fov": "0.0",
+    "gamma": "0.5",
+    "graphicsMode": "1",
+    "renderClouds": "\"false\"",
+    "particles": "2",
+    "bobView": "false",
+    "biomeBlendRadius": "2",
+    "mipmapLevels": "4",
+    "entityShadows": "true",
+    "ao": "true",
+    "menuBackgroundBlurriness": "5",
+    "soundCategory_master": "0.0",
+    "lang": "en_us"
+  },
+  "packs": [],
+  "steps": [
+    {
+      "do": "wait-for-title",
+      "with": ""
+    },
+    {
+      "do": "create-world",
+      "with": ""
+    },
+    {
+      "do": "command",
+      "with": "gamerule doDaylightCycle false"
+    },
+    {
+      "do": "command",
+      "with": "gamerule doWeatherCycle false"
+    },
+    {
+      "do": "command",
+      "with": "gamerule doMobSpawning false"
+    },
+    {
+      "do": "command",
+      "with": "gamerule announceAdvancements false"
+    },
+    {
+      "do": "command",
+      "with": "time set 6000"
+    },
+    {
+      "do": "command",
+      "with": "weather clear"
+    },
+    {
+      "do": "hud",
+      "with": "hidden"
+    },
+    {
+      "do": "command",
+      "with": "gamemode spectator @a"
+    },
+    {
+      "do": "command",
+      "with": "execute as @a at @s run tp @s ~ 141 ~ 180 35"
+    },
+    {
+      "do": "settle",
+      "with": "40"
+    },
+    {
+      "do": "attempt",
+      "with": "kill @e[type=!minecraft:player]"
+    },
+    {
+      "do": "wait",
+      "with": "40"
+    },
+    {
+      "do": "attempt",
+      "with": "kill @e[type=!minecraft:player]"
+    },
+    {
+      "do": "wait",
+      "with": "20"
+    },
+    {
+      "do": "capture",
+      "with": "terrain-day"
+    },
+    {
+      "do": "command",
+      "with": "tp @a 0.5 204 6.5 180 5"
+    },
+    {
+      "do": "settle",
+      "with": "20"
+    },
+    {
+      "do": "command",
+      "with": "fill -8 199 -8 8 199 8 minecraft:smooth_stone"
+    },
+    {
+      "do": "command",
+      "with": "fill -8 200 -8 8 206 -8 minecraft:white_concrete"
+    },
+    {
+      "do": "command",
+      "with": "fill -6 200 -4 -5 202 -4 minecraft:oak_leaves[persistent=true]"
+    },
+    {
+      "do": "command",
+      "with": "fill -3 200 -4 -2 202 -4 minecraft:glass"
+    },
+    {
+      "do": "command",
+      "with": "fill 0 200 -4 1 202 -4 minecraft:red_stained_glass"
+    },
+    {
+      "do": "command",
+      "with": "fill 3 200 -6 6 201 -4 minecraft:blue_stained_glass"
+    },
+    {
+      "do": "command",
+      "with": "fill 4 200 -5 5 201 -5 minecraft:water"
+    },
+    {
+      "do": "command",
+      "with": "setblock -7 200 -7 minecraft:glowstone"
+    },
+    {
+      "do": "command",
+      "with": "setblock 7 200 -7 minecraft:sea_lantern"
+    },
+    {
+      "do": "command",
+      "with": "setblock 3 200 -2 minecraft:chest[facing=south]"
+    },
+    {
+      "do": "command",
+      "with": "setblock -1 200 -2 minecraft:oak_sign[rotation=0]{front_text:{messages:['{\"text\":\"MineMod\"}','{\"text\":\"Vulkan\"}','{\"text\":\"\"}','{\"text\":\"\"}']}}"
+    },
+    {
+      "do": "command",
+      "with": "summon minecraft:block_display -5.5 200 -2.5 {block_state:{Name:\"minecraft:lime_stained_glass\"}}"
+    },
+    {
+      "do": "command",
+      "with": "summon minecraft:item_display 5.5 201 -1.5 {item:{id:\"minecraft:diamond_sword\",count:1}}"
+    },
+    {
+      "do": "command",
+      "with": "summon minecraft:armor_stand 1.5 200 -2.5 {NoGravity:1b}"
+    },
+    {
+      "do": "command",
+      "with": "fill 12 200 -4 16 205 0 minecraft:glass hollow"
+    },
+    {
+      "do": "command",
+      "with": "fill 13 201 -3 15 204 -1 minecraft:water"
+    },
+    {
+      "do": "command",
+      "with": "tp @a 0.5 200 6.5 180 5"
+    },
+    {
+      "do": "settle",
+      "with": "40"
+    },
+    {
+      "do": "wait",
+      "with": "40"
+    },
+    {
+      "do": "capture",
+      "with": "materials-day"
+    },
+    {
+      "do": "command",
+      "with": "time set 18000"
+    },
+    {
+      "do": "wait",
+      "with": "60"
+    },
+    {
+      "do": "capture",
+      "with": "materials-night"
+    },
+    {
+      "do": "command",
+      "with": "time set 6000"
+    },
+    {
+      "do": "command",
+      "with": "tp @a 14.5 202 -1.5 180 0"
+    },
+    {
+      "do": "settle",
+      "with": "40"
+    },
+    {
+      "do": "wait",
+      "with": "40"
+    },
+    {
+      "do": "capture",
+      "with": "underwater"
+    },
+    {
+      "do": "command",
+      "with": "tp @a 0.5 200 6.5 180 5"
+    },
+    {
+      "do": "command",
+      "with": "gamemode creative @a"
+    },
+    {
+      "do": "hud",
+      "with": "shown"
+    },
+    {
+      "do": "settle",
+      "with": "40"
+    },
+    {
+      "do": "wait",
+      "with": "40"
+    },
+    {
+      "do": "capture",
+      "with": "interface-hud"
+    },
+    {
+      "do": "screen",
+      "with": "pause"
+    },
+    {
+      "do": "wait",
+      "with": "40"
+    },
+    {
+      "do": "capture",
+      "with": "interface-pause"
+    },
+    {
+      "do": "screen",
+      "with": "none"
+    },
+    {
+      "do": "hud",
+      "with": "hidden"
+    },
+    {
+      "do": "command",
+      "with": "gamemode spectator @a"
+    },
+    {
+      "do": "command",
+      "with": "execute in minecraft:the_nether run tp @a 0.5 204 6.5 180 5"
+    },
+    {
+      "do": "expect-dimension",
+      "with": "minecraft:the_nether"
+    },
+    {
+      "do": "settle",
+      "with": "20"
+    },
+    {
+      "do": "command",
+      "with": "execute in minecraft:the_nether run fill -8 199 -8 8 199 8 minecraft:netherrack"
+    },
+    {
+      "do": "command",
+      "with": "execute in minecraft:the_nether run fill -8 200 -8 8 206 -8 minecraft:nether_bricks"
+    },
+    {
+      "do": "command",
+      "with": "execute in minecraft:the_nether run fill -6 200 -4 -5 202 -4 minecraft:crimson_stem"
+    },
+    {
+      "do": "command",
+      "with": "execute in minecraft:the_nether run fill -3 200 -4 -2 202 -4 minecraft:glowstone"
+    },
+    {
+      "do": "command",
+      "with": "execute in minecraft:the_nether run fill 0 200 -4 1 202 -4 minecraft:warped_wart_block"
+    },
+    {
+      "do": "command",
+      "with": "execute in minecraft:the_nether run fill 3 200 -4 4 202 -4 minecraft:shroomlight"
+    },
+    {
+      "do": "command",
+      "with": "execute in minecraft:the_nether run tp @a 0.5 200 6.5 180 5"
+    },
+    {
+      "do": "settle",
+      "with": "40"
+    },
+    {
+      "do": "wait",
+      "with": "160"
+    },
+    {
+      "do": "capture",
+      "with": "nether"
+    },
+    {
+      "do": "command",
+      "with": "execute in minecraft:the_end run tp @a 2000.5 204 6.5 180 5"
+    },
+    {
+      "do": "expect-dimension",
+      "with": "minecraft:the_end"
+    },
+    {
+      "do": "settle",
+      "with": "20"
+    },
+    {
+      "do": "command",
+      "with": "execute in minecraft:the_end run fill 1992 199 -8 2008 199 8 minecraft:end_stone"
+    },
+    {
+      "do": "command",
+      "with": "execute in minecraft:the_end run fill 1992 200 -8 2008 206 -8 minecraft:purpur_block"
+    },
+    {
+      "do": "command",
+      "with": "execute in minecraft:the_end run fill 1994 200 -4 1995 202 -4 minecraft:obsidian"
+    },
+    {
+      "do": "command",
+      "with": "execute in minecraft:the_end run fill 1997 200 -4 1998 202 -4 minecraft:end_stone_bricks"
+    },
+    {
+      "do": "command",
+      "with": "execute in minecraft:the_end run fill 2000 200 -4 2001 202 -4 minecraft:purple_stained_glass"
+    },
+    {
+      "do": "command",
+      "with": "execute in minecraft:the_end run setblock 2004 200 -4 minecraft:end_rod"
+    },
+    {
+      "do": "command",
+      "with": "execute in minecraft:the_end run tp @a 2000.5 200 6.5 180 5"
+    },
+    {
+      "do": "settle",
+      "with": "40"
+    },
+    {
+      "do": "wait",
+      "with": "160"
+    },
+    {
+      "do": "capture",
+      "with": "end"
+    },
+    {
+      "do": "quit",
+      "with": ""
+    }
+  ],
+  "scenes": [
+    {
+      "capture": "terrain-day",
+      "cellSize": 16,
+      "channelTolerance": 32,
+      "differingCells": 0.03,
+      "meanError": 6.0
+    },
+    {
+      "capture": "materials-day",
+      "cellSize": 16,
+      "channelTolerance": 32,
+      "differingCells": 0.03,
+      "meanError": 6.0
+    },
+    {
+      "capture": "materials-night",
+      "cellSize": 16,
+      "channelTolerance": 32,
+      "differingCells": 0.03,
+      "meanError": 6.0
+    },
+    {
+      "capture": "underwater",
+      "cellSize": 16,
+      "channelTolerance": 32,
+      "differingCells": 0.03,
+      "meanError": 6.0
+    },
+    {
+      "capture": "interface-hud",
+      "cellSize": 8,
+      "channelTolerance": 24,
+      "differingCells": 0.02,
+      "meanError": 4.0
+    },
+    {
+      "capture": "interface-pause",
+      "cellSize": 8,
+      "channelTolerance": 24,
+      "differingCells": 0.02,
+      "meanError": 4.0
+    },
+    {
+      "capture": "nether",
+      "cellSize": 16,
+      "channelTolerance": 32,
+      "differingCells": 0.03,
+      "meanError": 6.0
+    },
+    {
+      "capture": "end",
+      "cellSize": 16,
+      "channelTolerance": 32,
+      "differingCells": 0.03,
+      "meanError": 6.0
+    }
+  ]
+}

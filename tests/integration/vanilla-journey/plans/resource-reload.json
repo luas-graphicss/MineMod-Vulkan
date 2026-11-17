@@ -1,0 +1,167 @@
+{
+  "name": "resource-reload",
+  "timeoutMinutes": 45,
+  "stepTimeoutSeconds": 300,
+  "world": {
+    "name": "journey",
+    "seed": 20240808
+  },
+  "options": {
+    "version": "3955",
+    "onboardAccessibility": "false",
+    "skipMultiplayerWarning": "true",
+    "joinedFirstServer": "true",
+    "tutorialStep": "none",
+    "narrator": "0",
+    "pauseOnLostFocus": "false",
+    "reducedDebugInfo": "true",
+    "overrideWidth": "854",
+    "overrideHeight": "480",
+    "fullscreen": "false",
+    "enableVsync": "false",
+    "maxFps": "60",
+    "renderDistance": "6",
+    "simulationDistance": "6",
+    "guiScale": "2",
+    "fov": "0.0",
+    "gamma": "0.5",
+    "graphicsMode": "1",
+    "renderClouds": "\"false\"",
+    "particles": "2",
+    "bobView": "false",
+    "biomeBlendRadius": "2",
+    "mipmapLevels": "4",
+    "entityShadows": "true",
+    "ao": "true",
+    "menuBackgroundBlurriness": "5",
+    "soundCategory_master": "0.0",
+    "lang": "en_us"
+  },
+  "packs": [
+    "replaced-core-shader",
+    "broken-core-shader"
+  ],
+  "steps": [
+    {
+      "do": "wait-for-title",
+      "with": ""
+    },
+    {
+      "do": "create-world",
+      "with": ""
+    },
+    {
+      "do": "command",
+      "with": "gamerule doDaylightCycle false"
+    },
+    {
+      "do": "command",
+      "with": "gamerule doWeatherCycle false"
+    },
+    {
+      "do": "command",
+      "with": "gamerule doMobSpawning false"
+    },
+    {
+      "do": "command",
+      "with": "gamerule announceAdvancements false"
+    },
+    {
+      "do": "command",
+      "with": "time set 6000"
+    },
+    {
+      "do": "command",
+      "with": "weather clear"
+    },
+    {
+      "do": "settle",
+      "with": "40"
+    },
+    {
+      "do": "inspect",
+      "with": "baseline"
+    },
+    {
+      "do": "reload",
+      "with": ""
+    },
+    {
+      "do": "wait",
+      "with": "20"
+    },
+    {
+      "do": "reload",
+      "with": ""
+    },
+    {
+      "do": "wait",
+      "with": "20"
+    },
+    {
+      "do": "reload",
+      "with": ""
+    },
+    {
+      "do": "wait",
+      "with": "20"
+    },
+    {
+      "do": "inspect",
+      "with": "repeated"
+    },
+    {
+      "do": "select-packs",
+      "with": "file/replaced-core-shader"
+    },
+    {
+      "do": "reload",
+      "with": ""
+    },
+    {
+      "do": "wait",
+      "with": "40"
+    },
+    {
+      "do": "inspect",
+      "with": "replaced"
+    },
+    {
+      "do": "select-packs",
+      "with": "file/broken-core-shader"
+    },
+    {
+      "do": "reload",
+      "with": ""
+    },
+    {
+      "do": "wait",
+      "with": "40"
+    },
+    {
+      "do": "inspect",
+      "with": "refused"
+    },
+    {
+      "do": "select-packs",
+      "with": ""
+    },
+    {
+      "do": "reload",
+      "with": ""
+    },
+    {
+      "do": "wait",
+      "with": "100"
+    },
+    {
+      "do": "inspect",
+      "with": "restored"
+    },
+    {
+      "do": "quit",
+      "with": ""
+    }
+  ],
+  "scenes": []
+}

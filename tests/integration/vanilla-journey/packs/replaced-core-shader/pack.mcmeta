@@ -1,0 +1,6 @@
+{
+  "pack": {
+    "pack_format": 34,
+    "description": "Replaces the position_tex_color core shader with stages that compile."
+  }
+}
