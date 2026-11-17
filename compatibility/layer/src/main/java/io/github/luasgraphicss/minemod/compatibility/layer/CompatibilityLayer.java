@@ -37,6 +37,7 @@ import io.github.luasgraphicss.minemod.compatibility.translation.texture.AliasSt
 import io.github.luasgraphicss.minemod.compatibility.translation.texture.TextureBindings;
 import java.util.Arrays;
 import java.util.List;
+import java.util.OptionalInt;
 
 public final class CompatibilityLayer implements AutoCloseable {
     private static final int REPORT_CAPACITY = 256;
@@ -142,6 +143,10 @@ public final class CompatibilityLayer implements AutoCloseable {
 
     public boolean withdrawVanillaTexture(long nativeResource) {
         return aliases.withdraw(nativeResource, typedProvider);
+    }
+
+    public OptionalInt vanillaTextureName(long nativeResource) {
+        return aliases.nameOf(nativeResource);
     }
 
     public WrapperState wrapperState() {
