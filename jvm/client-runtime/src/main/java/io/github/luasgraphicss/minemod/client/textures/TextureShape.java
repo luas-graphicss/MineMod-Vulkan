@@ -38,7 +38,7 @@ public final class TextureShape {
         return levels;
     }
 
-    boolean holds(TexelArea area) {
+    public boolean holds(TexelArea area) {
         if (area.level() >= levels) {
             return false;
         }

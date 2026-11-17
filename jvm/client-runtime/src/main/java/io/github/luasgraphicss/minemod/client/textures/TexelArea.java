@@ -31,15 +31,15 @@ public final class TexelArea {
         return (long) width * height * TEXEL_BYTES;
     }
 
-    int level() {
+    public int level() {
         return level;
     }
 
-    int x() {
+    public int x() {
         return x;
     }
 
-    int y() {
+    public int y() {
         return y;
     }
 

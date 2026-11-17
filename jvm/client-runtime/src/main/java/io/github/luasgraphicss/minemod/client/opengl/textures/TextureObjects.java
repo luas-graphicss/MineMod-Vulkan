@@ -6,6 +6,7 @@ import io.github.luasgraphicss.minemod.client.textures.TextureShape;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public final class TextureObjects {
@@ -27,25 +28,38 @@ public final class TextureObjects {
     private int lastName;
     private int proxyWidth;
     private int proxyHeight;
+    private TextureMirror mirror;
 
     public TextureObjects(TexturePublisher published) {
         this.published = published;
     }
 
+    public void mirrorTo(TextureMirror follower) {
+        if (lastName != NO_TEXTURE) {
+            throw new IllegalStateException("the textures of the game are mirrored from the first one on");
+        }
+        mirror = Objects.requireNonNull(follower, "follower");
+    }
+
+    public void stopMirroring() {
+        mirror = null;
+    }
+
     public int generate() {
-        return ++lastName;
+        if (mirror == null) {
+            return ++lastName;
+        }
+        int name = mirror.generate();
+        discard(name);
+        lastName = Math.max(lastName, name);
+        return name;
     }
 
     public void delete(int texture) {
-        if (objects.remove(texture) == null) {
-            return;
+        if (mirror != null) {
+            mirror.delete(texture);
         }
-        published.destroy(texture);
-        for (int unit = 0; unit < UNIT_COUNT; unit++) {
-            if (bound[unit] == texture) {
-                bound[unit] = NO_TEXTURE;
-            }
-        }
+        discard(texture);
     }
 
     public void activate(int unit) {
@@ -74,6 +88,9 @@ public final class TextureObjects {
         TextureObject texture = boundObject();
         if (texture.set(parameter, value) && texture.isPublished()) {
             published.sample(bound(), texture.sampling());
+        }
+        if (mirror != null) {
+            mirror.setParameter(bound(), parameter, value);
         }
     }
 
@@ -131,8 +148,11 @@ public final class TextureObjects {
         if (!texture.isPublished() && !publish(texture)) {
             return;
         }
-        published.write(
-                bound(), area, TexelUnpacker.toRgba(source, texels.get(), unpacking, area.width(), area.height()));
+        ByteBuffer rgba = TexelUnpacker.toRgba(source, texels.get(), unpacking, area.width(), area.height());
+        if (mirror != null) {
+            mirror.write(bound(), area, rgba);
+        }
+        published.write(bound(), area, rgba);
     }
 
     private boolean publish(TextureObject texture) {
@@ -142,7 +162,22 @@ public final class TextureObjects {
         }
         published.define(bound(), shape.get(), texture.sampling());
         texture.publish();
+        if (mirror != null) {
+            mirror.define(bound(), shape.get());
+        }
         return true;
+    }
+
+    private void discard(int texture) {
+        if (objects.remove(texture) == null) {
+            return;
+        }
+        published.destroy(texture);
+        for (int unit = 0; unit < UNIT_COUNT; unit++) {
+            if (bound[unit] == texture) {
+                bound[unit] = NO_TEXTURE;
+            }
+        }
     }
 
     private TextureObject boundObject() {
