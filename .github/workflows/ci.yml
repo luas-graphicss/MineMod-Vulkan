@@ -137,3 +137,25 @@ jobs:
           -Pminemod.sceneLibrary="$GITHUB_WORKSPACE/build/linux-client/jni/libminemod_jni.so"
           -Porg.gradle.java.installations.auto-download=false
           -Porg.gradle.java.installations.fromEnv=JAVA_HOME_8_X64,JAVA_HOME_16_X64,JAVA_HOME_17_X64,JAVA_HOME_21_X64
+
+  provider-windows:
+    name: OpenGL provider on Windows
+    runs-on: windows-2025
+    timeout-minutes: 20
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Annotate the diagnostics of MSVC and of the tests
+        run: echo "::add-matcher::.github/problem-matchers/msvc.json"
+
+      - name: Configure
+        run: cmake --preset windows-provider
+
+      - name: Build
+        run: cmake --build --preset windows-provider
+
+      - name: Test
+        run: ctest --preset windows-provider
