@@ -21,8 +21,12 @@ public final class ObjectNames {
     private static final int GL_INVALID_VALUE = 0x0501;
     private static final int GL_INVALID_OPERATION = 0x0502;
     private static final int GL_OUT_OF_MEMORY = 0x0505;
-    private static final Set<ObjectKind> CREATED_BY_FIRST_USE =
-            Collections.unmodifiableSet(EnumSet.of(ObjectKind.TEXTURE, ObjectKind.BUFFER, ObjectKind.DISPLAY_LIST));
+    private static final Set<ObjectKind> CREATED_BY_FIRST_USE = Collections.unmodifiableSet(EnumSet.of(
+            ObjectKind.TEXTURE,
+            ObjectKind.BUFFER,
+            ObjectKind.RENDERBUFFER,
+            ObjectKind.FRAMEBUFFER,
+            ObjectKind.DISPLAY_LIST));
 
     private final Supplier<ContextNames> currentNames;
     private final ProviderObjects provider;
@@ -71,6 +75,8 @@ public final class ObjectNames {
         for (int name : names) {
             if (table.contains(name)) {
                 table.delete(name, provider);
+            } else if (name != NO_NAME && kind == ObjectKind.SHADER_OR_PROGRAM) {
+                errors.raise(GL_INVALID_VALUE);
             }
         }
     }
@@ -97,7 +103,7 @@ public final class ObjectNames {
 
     private boolean createByFirstUse(NameTable table, ObjectKind kind, int name) {
         if (profile == ContextProfile.CORE || !CREATED_BY_FIRST_USE.contains(kind)) {
-            errors.raise(GL_INVALID_OPERATION);
+            errors.raise(kind == ObjectKind.SHADER_OR_PROGRAM ? GL_INVALID_VALUE : GL_INVALID_OPERATION);
             return false;
         }
         int backing = provider.create(kind, NO_PARAMETER);

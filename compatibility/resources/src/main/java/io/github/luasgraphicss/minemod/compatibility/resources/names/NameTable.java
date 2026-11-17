@@ -1,6 +1,7 @@
 package io.github.luasgraphicss.minemod.compatibility.resources.names;
 
 import io.github.luasgraphicss.minemod.compatibility.contracts.object.ObjectKind;
+import io.github.luasgraphicss.minemod.compatibility.contracts.object.ObjectScope;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -113,7 +114,7 @@ public final class NameTable {
             if (index < freeCandidate) {
                 freeCandidate = index;
             }
-            if (lastUse != NEVER_USED) {
+            if (lastUse != NEVER_USED && kind.scope() == ObjectScope.SHARE_GROUP) {
                 retiring.add(new RetiringBacking(backing, lastUse));
                 return;
             }
