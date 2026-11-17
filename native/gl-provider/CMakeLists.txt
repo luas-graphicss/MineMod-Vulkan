@@ -31,6 +31,15 @@ add_custom_command(
     COMMENT "Generating the OpenGL call table from the Khronos registry"
     VERBATIM)
 
+if(WIN32)
+    if(NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
+        message(FATAL_ERROR "The OpenGL provider calls its functions with the x64 convention only")
+    endif()
+    set(minemod_gl_provider_platform windows)
+else()
+    set(minemod_gl_provider_platform linux)
+endif()
+
 add_library(minemod_gl_provider STATIC
     src/calls/call_gate.cpp
     src/calls/call_table.cpp
@@ -39,12 +48,19 @@ add_library(minemod_gl_provider STATIC
     src/library/driver_settings.cpp
     src/library/loaded_image.cpp
     src/library/provider_library.cpp
+    src/library/${minemod_gl_provider_platform}/dynamic_library.cpp
+    src/library/${minemod_gl_provider_platform}/loaded_segments.cpp
+    src/library/${minemod_gl_provider_platform}/process_environment.cpp
     src/session/provider_session.cpp
     "${minemod_gl_call_table}")
 add_library(minemod::gl_provider ALIAS minemod_gl_provider)
 
 target_include_directories(minemod_gl_provider PUBLIC src)
-target_link_libraries(minemod_gl_provider PUBLIC ${CMAKE_DL_LIBS})
+if(WIN32)
+    target_compile_definitions(minemod_gl_provider PRIVATE NOMINMAX PSAPI_VERSION=2 WIN32_LEAN_AND_MEAN)
+else()
+    target_link_libraries(minemod_gl_provider PUBLIC ${CMAKE_DL_LIBS})
+endif()
 minemod_configure_target(minemod_gl_provider)
 
 if(MINEMOD_BUILD_JNI_BRIDGE)

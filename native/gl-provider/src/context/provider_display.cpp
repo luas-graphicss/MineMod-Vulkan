@@ -1,5 +1,6 @@
 #include "context/provider_display.hpp"
 
+#include <algorithm>
 #include <array>
 #include <cstdio>
 #include <string>

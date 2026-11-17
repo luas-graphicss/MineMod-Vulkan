@@ -2,16 +2,13 @@
 
 #include <filesystem>
 #include <span>
-#include <stdexcept>
 #include <string>
 #include <vector>
 
-namespace minemod::provider {
+#include "library/dynamic_library.hpp"
+#include "library/library_load_error.hpp"
 
-class LibraryLoadError : public std::runtime_error {
-public:
-    using std::runtime_error::runtime_error;
-};
+namespace minemod::provider {
 
 class ProviderLibrary {
 public:
@@ -34,7 +31,7 @@ private:
     void close_all() noexcept;
 
     std::filesystem::path directory_;
-    std::vector<void*> handles_;
+    std::vector<LibraryHandle> handles_;
 };
 
 }

@@ -10,9 +10,11 @@
 namespace {
 
 using namespace minemod::provider;
+using minemod::provider::testing::fake_dependencies;
 using minemod::provider::testing::fake_provider_directory;
+using minemod::provider::testing::fake_provider_file;
 
-const std::array<std::string, 1> dependencies{"libfake_dependency.so"};
+const std::array<std::string, 1> dependencies = fake_dependencies();
 
 std::string failure_of(ProviderSession& session, const char* function, std::span<const std::int64_t> words) {
     try {
@@ -26,7 +28,7 @@ std::string failure_of(ProviderSession& session, const char* function, std::span
 }
 
 TEST_CASE("a session invokes functions the provider offers from inside its own image") {
-    ProviderSession session(fake_provider_directory(), dependencies, "libfake_provider.so");
+    ProviderSession session(fake_provider_directory(), dependencies, fake_provider_file());
     std::array<std::uint32_t, 1> name{};
 
     const std::array<std::int64_t, 2> generate{1, static_cast<std::int64_t>(reinterpret_cast<std::uintptr_t>(name.data()))};
@@ -40,7 +42,7 @@ TEST_CASE("a session invokes functions the provider offers from inside its own i
 }
 
 TEST_CASE("a session refuses a function the provider lacks, a wrong argument count and an unknown index") {
-    ProviderSession session(fake_provider_directory(), dependencies, "libfake_provider.so");
+    ProviderSession session(fake_provider_directory(), dependencies, fake_provider_file());
     const std::array<std::int64_t, 1> one_word{1};
 
     CHECK(failure_of(session, "glEnable", one_word) == "glEnable is not offered by the provider");

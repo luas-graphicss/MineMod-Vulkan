@@ -121,7 +121,8 @@
       "configurePreset": "windows-jni",
       "configuration": "RelWithDebInfo",
       "targets": [
-        "minemod_jni"
+        "minemod_jni",
+        "minemod_gl_provider_jni"
       ]
     },
     {
@@ -144,7 +145,8 @@
       "configurePreset": "windows-client",
       "configuration": "RelWithDebInfo",
       "targets": [
-        "minemod_jni"
+        "minemod_jni",
+        "minemod_gl_provider_jni"
       ]
     }
   ],

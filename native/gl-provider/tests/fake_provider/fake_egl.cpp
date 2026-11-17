@@ -1,12 +1,9 @@
-#include <dlfcn.h>
-
 #include <array>
 #include <cstdint>
 #include <cstring>
 
 #include "fake_provider/fake_calls.hpp"
-
-#define FAKE_EXPORT extern "C" __attribute__((visibility("default")))
+#include "fake_provider/fake_export.hpp"
 
 FAKE_EXPORT std::uint32_t glGetError();
 

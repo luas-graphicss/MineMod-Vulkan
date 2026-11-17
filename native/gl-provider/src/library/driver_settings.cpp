@@ -1,9 +1,9 @@
 #include "library/driver_settings.hpp"
 
 #include <algorithm>
-#include <cstdlib>
 
-#include "library/provider_library.hpp"
+#include "library/library_load_error.hpp"
+#include "library/process_environment.hpp"
 
 namespace minemod::provider {
 
@@ -27,7 +27,7 @@ void apply_driver_settings(std::span<const DriverSetting> settings) {
         }
     }
     for (const DriverSetting& setting : settings) {
-        if (::setenv(setting.name.c_str(), setting.value.c_str(), 1) != 0) {
+        if (!set_process_variable(setting.name, setting.value)) {
             throw LibraryLoadError("the driver setting " + setting.name + " could not be applied");
         }
     }

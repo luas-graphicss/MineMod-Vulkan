@@ -3,8 +3,7 @@
 #include <initializer_list>
 
 #include "fake_provider/fake_calls.hpp"
-
-#define FAKE_EXPORT extern "C" __attribute__((visibility("default")))
+#include "fake_provider/fake_export.hpp"
 
 extern "C" int fake_dependency_answer();
 

@@ -1,6 +1,7 @@
 #include "provider/provider_natives.hpp"
 
 #include <array>
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <vector>
@@ -23,6 +24,13 @@ std::string text_of(JNIEnv& env, jstring text) {
     std::string copied(characters);
     env.ReleaseStringUTFChars(text, characters);
     return copied;
+}
+
+std::filesystem::path path_of(JNIEnv& env, jstring text) {
+    const jsize length = env.GetStringLength(text);
+    std::vector<jchar> units(static_cast<std::size_t>(length));
+    env.GetStringRegion(text, 0, length, units.data());
+    return std::filesystem::path(std::u16string(units.begin(), units.end()));
 }
 
 std::vector<std::string> texts_of(JNIEnv& env, jobjectArray texts) {
@@ -70,7 +78,7 @@ jlong open_provider(
     return guarded(*env, jlong{0}, [&] {
         apply_driver_settings(settings_of(*env, setting_names, setting_values));
         const std::vector<std::string> preloaded = texts_of(*env, dependencies);
-        auto session = std::make_unique<ProviderSession>(text_of(*env, directory), preloaded, text_of(*env, entry));
+        auto session = std::make_unique<ProviderSession>(path_of(*env, directory), preloaded, text_of(*env, entry));
         return handle_of(session.release());
     });
 }

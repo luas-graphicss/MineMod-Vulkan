@@ -1,9 +1,9 @@
-#include <unistd.h>
-
 #include <array>
 #include <filesystem>
+#include <random>
 #include <span>
 #include <string>
+#include <system_error>
 
 #include <doctest.h>
 
@@ -13,18 +13,24 @@
 namespace {
 
 using namespace minemod::provider;
+using minemod::provider::testing::fake_dependencies;
 using minemod::provider::testing::fake_provider_directory;
+using minemod::provider::testing::fake_provider_file;
 using minemod::provider::testing::open_fake_provider;
 
-const std::string entry = "libfake_provider.so";
-const std::array<std::string, 1> dependencies{"libfake_dependency.so"};
+const std::string entry = fake_provider_file();
+const std::array<std::string, 1> dependencies = fake_dependencies();
 
 class LinkedDirectory {
 public:
     LinkedDirectory()
-        : path_(std::filesystem::temp_directory_path() / ("minemod-provider-links-" + std::to_string(::getpid()))) {
+        : path_(
+              std::filesystem::temp_directory_path()
+              / ("minemod-provider-links-" + std::to_string(std::random_device{}()))) {
         std::filesystem::create_directory(path_);
-        std::filesystem::create_symlink(fake_provider_directory() / entry, path_ / entry);
+        std::error_code refusal;
+        std::filesystem::create_symlink(fake_provider_directory() / entry, path_ / entry, refusal);
+        holds_link_ = !refusal;
     }
     LinkedDirectory(const LinkedDirectory&) = delete;
     LinkedDirectory& operator=(const LinkedDirectory&) = delete;
@@ -36,8 +42,13 @@ public:
         return path_;
     }
 
+    bool holds_link() const noexcept {
+        return holds_link_;
+    }
+
 private:
     std::filesystem::path path_;
+    bool holds_link_ = false;
 };
 
 }
@@ -66,13 +77,17 @@ TEST_CASE("a library is named by file name only") {
 
 TEST_CASE("a missing library and a missing directory are reported") {
     CHECK_THROWS_AS(
-        ProviderLibrary(fake_provider_directory(), dependencies, "libabsent.so"), LibraryLoadError);
+        ProviderLibrary(fake_provider_directory(), dependencies, "absent-library"), LibraryLoadError);
     CHECK_THROWS_AS(
         ProviderLibrary(fake_provider_directory() / "absent", dependencies, entry), LibraryLoadError);
 }
 
 TEST_CASE("a symbolic link in the provider directory is not followed") {
     const LinkedDirectory links;
+    if (!links.holds_link()) {
+        MESSAGE("this account may not create symbolic links, so the refusal was not exercised");
+        return;
+    }
 
     CHECK_THROWS_AS(ProviderLibrary(links.path(), std::span<const std::string>{}, entry), LibraryLoadError);
 }

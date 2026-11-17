@@ -1,7 +1,5 @@
 #include "library/provider_library.hpp"
 
-#include <dlfcn.h>
-
 #include <utility>
 
 namespace minemod::provider {
@@ -64,22 +62,16 @@ ProviderLibrary::~ProviderLibrary() {
 }
 
 void* ProviderLibrary::symbol(const char* name) const noexcept {
-    return handles_.empty() ? nullptr : ::dlsym(handles_.back(), name);
+    return handles_.empty() ? nullptr : find_library_symbol(handles_.back(), name);
 }
 
 void ProviderLibrary::open_file(const std::string& file_name) {
-    const std::filesystem::path library = library_in(directory_, file_name);
-    void* handle = ::dlopen(library.c_str(), RTLD_NOW | RTLD_LOCAL);
-    if (handle == nullptr) {
-        const char* reason = ::dlerror();
-        throw LibraryLoadError(file_name + " could not be loaded: " + (reason != nullptr ? reason : "unknown reason"));
-    }
-    handles_.push_back(handle);
+    handles_.push_back(open_dynamic_library(library_in(directory_, file_name)));
 }
 
 void ProviderLibrary::close_all() noexcept {
     while (!handles_.empty()) {
-        ::dlclose(handles_.back());
+        close_dynamic_library(handles_.back());
         handles_.pop_back();
     }
 }
