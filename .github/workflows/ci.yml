@@ -185,6 +185,17 @@ jobs:
           -Porg.gradle.java.installations.auto-download=false
           -Porg.gradle.java.installations.fromEnv=JAVA_HOME_8_X64,JAVA_HOME_16_X64,JAVA_HOME_17_X64,JAVA_HOME_21_X64
 
+      - name: Compare the layer with the installed Mesa on generated scripts
+        run: >
+          sh ./gradlew
+          :tools:verification:test --tests '*.differential.provider.*'
+          :tools:verification:run
+          --args="compare --suite gl-differential --provider $SYSTEM_PROVIDER
+          --natives build/linux-client/jni/libminemod_gl_provider_jni.so"
+          -Pminemod.systemProvider="$SYSTEM_PROVIDER"
+          -Porg.gradle.java.installations.auto-download=false
+          -Porg.gradle.java.installations.fromEnv=JAVA_HOME_8_X64,JAVA_HOME_16_X64,JAVA_HOME_17_X64,JAVA_HOME_21_X64
+
   provider-windows:
     name: OpenGL provider on Windows
     runs-on: windows-2025
