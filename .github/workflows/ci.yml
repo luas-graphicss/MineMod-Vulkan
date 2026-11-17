@@ -159,12 +159,13 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
 
-      - name: Install Mesa with Zink, the lavapipe driver and the Vulkan toolchain
+      - name: Install Mesa with Zink, the lavapipe driver, the Vulkan toolchain and a virtual display
         run: |
           sudo apt-get update
           sudo apt-get install --yes --no-install-recommends \
-            glslang-tools libegl1 libegl-mesa0 libgl1-mesa-dri libvulkan-dev mesa-vulkan-drivers ninja-build \
-            vulkan-validationlayers
+            glslang-tools libegl1 libegl-mesa0 libgl1-mesa-dri libvulkan-dev libx11-dev libxcursor1 libxext6 \
+            libxi6 libxinerama1 libxrandr2 libxrender1 libxtst6 mesa-vulkan-drivers ninja-build \
+            vulkan-validationlayers xauth xvfb
 
       - name: Build the renderer and the stand-in that share their attachments
         run: |
@@ -193,6 +194,16 @@ jobs:
           --args="compare --suite gl-differential --provider $SYSTEM_PROVIDER
           --natives build/linux-client/jni/libminemod_gl_provider_jni.so"
           -Pminemod.systemProvider="$SYSTEM_PROVIDER"
+          -Porg.gradle.java.installations.auto-download=false
+          -Porg.gradle.java.installations.fromEnv=JAVA_HOME_8_X64,JAVA_HOME_16_X64,JAVA_HOME_17_X64,JAVA_HOME_21_X64
+
+      - name: Present on the windows of a virtual display through the native owners
+        run: >
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x800x24"
+          sh ./gradlew
+          :adapters:presentation:glfw:check
+          :adapters:presentation:display:check
+          -Pminemod.sceneLibrary="$GITHUB_WORKSPACE/build/linux-client/jni/libminemod_jni.so"
           -Porg.gradle.java.installations.auto-download=false
           -Porg.gradle.java.installations.fromEnv=JAVA_HOME_8_X64,JAVA_HOME_16_X64,JAVA_HOME_17_X64,JAVA_HOME_21_X64
 
