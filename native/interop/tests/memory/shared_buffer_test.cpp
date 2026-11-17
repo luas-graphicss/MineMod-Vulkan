@@ -5,7 +5,7 @@
 
 #include "device/vulkan_error.hpp"
 #include "memory/shared_buffer.hpp"
-#include "support/descriptor_count.hpp"
+#include "support/open_handles.hpp"
 #include "support/sharing_device.hpp"
 #include "support/validated_device.hpp"
 
@@ -25,12 +25,12 @@ constexpr SharedBufferDescription without_bytes{0, vertex_data.usage};
 
 }
 
-TEST_CASE("exported buffer memory is a descriptor owned by the caller and sized for the buffer") {
+TEST_CASE("exported buffer memory is a handle owned by the caller and sized for the buffer") {
     const SharingDevice gpu;
     REQUIRE(can_export_buffers(gpu.device().physical(), vertex_data.usage));
     const SharedBuffer buffer(gpu.device(), vertex_data);
 
-    const OwnedDescriptor memory = buffer.export_memory();
+    const ExportedHandle memory = buffer.export_memory();
 
     CHECK(memory.is_open());
     CHECK(buffer.allocation_size() >= vertex_data.size_bytes);
@@ -50,16 +50,16 @@ TEST_CASE("a device created without the sharing extension cannot share buffers")
     CHECK_THROWS_AS(SharedBuffer(gpu.device(), vertex_data), renderer::UnsupportedSystem);
 }
 
-TEST_CASE("repeated buffer exports and destructions leave no descriptor behind") {
+TEST_CASE("repeated buffer exports and destructions leave no handle behind") {
     const SharingDevice gpu;
-    const std::ptrdiff_t open_before = open_descriptor_count();
+    const std::ptrdiff_t open_before = open_handle_count();
 
     for (int cycle = 0; cycle < export_cycles; ++cycle) {
         const SharedBuffer buffer(gpu.device(), vertex_data);
-        const OwnedDescriptor memory = buffer.export_memory();
+        const ExportedHandle memory = buffer.export_memory();
         REQUIRE(memory.is_open());
     }
 
-    CHECK(open_descriptor_count() == open_before);
+    CHECK(open_handle_count() == open_before);
     CHECK(gpu.validation_text() == "");
 }

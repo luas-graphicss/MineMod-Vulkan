@@ -168,7 +168,7 @@ set(minemod_device_tests
     scene_session_device
     world_geometry_device)
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR WIN32)
     add_executable(minemod_scene_sharing_device_tests
         session/scene_handoff_test.cpp
         session/scene_sharing_test.cpp

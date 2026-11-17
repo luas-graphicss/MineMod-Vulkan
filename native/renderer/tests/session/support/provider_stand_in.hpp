@@ -6,7 +6,7 @@
 
 #include "device/device_handle.hpp"
 #include "handoff/ownership_transfer.hpp"
-#include "memory/owned_descriptor.hpp"
+#include "memory/exported_handle.hpp"
 #include "minemod/scene/scene_session.h"
 #include "session/support/running_session.hpp"
 #include "support/sharing_device.hpp"
@@ -15,7 +15,7 @@ namespace minemod::scene::test_support {
 
 class ProviderStandIn {
 public:
-    ProviderStandIn(const minemod_shared_attachment& color, interop::OwnedDescriptor memory);
+    ProviderStandIn(const minemod_shared_attachment& color, interop::ExportedHandle memory);
 
     DrawnFrame fill_after_reading(const std::array<float, 4>& fill);
 

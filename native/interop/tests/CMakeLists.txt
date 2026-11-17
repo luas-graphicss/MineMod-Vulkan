@@ -1,14 +1,18 @@
 add_library(minemod_interop_test_support STATIC
-    support/descriptor_count.cpp
-    support/sharing_device.cpp)
+    support/sharing_device.cpp
+    support/${minemod_interop_platform}/memory_import.cpp
+    support/${minemod_interop_platform}/open_handles.cpp)
 target_include_directories(minemod_interop_test_support PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(minemod_interop_test_support PUBLIC minemod::interop)
+if(WIN32)
+    target_compile_definitions(minemod_interop_test_support PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+endif()
 minemod_configure_vulkan_target(minemod_interop_test_support)
 
 add_executable(minemod_interop_tests
     handoff/ownership_transfer_test.cpp
-    memory/owned_descriptor_test.cpp)
-target_link_libraries(minemod_interop_tests PRIVATE minemod::interop minemod_doctest_main)
+    memory/exported_handle_test.cpp)
+target_link_libraries(minemod_interop_tests PRIVATE minemod_interop_test_support minemod_doctest_main)
 minemod_configure_vulkan_target(minemod_interop_tests)
 
 add_executable(minemod_interop_device_tests

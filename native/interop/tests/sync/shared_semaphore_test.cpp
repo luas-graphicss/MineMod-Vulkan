@@ -28,6 +28,6 @@ TEST_CASE("semaphores are exported or refused as the device reports") {
 
     const SharingDevice gpu(shared_semaphore_extensions);
     const SharedSemaphore semaphore(gpu.device());
-    CHECK(semaphore.export_descriptor().is_open());
+    CHECK(semaphore.export_handle().is_open());
     CHECK(gpu.validation_text() == "");
 }

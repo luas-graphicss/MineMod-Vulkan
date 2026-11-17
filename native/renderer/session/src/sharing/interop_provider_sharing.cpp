@@ -5,7 +5,7 @@
 #include "contexts/device_identity.hpp"
 #include "device/physical_device.hpp"
 #include "device/vulkan_error.hpp"
-#include "memory/owned_descriptor.hpp"
+#include "memory/exported_handle.hpp"
 #include "memory/shared_image.hpp"
 #include "sharing/interop_shared_targets.hpp"
 #include "sync/shared_semaphore.hpp"
@@ -47,8 +47,8 @@ public:
         if (!signals_) {
             throw renderer::UnsupportedSystem("the device shares no semaphores with an OpenGL provider");
         }
-        interop::OwnedDescriptor renderer_done = signals_->renderer_done.export_descriptor();
-        interop::OwnedDescriptor provider_done = signals_->provider_done.export_descriptor();
+        interop::ExportedHandle renderer_done = signals_->renderer_done.export_handle();
+        interop::ExportedHandle provider_done = signals_->provider_done.export_handle();
         return ExportedSemaphores{renderer_done.release(), provider_done.release()};
     }
 

@@ -6,14 +6,14 @@
 
 #include "device/device.hpp"
 #include "device/device_handle.hpp"
-#include "memory/owned_descriptor.hpp"
+#include "memory/exported_handle.hpp"
+#include "sync/semaphore_export.hpp"
 
 namespace minemod::interop {
 
-inline constexpr VkExternalSemaphoreHandleTypeFlagBits shared_semaphore_type =
-    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT;
+extern const VkExternalSemaphoreHandleTypeFlagBits shared_semaphore_type;
 
-inline constexpr std::array<const char*, 1> shared_semaphore_extensions{VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME};
+extern const std::array<const char*, 1> shared_semaphore_extensions;
 
 bool can_export_semaphores(VkPhysicalDevice device);
 
@@ -25,11 +25,10 @@ public:
         return semaphore_.get();
     }
 
-    OwnedDescriptor export_descriptor() const;
+    ExportedHandle export_handle() const;
 
 private:
-    VkDevice device_;
-    PFN_vkGetSemaphoreFdKHR get_semaphore_descriptor_;
+    SemaphoreExport semaphore_export_;
     renderer::DeviceHandle<VkSemaphore> semaphore_;
 };
 

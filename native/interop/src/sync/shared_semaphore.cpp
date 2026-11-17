@@ -3,20 +3,6 @@
 #include "device/vulkan_error.hpp"
 
 namespace minemod::interop {
-namespace {
-
-PFN_vkGetSemaphoreFdKHR find_semaphore_export(VkDevice device) {
-    const auto export_semaphore =
-        reinterpret_cast<PFN_vkGetSemaphoreFdKHR>(vkGetDeviceProcAddr(device, "vkGetSemaphoreFdKHR"));
-    if (export_semaphore == nullptr) {
-        throw renderer::UnsupportedSystem(
-            "the device was created without " VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME
-            ", so it cannot share semaphores with the OpenGL provider");
-    }
-    return export_semaphore;
-}
-
-}
 
 bool can_export_semaphores(VkPhysicalDevice device) {
     const VkPhysicalDeviceExternalSemaphoreInfo request{
@@ -28,8 +14,7 @@ bool can_export_semaphores(VkPhysicalDevice device) {
     return (answer.externalSemaphoreFeatures & VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT) != 0;
 }
 
-SharedSemaphore::SharedSemaphore(const renderer::Device& device)
-    : device_(device.get()), get_semaphore_descriptor_(find_semaphore_export(device.get())) {
+SharedSemaphore::SharedSemaphore(const renderer::Device& device) : semaphore_export_(device.get()) {
     if (!can_export_semaphores(device.physical())) {
         throw renderer::UnsupportedSystem("the device cannot export semaphores to the OpenGL provider");
     }
@@ -43,19 +28,11 @@ SharedSemaphore::SharedSemaphore(const renderer::Device& device)
         .pNext = &exported,
     };
     semaphore_ = renderer::create_device_handle<VkSemaphore>(
-        device_, create_info, vkCreateSemaphore, vkDestroySemaphore, "creating a shared semaphore");
+        device.get(), create_info, vkCreateSemaphore, vkDestroySemaphore, "creating a shared semaphore");
 }
 
-OwnedDescriptor SharedSemaphore::export_descriptor() const {
-    const VkSemaphoreGetFdInfoKHR request{
-        .sType = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR,
-        .semaphore = semaphore_.get(),
-        .handleType = shared_semaphore_type,
-    };
-    int descriptor = -1;
-    renderer::require_success(
-        get_semaphore_descriptor_(device_, &request, &descriptor), "exporting a shared semaphore");
-    return OwnedDescriptor(descriptor);
+ExportedHandle SharedSemaphore::export_handle() const {
+    return semaphore_export_.export_handle(semaphore_.get());
 }
 
 }

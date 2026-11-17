@@ -10,7 +10,7 @@
 #include "frame/frame_readback.hpp"
 #include "memory/external_support.hpp"
 #include "resources/image_layout.hpp"
-#include "resources/memory_type.hpp"
+#include "support/memory_import.hpp"
 
 namespace minemod::scene::test_support {
 
@@ -75,38 +75,6 @@ renderer::DeviceHandle<VkImage> create_image(const renderer::Device& device, con
         device.get(), create_info, vkCreateImage, vkDestroyImage, "creating the image a provider imports");
 }
 
-renderer::DeviceHandle<VkDeviceMemory> import_memory(
-    const renderer::Device& device,
-    VkImage image,
-    VkDeviceSize allocation_bytes,
-    interop::OwnedDescriptor memory) {
-    VkMemoryRequirements requirements{};
-    vkGetImageMemoryRequirements(device.get(), image, &requirements);
-    const VkMemoryDedicatedAllocateInfo dedicated{
-        .sType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO,
-        .image = image,
-    };
-    const VkImportMemoryFdInfoKHR imported{
-        .sType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR,
-        .pNext = &dedicated,
-        .handleType = interop::shared_handle_type,
-        .fd = memory.get(),
-    };
-    const VkMemoryAllocateInfo allocation{
-        .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-        .pNext = &imported,
-        .allocationSize = allocation_bytes,
-        .memoryTypeIndex = renderer::find_memory_type(
-            device.physical(), requirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT),
-    };
-    renderer::DeviceHandle<VkDeviceMemory> allocated = renderer::create_device_handle<VkDeviceMemory>(
-        device.get(), allocation, vkAllocateMemory, vkFreeMemory, "importing the memory of a shared attachment");
-    memory.release();
-    renderer::require_success(
-        vkBindImageMemory(device.get(), image, allocated.get(), 0), "binding the memory of a shared attachment");
-    return allocated;
-}
-
 std::vector<std::uint8_t> bytes_of(std::span<const std::byte> rgba) {
     std::vector<std::uint8_t> bytes(rgba.size());
     for (std::size_t index = 0; index < rgba.size(); ++index) {
@@ -117,13 +85,17 @@ std::vector<std::uint8_t> bytes_of(std::span<const std::byte> rgba) {
 
 }
 
-ProviderStandIn::ProviderStandIn(const minemod_shared_attachment& color, interop::OwnedDescriptor memory)
+ProviderStandIn::ProviderStandIn(const minemod_shared_attachment& color, interop::ExportedHandle memory)
     : extent_{color.width, color.height},
       handoff_layout_(static_cast<VkImageLayout>(color.vulkan_layout)),
       image_(create_image(gpu_.device(), color)),
       acquire_(interop::OwnershipTransfer::acquire_for(gpu_.device().queue_family(), imported_color())),
       release_(interop::OwnershipTransfer::release_from(gpu_.device().queue_family(), imported_color())) {
-    memory_ = import_memory(gpu_.device(), image_.get(), color.allocation_bytes, std::move(memory));
+    memory_ = interop::test_support::import_image_memory(
+        gpu_.device(), image_.get(), color.allocation_bytes, std::move(memory));
+    renderer::require_success(
+        vkBindImageMemory(gpu_.device().get(), image_.get(), memory_.get(), 0),
+        "binding the memory of a shared attachment");
 }
 
 DrawnFrame ProviderStandIn::fill_after_reading(const std::array<float, 4>& fill) {

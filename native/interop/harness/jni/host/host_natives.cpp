@@ -9,7 +9,7 @@
 #include "errors/java_failure.hpp"
 #include "harness/shared_scene_host.hpp"
 #include "library/native_registration.hpp"
-#include "memory/owned_descriptor.hpp"
+#include "memory/exported_handle.hpp"
 
 namespace minemod::interop::harness::jni {
 
@@ -130,7 +130,7 @@ jlong allocation_size(JNIEnv* env, jclass, jlong host, jint attachment) noexcept
 
 jint export_memory(JNIEnv* env, jclass, jlong host, jint attachment) noexcept {
     return guarded(*env, jint{-1}, [&] {
-        return jint{attachment_of(host, attachment).shared().export_memory().release()};
+        return static_cast<jint>(attachment_of(host, attachment).shared().export_memory().release());
     });
 }
 
@@ -174,7 +174,7 @@ jstring validation_text(JNIEnv* env, jclass, jlong host) noexcept {
 }
 
 void close_descriptor(JNIEnv*, jclass, jint descriptor) noexcept {
-    const OwnedDescriptor closing(descriptor);
+    const ExportedHandle closing(descriptor);
 }
 
 }

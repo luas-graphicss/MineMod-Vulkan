@@ -6,7 +6,7 @@
 
 namespace minemod::interop {
 
-inline constexpr VkExternalMemoryHandleTypeFlagBits shared_handle_type = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT;
+extern const VkExternalMemoryHandleTypeFlagBits shared_handle_type;
 
 struct ExternalSupport {
     bool exportable;

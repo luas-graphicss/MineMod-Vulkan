@@ -27,11 +27,11 @@ minemod_scene_sharing sharing_of(const RunningSession& session) {
     return sharing;
 }
 
-interop::OwnedDescriptor exported_memory(const RunningSession& session, std::uint32_t attachment) {
+interop::ExportedHandle exported_memory(const RunningSession& session, std::uint32_t attachment) {
     std::int64_t handle = -1;
     require_ok(
         minemod_scene_session_export_attachment(session.get(), attachment, &handle), "exporting a shared attachment");
-    return interop::OwnedDescriptor(static_cast<int>(handle));
+    return interop::ExportedHandle(handle);
 }
 
 }

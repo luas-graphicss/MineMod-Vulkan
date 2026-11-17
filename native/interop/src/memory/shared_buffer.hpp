@@ -5,7 +5,7 @@
 #include "device/device.hpp"
 #include "device/device_handle.hpp"
 #include "memory/exportable_memory.hpp"
-#include "memory/owned_descriptor.hpp"
+#include "memory/exported_handle.hpp"
 
 namespace minemod::interop {
 
@@ -28,7 +28,7 @@ public:
         return allocation_size_;
     }
 
-    OwnedDescriptor export_memory() const;
+    ExportedHandle export_memory() const;
 
 private:
     MemoryExport memory_export_;

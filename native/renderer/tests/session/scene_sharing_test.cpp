@@ -5,7 +5,7 @@
 
 #include <doctest.h>
 
-#include "memory/owned_descriptor.hpp"
+#include "memory/exported_handle.hpp"
 #include "minemod/abi/scene_commands.h"
 #include "minemod/scene/scene_session.h"
 #include "session/support/running_session.hpp"
@@ -13,7 +13,7 @@
 #include "session/support/scene_stream.hpp"
 #include "session/support/shared_session.hpp"
 #include "session/support/terrain_frames.hpp"
-#include "support/descriptor_count.hpp"
+#include "support/open_handles.hpp"
 #include "support/terrain_quads.hpp"
 #include "terrain/section_mesh.hpp"
 #include "terrain/terrain_layer.hpp"
@@ -22,8 +22,8 @@ namespace {
 
 using namespace minemod::scene::test_support;
 namespace renderer = minemod::renderer;
-using minemod::interop::OwnedDescriptor;
-using minemod::interop::test_support::open_descriptor_count;
+using minemod::interop::ExportedHandle;
+using minemod::interop::test_support::open_handle_count;
 using renderer::test_support::QuadPlacement;
 
 constexpr VkExtent2D frame_extent{64, 64};
@@ -104,9 +104,9 @@ TEST_CASE("a shared session describes the color and depth-stencil attachments a 
     CHECK(session.validation_text() == "");
 }
 
-TEST_CASE("the memory of each attachment is exported as a descriptor the caller owns") {
+TEST_CASE("the memory of each attachment is exported as a handle the caller owns") {
     RunningSession session(shared_config(frame_extent));
-    const std::ptrdiff_t open_before = open_descriptor_count();
+    const std::ptrdiff_t open_before = open_handle_count();
     std::int64_t memory = -1;
 
     for (int cycle = 0; cycle < export_cycles; ++cycle) {
@@ -114,7 +114,7 @@ TEST_CASE("the memory of each attachment is exported as a descriptor the caller 
         REQUIRE(exported_memory(session, MINEMOD_SHARED_ATTACHMENT_DEPTH_STENCIL).is_open());
     }
 
-    CHECK(open_descriptor_count() == open_before);
+    CHECK(open_handle_count() == open_before);
     CHECK(
         minemod_scene_session_export_attachment(session.get(), MINEMOD_SHARED_ATTACHMENT_COUNT, &memory)
         == MINEMOD_RESULT_INVALID_ARGUMENT);
@@ -134,8 +134,8 @@ TEST_CASE("the handoff semaphores are exported or refused as the device reports"
         return;
     }
     REQUIRE(exported == MINEMOD_RESULT_OK);
-    const OwnedDescriptor signaled_by_the_renderer(static_cast<int>(renderer_done));
-    const OwnedDescriptor signaled_by_the_provider(static_cast<int>(provider_done));
+    const ExportedHandle signaled_by_the_renderer(renderer_done);
+    const ExportedHandle signaled_by_the_provider(provider_done);
     CHECK(signaled_by_the_renderer.is_open());
     CHECK(signaled_by_the_provider.is_open());
     CHECK(signaled_by_the_renderer.get() != signaled_by_the_provider.get());

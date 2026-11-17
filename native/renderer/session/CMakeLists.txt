@@ -20,7 +20,7 @@ target_include_directories(minemod_scene_session PUBLIC include PRIVATE src)
 target_link_libraries(minemod_scene_session
     PUBLIC minemod::abi
     PRIVATE minemod::renderer)
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR WIN32)
     target_sources(minemod_scene_session PRIVATE
         src/sharing/interop_provider_sharing.cpp
         src/sharing/interop_shared_targets.cpp)
