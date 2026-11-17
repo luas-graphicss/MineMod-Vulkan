@@ -5,10 +5,12 @@ glDeleteProgramPipelines
 glCreateMemoryObjectsEXT
 glDeleteMemoryObjectsEXT
 glImportMemoryFdEXT
+glImportMemoryWin32HandleEXT
 glTexStorageMem2DEXT
 glGenSemaphoresEXT
 glDeleteSemaphoresEXT
 glImportSemaphoreFdEXT
+glImportSemaphoreWin32HandleEXT
 glWaitSemaphoreEXT
 glSignalSemaphoreEXT
 glGetUnsignedBytevEXT

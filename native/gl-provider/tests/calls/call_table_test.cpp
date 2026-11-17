@@ -45,6 +45,8 @@ TEST_CASE("functions that mods call have a thunk and functions only the layer ca
     CHECK(records[*find_call("glBindFramebuffer")].thunk != nullptr);
     CHECK(records[*find_call("glBindFramebufferEXT")].thunk != nullptr);
     CHECK(records[*find_call("glImportMemoryFdEXT")].thunk == nullptr);
+    CHECK(records[*find_call("glImportMemoryWin32HandleEXT")].thunk == nullptr);
+    CHECK(records[*find_call("glImportSemaphoreWin32HandleEXT")].thunk == nullptr);
 }
 
 TEST_CASE("an invocation carries single and double precision arguments bit for bit") {
