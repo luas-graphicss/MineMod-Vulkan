@@ -20,6 +20,7 @@ public:
     ProviderLibrary& operator=(const ProviderLibrary&) = delete;
     ~ProviderLibrary();
 
+    void prepare_for_driver_threads();
     void* symbol(const char* name) const noexcept;
 
     const std::filesystem::path& directory() const noexcept {

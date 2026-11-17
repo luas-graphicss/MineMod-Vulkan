@@ -22,6 +22,8 @@ void close_dynamic_library(LibraryHandle library) noexcept {
     ::dlclose(library);
 }
 
+void prepare_for_driver_threads(LibraryHandle) {}
+
 void* find_library_symbol(LibraryHandle library, const char* name) noexcept {
     return ::dlsym(library, name);
 }

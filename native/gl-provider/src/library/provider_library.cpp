@@ -61,6 +61,12 @@ ProviderLibrary::~ProviderLibrary() {
     close_all();
 }
 
+void ProviderLibrary::prepare_for_driver_threads() {
+    for (const LibraryHandle handle : handles_) {
+        minemod::provider::prepare_for_driver_threads(handle);
+    }
+}
+
 void* ProviderLibrary::symbol(const char* name) const noexcept {
     return handles_.empty() ? nullptr : find_library_symbol(handles_.back(), name);
 }

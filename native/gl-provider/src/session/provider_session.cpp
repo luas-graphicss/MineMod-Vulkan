@@ -4,9 +4,20 @@
 
 namespace minemod::provider {
 
+namespace {
+
+ProviderLibrary library_for_driver(
+    const std::filesystem::path& directory, std::span<const std::string> dependencies, const std::string& entry) {
+    ProviderLibrary library(directory, dependencies, entry);
+    library.prepare_for_driver_threads();
+    return library;
+}
+
+}
+
 ProviderSession::ProviderSession(
     const std::filesystem::path& directory, std::span<const std::string> dependencies, const std::string& entry)
-    : library_(directory, dependencies, entry),
+    : library_(library_for_driver(directory, dependencies, entry)),
       display_(library_),
       image_(segments_loaded_from(library_.directory())),
       provided_(call_records().size()) {}
