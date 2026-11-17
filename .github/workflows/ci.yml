@@ -148,8 +148,10 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Annotate the diagnostics of MSVC and of the tests
-        run: echo "::add-matcher::.github/problem-matchers/msvc.json"
+      - name: Annotate the diagnostics of CMake, of MSVC and of the tests
+        run: |
+          echo "::add-matcher::.github/problem-matchers/cmake.json"
+          echo "::add-matcher::.github/problem-matchers/msvc.json"
 
       - name: Configure
         run: cmake --preset windows-provider
