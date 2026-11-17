@@ -207,6 +207,15 @@ jobs:
           -Porg.gradle.java.installations.auto-download=false
           -Porg.gradle.java.installations.fromEnv=JAVA_HOME_8_X64,JAVA_HOME_16_X64,JAVA_HOME_17_X64,JAVA_HOME_21_X64
 
+      - name: Fail when a suite that opens a window was skipped
+        run: |
+          reports=$(find adapters/presentation -path '*/test-results/*' -name 'TEST-*OnWindowTest.xml')
+          echo "$reports"
+          test -n "$reports"
+          skipped=$(grep -L 'skipped="0"' $reports || true)
+          echo "skipped: ${skipped:-none}"
+          test -z "$skipped"
+
   provider-windows:
     name: OpenGL provider on Windows
     runs-on: windows-2025
