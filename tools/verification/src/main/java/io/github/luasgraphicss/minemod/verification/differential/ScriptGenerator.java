@@ -22,8 +22,9 @@ final class ScriptGenerator {
             ObjectKind.SHADER_OR_PROGRAM);
 
     private static final int CHOICES = 14;
-    private static final int UNGENERATED_NAMES = 8;
-    private static final List<ObjectKind> CREATED_BY_FIRST_USE = List.of(ObjectKind.TEXTURE, ObjectKind.BUFFER);
+    static final int UNGENERATED_NAMES = 8;
+    private static final List<ObjectKind> CREATED_BY_FIRST_USE =
+            List.of(ObjectKind.TEXTURE, ObjectKind.BUFFER, ObjectKind.RENDERBUFFER, ObjectKind.FRAMEBUFFER);
     private static final TrackedState[] STATES = TrackedState.values();
 
     private ScriptGenerator() {}

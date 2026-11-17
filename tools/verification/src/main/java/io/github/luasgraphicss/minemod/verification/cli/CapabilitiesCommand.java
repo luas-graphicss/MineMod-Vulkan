@@ -4,7 +4,7 @@ import io.github.luasgraphicss.minemod.compatibility.dispatch.catalog.CallCatalo
 import io.github.luasgraphicss.minemod.compatibility.provider.capability.ContextProfile;
 import io.github.luasgraphicss.minemod.verification.capability.CapabilityMatrix;
 import io.github.luasgraphicss.minemod.verification.capability.ReportedConditions;
-import io.github.luasgraphicss.minemod.verification.differential.DifferentialSuite;
+import io.github.luasgraphicss.minemod.verification.differential.simulated.SimulatedComparison;
 import io.github.luasgraphicss.minemod.verification.scenario.simulation.SimulatedLayer;
 import io.github.luasgraphicss.minemod.verification.scenario.synchronous.NativeSpanFrame;
 import java.io.PrintStream;
@@ -25,8 +25,8 @@ final class CapabilitiesCommand {
                 .map(name -> List.of(profileNamed(name)))
                 .orElseGet(() -> List.of(ContextProfile.values()));
         CallCatalog catalog = CallCatalog.standard();
-        output.println("capabilities against the " + DifferentialSuite.PROVIDER
-                + " provider, which exports every described function");
+        output.println("capabilities against " + SimulatedComparison.PROVIDER
+                + ", which exports every described function");
         for (ContextProfile profile : profiles) {
             output.println(nameOf(profile) + " context:");
             CapabilityMatrix.of(catalog, profile).rows().forEach(row -> output.println(INDENT + row));

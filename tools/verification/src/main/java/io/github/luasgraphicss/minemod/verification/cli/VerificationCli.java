@@ -20,7 +20,7 @@ public final class VerificationCli {
               verification adapters refresh [--cache <directory>] [--root <directory>]
               verification evidence refresh [--root <directory>]
               verification scenario <name> [--cache <directory>] [--report <file>] [--root <directory>]
-              verification compare --suite <name> [--root <directory>]
+              verification compare --suite <name> [--provider <directory> --natives <library>] [--root <directory>]
               verification capabilities [--context <compatibility|core>] [--root <directory>]
             """;
 
@@ -45,7 +45,7 @@ public final class VerificationCli {
                 case "adapters refresh" -> RefreshAdaptersCommand.run(invocation, repositoryRoot, output);
                 case "evidence refresh" -> RefreshEvidenceCommand.run(invocation, repositoryRoot, output);
                 case "build-matrix" -> BuildMatrixCommand.run(invocation, repositoryRoot, output);
-                case "compare" -> CompareCommand.run(invocation, output);
+                case "compare" -> CompareCommand.run(invocation, repositoryRoot, output);
                 case "capabilities" -> CapabilitiesCommand.run(invocation, output);
                 default -> throw new UsageException("unknown command: " + invocation.commandLine());
             };
