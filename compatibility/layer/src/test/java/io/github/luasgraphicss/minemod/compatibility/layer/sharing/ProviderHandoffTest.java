@@ -3,9 +3,9 @@ package io.github.luasgraphicss.minemod.compatibility.layer.sharing;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.github.luasgraphicss.minemod.compatibility.interop.platform.HandlePlatform;
+import io.github.luasgraphicss.minemod.compatibility.layer.fixtures.HeapMemory;
+import io.github.luasgraphicss.minemod.compatibility.layer.fixtures.RecordingProvider;
 import io.github.luasgraphicss.minemod.compatibility.layer.memory.ScratchInts;
-import io.github.luasgraphicss.minemod.compatibility.layer.support.HeapMemory;
-import io.github.luasgraphicss.minemod.compatibility.layer.support.RecordingProvider;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package io.github.luasgraphicss.minemod.compatibility.layer.support;
+package io.github.luasgraphicss.minemod.compatibility.layer.fixtures;
 
 import io.github.luasgraphicss.minemod.compatibility.layer.memory.NativeMemory;
 import io.github.luasgraphicss.minemod.compatibility.translation.provider.ProviderCalls;
