@@ -21,6 +21,29 @@ dependencyResolutionManagement {
             }
             filter {
                 includeGroup("org.lwjgl.lwjgl")
+                includeModule("net.minecraft", "launchwrapper")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "NeoForged"
+                    url = uri("https://maven.neoforged.net/releases")
+                }
+            }
+            filter {
+                includeModule("cpw.mods", "modlauncher")
+            }
+        }
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "Fabric"
+                    url = uri("https://maven.fabricmc.net")
+                }
+            }
+            filter {
+                includeModule("net.fabricmc", "sponge-mixin")
             }
         }
         mavenCentral()
@@ -45,6 +68,12 @@ include(":adapters:configuration")
 include(":adapters:presentation:core")
 include(":adapters:presentation:glfw")
 include(":adapters:presentation:display")
+include(":adapters:loaders:launch")
+include(":adapters:loaders:agent")
+include(":adapters:loaders:launchwrapper")
+include(":adapters:loaders:knot")
+include(":adapters:loaders:modlauncher")
+include(":adapters:loaders:modlauncher11")
 include(":jvm:compatibility-spi")
 include(":compatibility:provider")
 include(":compatibility:dispatch")
@@ -57,3 +86,14 @@ include(":compatibility:runtime")
 include(":compatibility:lwjgl3")
 include(":compatibility:lwjgl2")
 include(":jvm:client-runtime")
+
+val pinnedCallAdapter = Regex("""plugins \{\s+id\("minemod\.(release|loader)-adapter"\)\s+}\s*""")
+
+listOf("minecraft", "bootstrap", "forge", "fabric", "neoforge").forEach { family ->
+    rootDir.resolve("adapters/$family")
+        .listFiles { module -> module.resolve("build.gradle.kts").isFile }
+        .orEmpty()
+        .filter { module -> pinnedCallAdapter.matches(module.resolve("build.gradle.kts").readText()) }
+        .sortedBy { module -> module.name }
+        .forEach { module -> include(":adapters:$family:${module.name}") }
+}
