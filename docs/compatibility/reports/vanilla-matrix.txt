@@ -66,10 +66,10 @@
 1.20.6 FABRIC: 6 points redirect 6 calls of the client in intermediary names
 1.20.6 NEOFORGE: 6 points redirect 6 calls of the client in mojang names
 1.21 FORGE: 6 points redirect 6 calls of the client in mojang names
-1.21 FABRIC: 6 points redirect 6 calls of the client in intermediary names
+1.21 FABRIC: adapters/fabric/mc-1.21 has a build of its own, outside the pinned calls
 1.21 NEOFORGE: 6 points redirect 6 calls of the client in mojang names
 1.21.1 FORGE: 6 points redirect 6 calls of the client in mojang names
 1.21.1 FABRIC: adapters/fabric/mc-1.21.1 has a build of its own, outside the pinned calls
 1.21.1 NEOFORGE: 6 points redirect 6 calls of the client in mojang names
-pinned-call adapters verified on the production client: 3 in official names, 10 in mojang names, 27 in intermediary names, 27 in srg names; 6 target(s) with a build of their own
+pinned-call adapters verified on the production client: 3 in official names, 10 in mojang names, 26 in intermediary names, 27 in srg names; 7 target(s) with a build of their own
 the clients of forge and neoforge are the vanilla client under the names those loaders run; the binary patches of the loaders are not applied here
