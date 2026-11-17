@@ -81,9 +81,10 @@ VkCullModeFlags cull_mode(FaceCulling culling) noexcept {
 
 }
 
-BatchRenderer::BatchRenderer(const Device& device, PipelineCache& pipelines)
+BatchRenderer::BatchRenderer(const Device& device, PipelineCache& pipelines, VkFormat depth_format)
     : device_(device.get()),
       pipelines_(pipelines),
+      depth_format_(depth_format),
       vertex_shader_(create_shader_module(device, SpirvModule{scene_vert})),
       fragment_shader_(create_shader_module(device, SpirvModule{scene_frag})),
       view_layout_(create_descriptor_layout(device, view_bindings)),
@@ -192,7 +193,7 @@ VkPipeline BatchRenderer::pipeline_for(const PipelineKey& key) {
         .depth = key.depth,
         .blending = key.blending,
         .color_format = frame_color_format,
-        .depth_format = frame_depth_format,
+        .depth_format = depth_format_,
         .depth_bias = key.depth_bias,
         .writes_color = key.writes_color,
     });

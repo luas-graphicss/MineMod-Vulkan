@@ -26,10 +26,11 @@ final class FrameViews {
         return views.size() - 1;
     }
 
-    void write(SceneCommandWriter frame) {
-        for (int index = 0; index < views.size(); index++) {
+    int writeFrom(int firstUnwritten, SceneCommandWriter frame) {
+        for (int index = firstUnwritten; index < views.size(); index++) {
             frame.setView(views.get(index).toScene(index));
         }
+        return views.size();
     }
 
     void clear() {

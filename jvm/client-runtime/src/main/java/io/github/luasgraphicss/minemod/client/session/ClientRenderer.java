@@ -5,6 +5,7 @@ import io.github.luasgraphicss.minemod.bridge.NativeSceneHost;
 import io.github.luasgraphicss.minemod.bridge.NativeSceneSession;
 import io.github.luasgraphicss.minemod.bridge.PresentPacing;
 import io.github.luasgraphicss.minemod.bridge.SceneSessionSetup;
+import io.github.luasgraphicss.minemod.bridge.SceneSharing;
 import io.github.luasgraphicss.minemod.client.diagnostics.RendererDiagnostics;
 import io.github.luasgraphicss.minemod.client.failure.RendererFailure;
 import io.github.luasgraphicss.minemod.client.frame.FrameContent;
@@ -35,6 +36,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public final class ClientRenderer implements AutoCloseable {
     private static final Set<Capability> REQUIRED_CAPABILITIES =
@@ -64,6 +66,9 @@ public final class ClientRenderer implements AutoCloseable {
     private final ResourceReload reload;
     private final RendererDiagnostics diagnostics;
     private FramebufferSize drawnSize;
+    private boolean isFrameBegun;
+    private boolean isFrameDrawable;
+    private boolean isFramePartlySubmitted;
 
     private ClientRenderer(
             AbiNegotiation negotiation,
@@ -83,7 +88,8 @@ public final class ClientRenderer implements AutoCloseable {
         this.diagnostics = new RendererDiagnostics(session.diagnostics(), reload);
     }
 
-    public static ClientRenderer start(Path nativeLibrary, WindowSurface window, DeviceValidation validation) {
+    public static ClientRenderer start(
+            Path nativeLibrary, WindowSurface window, DeviceValidation validation, SceneAttachments attachments) {
         NativeBridge bridge = NativeBridge.load(nativeLibrary, REQUIRED_CAPABILITIES);
         NativeSceneHost host =
                 bridge.openSceneHost(validation == DeviceValidation.ENABLED, window.requiredInstanceExtensions());
@@ -91,10 +97,11 @@ public final class ClientRenderer implements AutoCloseable {
             FramebufferSize windowSize = window.framebufferSize();
             FramebufferSize openedSize =
                     new FramebufferSize(Math.max(1, windowSize.width()), Math.max(1, windowSize.height()));
+            SceneSessionSetup setup = SceneSessionSetup.offscreen(openedSize.width(), openedSize.height())
+                    .presentingOn(window.createSurface(host.vulkanInstance()))
+                    .withLimits(MAX_TEXTURES, MAX_SECTIONS);
             NativeSceneSession session =
-                    host.openSession(SceneSessionSetup.offscreen(openedSize.width(), openedSize.height())
-                            .presentingOn(window.createSurface(host.vulkanInstance()))
-                            .withLimits(MAX_TEXTURES, MAX_SECTIONS));
+                    host.openSession(attachments == SceneAttachments.SHARED ? setup.sharingAttachments() : setup);
             PresentationControl presentation =
                     new PresentationControl(new SessionPresentation(session), window, openedSize);
             ShaderCompiler shaders =
@@ -134,12 +141,61 @@ public final class ClientRenderer implements AutoCloseable {
         return diagnostics;
     }
 
+    public SceneSharing sharing() {
+        return session.sharing();
+    }
+
     public void pace(PresentPacing pacing) {
         presentation.pace(pacing);
     }
 
+    public boolean submitPart(FrameContent content) {
+        if (!beginFrame()) {
+            return false;
+        }
+        submit(true, content::writePart);
+        isFramePartlySubmitted = true;
+        return true;
+    }
+
     public void presentFrame(FrameContent content) {
-        boolean isDrawable = presentation.beginFrame();
+        boolean isDrawable = beginFrame();
+        isFrameBegun = false;
+        isFramePartlySubmitted = false;
+        submit(isDrawable, content::write);
+        if (isDrawable) {
+            presentation.endFrame();
+            drawnSize = presentation.frameSize();
+        }
+    }
+
+    public Optional<FramePixels> readFrame() {
+        FramebufferSize size = presentation.frameSize();
+        long bytes = (long) size.width() * size.height() * FramePixels.PIXEL_BYTES;
+        if (isFramePartlySubmitted || !size.equals(drawnSize) || bytes > Integer.MAX_VALUE) {
+            return Optional.empty();
+        }
+        ByteBuffer rgba = ByteBuffer.allocateDirect((int) bytes);
+        session.readFrame(rgba);
+        return Optional.of(new FramePixels(size.width(), size.height(), rgba));
+    }
+
+    @Override
+    public void close() {
+        reload.close();
+        session.close();
+        host.close();
+    }
+
+    private boolean beginFrame() {
+        if (!isFrameBegun) {
+            isFrameDrawable = presentation.beginFrame();
+            isFrameBegun = true;
+        }
+        return isFrameDrawable;
+    }
+
+    private void submit(boolean isDrawable, Consumer<SceneCommandWriter> content) {
         CommandStreamWriter stream = new CommandStreamWriter(streamStorage);
         SceneCommandWriter scene = new SceneCommandWriter(stream);
         StreamBudget definitions = TexturePublisher.definitionBudgetFor(GAME_TEXTURES);
@@ -156,7 +212,7 @@ public final class ClientRenderer implements AutoCloseable {
         overlay.publish(scene, resources);
         terrain.publish(scene, resources);
         if (isDrawable) {
-            content.write(scene);
+            content.accept(scene);
         }
         textures.publishDestructions(scene, definitions);
         if (!isDrawable && !definitions.hasTaken() && !resources.hasTaken()) {
@@ -166,27 +222,5 @@ public final class ClientRenderer implements AutoCloseable {
         if (!report.isAccepted()) {
             throw new RendererFailure("the native renderer refused the frame stream: " + report);
         }
-        if (isDrawable) {
-            presentation.endFrame();
-            drawnSize = presentation.frameSize();
-        }
-    }
-
-    public Optional<FramePixels> readFrame() {
-        FramebufferSize size = presentation.frameSize();
-        long bytes = (long) size.width() * size.height() * FramePixels.PIXEL_BYTES;
-        if (!size.equals(drawnSize) || bytes > Integer.MAX_VALUE) {
-            return Optional.empty();
-        }
-        ByteBuffer rgba = ByteBuffer.allocateDirect((int) bytes);
-        session.readFrame(rgba);
-        return Optional.of(new FramePixels(size.width(), size.height(), rgba));
-    }
-
-    @Override
-    public void close() {
-        reload.close();
-        session.close();
-        host.close();
     }
 }

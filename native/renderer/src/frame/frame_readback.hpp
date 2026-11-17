@@ -41,5 +41,6 @@ private:
 };
 
 FramePixels read_back_color(const Device& device, const Image& transfer_source);
+FramePixels read_back_color(const Device& device, VkImage transfer_source, VkExtent2D extent);
 
 }

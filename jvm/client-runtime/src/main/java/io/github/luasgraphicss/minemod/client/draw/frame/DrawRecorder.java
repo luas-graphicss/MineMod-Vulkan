@@ -24,7 +24,6 @@ public final class DrawRecorder implements FrameContent {
     private static final long TERRAIN_BYTES = SceneOpcode.SET_TERRAIN.fixedBytes();
     private static final long BATCH_BYTES = SceneOpcode.DRAW_BATCH.fixedBytes();
     private static final float[] OPAQUE_BLACK = {0.0f, 0.0f, 0.0f, 1.0f};
-    private static final int NEVER = -1;
 
     private final long streamBytes;
     private final long streamRecords;
@@ -34,11 +33,15 @@ public final class DrawRecorder implements FrameContent {
     private ByteBuffer vertices = ByteBuffer.allocateDirect(FIRST_ARENA_BYTES);
     private StreamBudget budget;
     private BatchOptions lastOptions;
+    private BatchOptions writtenOptions;
     private BatchSlot slot;
     private TerrainState terrain;
     private boolean drawsWorld;
     private float[] clearColor;
-    private int drawsBeforeTheDepthClear;
+    private boolean isDepthClear;
+    private boolean hasWrittenStart;
+    private boolean hasWrittenTerrain;
+    private int writtenViews;
     private long droppedDraws;
     private long approximatedDraws;
 
@@ -59,11 +62,19 @@ public final class DrawRecorder implements FrameContent {
         marks.clear();
         vertices.clear();
         lastOptions = BatchOptions.UNCHANGED;
+        writtenOptions = BatchOptions.UNCHANGED;
         slot = BatchSlot.INTERFACE;
         terrain = null;
         drawsWorld = false;
         clearColor = OPAQUE_BLACK;
-        drawsBeforeTheDepthClear = NEVER;
+        isDepthClear = true;
+        hasWrittenStart = false;
+        hasWrittenTerrain = false;
+        writtenViews = 0;
+    }
+
+    public boolean isPartlyWritten() {
+        return hasWrittenStart;
     }
 
     public void clearColor(float red, float green, float blue, float alpha) {
@@ -71,9 +82,8 @@ public final class DrawRecorder implements FrameContent {
     }
 
     public void clearDepth() {
-        boolean isAlreadyClear = draws.isEmpty() || drawsBeforeTheDepthClear == draws.size();
-        if (!isAlreadyClear && mark(new DepthClear(draws.size()))) {
-            drawsBeforeTheDepthClear = draws.size();
+        if (!isDepthClear && mark(new DepthClear(draws.size()))) {
+            isDepthClear = true;
         }
     }
 
@@ -86,6 +96,9 @@ public final class DrawRecorder implements FrameContent {
     }
 
     public void enterWorld() {
+        if (hasWrittenStart) {
+            throw new IllegalStateException("a part of this frame was already written without the world");
+        }
         drawsWorld = true;
         slot = BatchSlot.SKY;
     }
@@ -127,27 +140,52 @@ public final class DrawRecorder implements FrameContent {
     }
 
     @Override
+    public void writePart(SceneCommandWriter frame) {
+        writeRecorded(frame, slot != BatchSlot.SKY);
+        draws.clear();
+        marks.clear();
+        vertices.clear();
+        isDepthClear = false;
+        budget = new StreamBudget(streamBytes, streamRecords);
+        boolean awaitsTerrain = terrain != null && !hasWrittenTerrain;
+        if (!budget.take(FRAME_END_BYTES) || (awaitsTerrain && !budget.take(TERRAIN_BYTES))) {
+            throw new IllegalStateException("the stream of a frame has no room for the records that end it");
+        }
+    }
+
+    @Override
     public void write(SceneCommandWriter frame) {
+        writeRecorded(frame, true);
+        frame.endFrame();
+    }
+
+    private void writeRecorded(SceneCommandWriter frame, boolean hasReachedTheTerrain) {
+        if (!hasWrittenStart) {
+            writeStart(frame);
+            hasWrittenStart = true;
+        }
+        writtenViews = views.writeFrom(writtenViews, frame);
+        if (terrain != null && !hasWrittenTerrain && hasReachedTheTerrain) {
+            frame.setTerrain(terrain);
+            hasWrittenTerrain = true;
+        }
+        int writtenMarks = 0;
+        for (int drawn = 0; drawn < draws.size(); drawn++) {
+            RecordedDraw draw = draws.get(drawn);
+            writtenMarks = writeMarks(writtenMarks, drawn, frame);
+            draw.options().writeChangesFrom(writtenOptions, frame);
+            writtenOptions = draw.options();
+            frame.drawBatch(draw.state(), verticesOf(draw));
+        }
+        writeMarks(writtenMarks, draws.size(), frame);
+    }
+
+    private void writeStart(SceneCommandWriter frame) {
         if (drawsWorld) {
             frame.beginWorldFrame(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
         } else {
             frame.beginInterfaceFrame(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
         }
-        views.write(frame);
-        if (terrain != null) {
-            frame.setTerrain(terrain);
-        }
-        BatchOptions written = BatchOptions.UNCHANGED;
-        int writtenMarks = 0;
-        for (int drawn = 0; drawn < draws.size(); drawn++) {
-            RecordedDraw draw = draws.get(drawn);
-            writtenMarks = writeMarks(writtenMarks, drawn, frame);
-            draw.options().writeChangesFrom(written, frame);
-            written = draw.options();
-            frame.drawBatch(draw.state(), verticesOf(draw));
-        }
-        writeMarks(writtenMarks, draws.size(), frame);
-        frame.endFrame();
     }
 
     private boolean mark(FrameMark mark) {
@@ -181,6 +219,7 @@ public final class DrawRecorder implements FrameContent {
         VertexRepacker.pack(draw.layout(), draw.vertices(), draw.vertexCount(), vertices);
         draws.add(new RecordedDraw(batchOf(draw, view), vertexOffset, (int) vertexBytes, draw.options()));
         lastOptions = draw.options();
+        isDepthClear = false;
         if (!draw.state().isExact()) {
             approximatedDraws++;
         }

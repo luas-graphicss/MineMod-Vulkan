@@ -12,6 +12,10 @@ ImageDescription color_image(VkExtent2D extent, VkImageUsageFlags usage) {
 
 }
 
+Image create_frame_scratch(const Device& device, VkExtent2D extent) {
+    return Image(device, color_image(extent, filtered_color_usage));
+}
+
 FrameTargets::FrameTargets(const Device& device, VkExtent2D extent)
     : color_(device, color_image(extent, filtered_color_usage | VK_IMAGE_USAGE_TRANSFER_SRC_BIT)),
       depth_(
@@ -22,6 +26,6 @@ FrameTargets::FrameTargets(const Device& device, VkExtent2D extent)
               VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
               VK_IMAGE_ASPECT_DEPTH_BIT,
           }),
-      scratch_(device, color_image(extent, filtered_color_usage)) {}
+      scratch_(create_frame_scratch(device, extent)) {}
 
 }

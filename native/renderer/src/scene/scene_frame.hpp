@@ -12,9 +12,11 @@
 
 namespace minemod::renderer {
 
+enum class SceneStage { world, hand, interface };
+
 struct WorldStage {
     VkDescriptorSet view;
-    TerrainFrame terrain;
+    std::optional<TerrainFrame> terrain;
     std::span<const DrawBatch> sky;
     std::span<const DrawBatch> solid;
     std::span<const DrawBatch> blended;
@@ -32,6 +34,11 @@ struct BlurredBackdrop {
     VkDescriptorSet scratch;
 };
 
+struct FramePart {
+    std::optional<SceneStage> resumed_stage{};
+    bool is_handed_over = false;
+};
+
 struct SceneFrame {
     VkExtent2D extent;
     std::array<float, 4> clear_color;
@@ -39,6 +46,7 @@ struct SceneFrame {
     OverlayStage hand;
     OverlayStage interface;
     std::optional<BlurredBackdrop> backdrop{};
+    FramePart part{};
 };
 
 }

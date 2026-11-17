@@ -111,6 +111,37 @@ class SharingNegotiatorTest {
                 outcome.rejections());
     }
 
+    @Test
+    void memoryAloneIsPlannedWhereNoSemaphoreCanBeShared() {
+        extensions.removeAll(Arrays.asList("GL_EXT_semaphore", "GL_EXT_semaphore_fd"));
+        semaphoresShareable = false;
+
+        SharingOutcome outcome = negotiateMemory(identity(1), Arrays.asList(COLOR, DEPTH));
+
+        assertTrue(outcome.isAccepted());
+        assertEquals(2, outcome.shares().size());
+        assertTrue(outcome.shares().get(1).usesDedicatedAllocation());
+    }
+
+    @Test
+    void memoryAloneStillNeedsOneGpuAndTheMemoryExtensions() {
+        extensions.remove("GL_EXT_memory_object_fd");
+
+        SharingOutcome outcome = negotiateMemory(identity(2), Collections.singletonList(COLOR));
+
+        assertEquals(
+                Arrays.asList(
+                        "the provider runs on a different GPU or driver than the renderer",
+                        "the provider lacks GL_EXT_memory_object_fd"),
+                outcome.rejections());
+        assertEquals(Collections.emptyList(), outcome.shares());
+    }
+
+    private SharingOutcome negotiateMemory(DeviceIdentity provider, List<SharingRequest> requests) {
+        return SharingNegotiator.negotiateMemory(
+                renderer, provider, extensions, HandlePlatform.LINUX_FILE_DESCRIPTOR, requests, query());
+    }
+
     private SharingOutcome negotiate(DeviceIdentity provider, List<SharingRequest> requests) {
         return SharingNegotiator.negotiate(
                 renderer, provider, extensions, HandlePlatform.LINUX_FILE_DESCRIPTOR, requests, query());

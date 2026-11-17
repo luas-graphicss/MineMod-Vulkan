@@ -20,7 +20,6 @@
     {
       "name": "windows",
       "hidden": true,
-      "generator": "Visual Studio 17 2022",
       "architecture": "x64",
       "binaryDir": "${sourceDir}/build/${presetName}",
       "condition": {
@@ -72,6 +71,22 @@
       }
     },
     {
+      "name": "linux-provider",
+      "inherits": "linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "MINEMOD_BUILD_RENDERER": "OFF"
+      }
+    },
+    {
+      "name": "windows-provider",
+      "inherits": "windows",
+      "cacheVariables": {
+        "MINEMOD_BUILD_JNI_BRIDGE": "ON",
+        "MINEMOD_BUILD_RENDERER": "OFF"
+      }
+    },
+    {
       "name": "linux-client",
       "inherits": "linux",
       "cacheVariables": {
@@ -112,7 +127,8 @@
       "name": "linux-jni",
       "configurePreset": "linux-jni",
       "targets": [
-        "minemod_jni"
+        "minemod_jni",
+        "minemod_gl_provider_jni"
       ]
     },
     {
@@ -120,14 +136,36 @@
       "configurePreset": "windows-jni",
       "configuration": "RelWithDebInfo",
       "targets": [
-        "minemod_jni"
+        "minemod_jni",
+        "minemod_gl_provider_jni"
+      ]
+    },
+    {
+      "name": "linux-provider",
+      "configurePreset": "linux-provider"
+    },
+    {
+      "name": "windows-provider",
+      "configurePreset": "windows-provider",
+      "configuration": "RelWithDebInfo",
+      "targets": [
+        "minemod_gl_provider_tests",
+        "minemod_gl_provider_jni"
       ]
     },
     {
       "name": "linux-client",
       "configurePreset": "linux-client",
       "targets": [
-        "minemod_jni"
+        "minemod_jni",
+        "minemod_gl_provider_jni"
+      ]
+    },
+    {
+      "name": "linux-scene-host",
+      "configurePreset": "linux-client",
+      "targets": [
+        "minemod_scene_host_jni"
       ]
     },
     {
@@ -135,7 +173,8 @@
       "configurePreset": "windows-client",
       "configuration": "RelWithDebInfo",
       "targets": [
-        "minemod_jni"
+        "minemod_jni",
+        "minemod_gl_provider_jni"
       ]
     }
   ],
@@ -168,6 +207,37 @@
       "configuration": "RelWithDebInfo",
       "output": {
         "outputOnFailure": true
+      }
+    },
+    {
+      "name": "linux-provider",
+      "configurePreset": "linux-provider",
+      "output": {
+        "outputOnFailure": true
+      },
+      "filter": {
+        "include": {
+          "name": "^gl_provider"
+        }
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
+    {
+      "name": "windows-provider",
+      "configurePreset": "windows-provider",
+      "configuration": "RelWithDebInfo",
+      "output": {
+        "outputOnFailure": true
+      },
+      "filter": {
+        "include": {
+          "name": "^gl_provider"
+        }
+      },
+      "execution": {
+        "noTestsAction": "error"
       }
     }
   ]

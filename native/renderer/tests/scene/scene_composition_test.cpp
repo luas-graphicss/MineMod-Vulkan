@@ -97,8 +97,12 @@ constexpr QuadPlacement water_over_right_half{8.0f, 3.2f, 12.8f, 12.8f, 8.0f};
 constexpr QuadPlacement entity_in_third_strip{0.0f, -6.0f, 3.0f, 6.0f, -30.0f};
 constexpr QuadPlacement particle_in_fourth_strip{1.6f, -3.2f, 3.2f, 3.2f, -16.0f};
 constexpr QuadPlacement hand_in_lower_right_corner{0.5f, -1.0f, 1.0f, -0.5f, 0.999f};
+constexpr QuadPlacement cover_close_to_the_camera{-18.0f, -18.0f, 18.0f, 18.0f, -2.0f};
 
 constexpr float interface_depth = 0.9995f;
+constexpr float near_depth = 0.25f;
+constexpr float far_depth = 0.75f;
+constexpr VkRect2D whole_frame{{0, 0}, frame_extent};
 constexpr VkRect2D badge_in_upper_left_corner{{0, 0}, {16, 16}};
 constexpr VkRect2D badge_over_hand{{56, 56}, {8, 8}};
 
@@ -110,6 +114,8 @@ constexpr VkOffset2D hand_corner{52, 52};
 constexpr VkOffset2D upper_left_badge{8, 8};
 constexpr VkOffset2D badge_on_hand{60, 60};
 constexpr VkOffset2D frame_center{32, 40};
+
+constexpr FramePart handed_over{std::nullopt, true};
 
 Matrix4 world_projection() {
     return perspective({2.0f * std::atan(wall_reach / wall_distance), 1.0f, 0.5f, 100.0f});
@@ -140,18 +146,27 @@ SceneVertex colored(const std::array<std::uint8_t, 4>& color) {
     return vertex;
 }
 
-std::array<SceneVertex, 4> interface_quad(const VkRect2D& pixels, const std::array<std::uint8_t, 4>& color) {
+constexpr FramePart resumed_in(SceneStage stage) {
+    return FramePart{stage, false};
+}
+
+std::array<SceneVertex, 4> interface_quad_at(
+    const VkRect2D& pixels, float depth, const std::array<std::uint8_t, 4>& color) {
     const auto left = static_cast<float>(pixels.offset.x);
     const auto top = static_cast<float>(pixels.offset.y);
     const float right = left + static_cast<float>(pixels.extent.width);
     const float bottom = top + static_cast<float>(pixels.extent.height);
 
     std::array<SceneVertex, 4> corners{colored(color), colored(color), colored(color), colored(color)};
-    corners[0].position = {left, top, interface_depth};
-    corners[1].position = {left, bottom, interface_depth};
-    corners[2].position = {right, bottom, interface_depth};
-    corners[3].position = {right, top, interface_depth};
+    corners[0].position = {left, top, depth};
+    corners[1].position = {left, bottom, depth};
+    corners[2].position = {right, bottom, depth};
+    corners[3].position = {right, top, depth};
     return corners;
+}
+
+std::array<SceneVertex, 4> interface_quad(const VkRect2D& pixels, const std::array<std::uint8_t, 4>& color) {
+    return interface_quad_at(pixels, interface_depth, color);
 }
 
 SectionMesh terrain_quad(TerrainLayer layer, const QuadPlacement& placement, const std::array<std::uint8_t, 4>& color) {
@@ -236,22 +251,47 @@ public:
         const std::optional<WorldStage>& world_stage,
         std::span<const DrawBatch> hand,
         std::span<const DrawBatch> interface) {
+        draw_part(world_stage, hand, interface, FramePart{});
+        return read_frame();
+    }
+
+    std::optional<SceneStage> draw_part(
+        const std::optional<WorldStage>& world_stage,
+        std::span<const DrawBatch> hand,
+        std::span<const DrawBatch> interface,
+        const FramePart& part) {
+        const auto entry = [&part](const ImageUse& kept) { return part.resumed_stage ? kept : uses::untouched; };
         RenderGraph graph;
         const ImageId color = graph.import_image(
             "frame color",
-            imported(targets_.color(), VK_IMAGE_ASPECT_COLOR_BIT, uses::untouched, uses::transfer_source));
+            imported(
+                targets_.color(),
+                VK_IMAGE_ASPECT_COLOR_BIT,
+                entry(uses::color_attachment),
+                part.is_handed_over ? uses::color_attachment : uses::transfer_source));
         const ImageId depth = graph.import_image(
-            "frame depth", imported(targets_.depth(), VK_IMAGE_ASPECT_DEPTH_BIT, uses::untouched, std::nullopt));
+            "frame depth",
+            imported(
+                targets_.depth(),
+                VK_IMAGE_ASPECT_DEPTH_BIT,
+                entry(uses::depth_attachment),
+                part.is_handed_over ? std::optional(uses::depth_attachment) : std::nullopt));
         const ImageId lightmap = graph.import_image(
             "lightmap",
             imported(lightmap_.image(), VK_IMAGE_ASPECT_COLOR_BIT, uses::sampled_by_shaders, std::nullopt));
 
-        const SceneFrame frame{frame_extent, dark_gray, world_stage, {hand_view_, hand}, {interface_view_, interface}};
-        scene_.add_passes(graph, SceneTargets{color, depth, {lightmap}}, frame, sections_);
+        const SceneFrame frame{
+            frame_extent, dark_gray, world_stage, {hand_view_, hand}, {interface_view_, interface}, std::nullopt, part};
+        const std::optional<SceneStage> drawn_stage =
+            scene_.add_passes(graph, SceneTargets{color, depth, {lightmap}}, frame, sections_);
         pass_count_ = graph.passes().size();
 
         const PlannedFrame planned(gpu_.device(), std::move(graph));
         gpu_.device().submit([&planned](VkCommandBuffer commands) { planned.record(commands); });
+        return drawn_stage;
+    }
+
+    FramePixels read_frame() const {
         return read_back_color(gpu_.device(), targets_.color());
     }
 
@@ -366,5 +406,86 @@ TEST_CASE("a world without anything in the hand skips the hand stage") {
     check_pixel(pixels, wall_strip, {255, 0, 0});
     check_pixel(pixels, sky_strip, {32, 32, 32});
     CHECK(scene.pass_count() == 2);
+    CHECK(scene.validation_text() == "");
+}
+
+TEST_CASE("a frame drawn in two parts shows the world of the first under the batches of the second") {
+    ComposedScene scene;
+    scene.add_section(wall_section, terrain_quad(TerrainLayer::solid, wall_right_of_first_strip, red));
+    scene.add_section(water_section, terrain_quad(TerrainLayer::translucent, water_over_right_half, half_blue));
+    const std::array sky{scene.batch(quad_corners(sky_dome, colored(cyan)), backdrop)};
+    const std::array solid{scene.batch(quad_corners(entity_in_third_strip, colored(green)), opaque)};
+    const std::array blended{scene.batch(quad_corners(particle_in_fourth_strip, colored(half_green)), translucent)};
+    const std::array interface{scene.batch(interface_quad(badge_in_upper_left_corner, white), opaque)};
+    WorldStage world_after_the_terrain = scene.world({}, {}, blended);
+    world_after_the_terrain.terrain.reset();
+
+    CHECK(scene.draw_part(scene.world(sky, solid, {}), {}, {}, handed_over) == SceneStage::world);
+    CHECK(scene.pass_count() == 1);
+    scene.draw_part(world_after_the_terrain, {}, interface, resumed_in(SceneStage::world));
+    const FramePixels pixels = scene.read_frame();
+
+    check_pixel(pixels, sky_strip, {0, 255, 255});
+    check_pixel(pixels, wall_strip, {255, 0, 0});
+    check_pixel(pixels, entity_strip, {0, 127, 128});
+    check_pixel(pixels, particle_strip, {63, 128, 64});
+    check_pixel(pixels, upper_left_badge, {255, 255, 255});
+    CHECK(scene.validation_text() == "");
+}
+
+TEST_CASE("a world whose terrain is only known later draws it in the part that brings it") {
+    ComposedScene scene;
+    scene.add_section(wall_section, terrain_quad(TerrainLayer::solid, wall_right_of_first_strip, red));
+    const std::array sky{scene.batch(quad_corners(sky_dome, colored(cyan)), backdrop)};
+    WorldStage world_before_the_terrain = scene.world(sky, {}, {});
+    world_before_the_terrain.terrain.reset();
+
+    CHECK(scene.draw_part(world_before_the_terrain, {}, {}, handed_over) == SceneStage::world);
+    scene.draw_part(scene.world({}, {}, {}), {}, {}, resumed_in(SceneStage::world));
+    const FramePixels pixels = scene.read_frame();
+
+    check_pixel(pixels, sky_strip, {0, 255, 255});
+    check_pixel(pixels, wall_strip, {255, 0, 0});
+    CHECK(scene.validation_text() == "");
+}
+
+TEST_CASE("a stage resumed by a later part is tested against the depth the earlier part wrote") {
+    ComposedScene scene;
+    const std::array near_badge{
+        scene.batch(interface_quad_at(badge_in_upper_left_corner, near_depth, red), opaque)};
+    const std::array far_cover{scene.batch(interface_quad_at(whole_frame, far_depth, green), opaque)};
+
+    scene.draw_part(std::nullopt, {}, near_badge, handed_over);
+    scene.draw_part(std::nullopt, {}, far_cover, resumed_in(SceneStage::interface));
+    const FramePixels pixels = scene.read_frame();
+
+    check_pixel(pixels, upper_left_badge, {255, 0, 0});
+    check_pixel(pixels, frame_center, {0, 255, 0});
+    CHECK(scene.validation_text() == "");
+}
+
+TEST_CASE("a stage that begins in a later part starts from a cleared depth") {
+    ComposedScene scene;
+    const std::array cover{scene.batch(quad_corners(cover_close_to_the_camera, colored(green)), opaque)};
+    const std::array hand{scene.batch(quad_corners(hand_in_lower_right_corner, colored(orange)), opaque)};
+
+    scene.draw_part(scene.world({}, cover, {}), {}, {}, handed_over);
+    scene.draw_part(std::nullopt, hand, {}, resumed_in(SceneStage::world));
+    const FramePixels pixels = scene.read_frame();
+
+    check_pixel(pixels, frame_center, {0, 255, 0});
+    check_pixel(pixels, hand_corner, {255, 128, 0});
+    CHECK(scene.validation_text() == "");
+}
+
+TEST_CASE("a part handed over before anything was drawn clears the frame for whoever draws next") {
+    ComposedScene scene;
+
+    CHECK(scene.draw_part(std::nullopt, {}, {}, handed_over) == SceneStage::interface);
+    CHECK(scene.pass_count() == 1);
+    scene.draw_part(std::nullopt, {}, {}, resumed_in(SceneStage::interface));
+    const FramePixels pixels = scene.read_frame();
+
+    check_pixel(pixels, frame_center, {32, 32, 32});
     CHECK(scene.validation_text() == "");
 }

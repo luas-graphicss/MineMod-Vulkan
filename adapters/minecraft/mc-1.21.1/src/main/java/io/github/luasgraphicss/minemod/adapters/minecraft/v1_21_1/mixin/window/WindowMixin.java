@@ -2,6 +2,7 @@ package io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.mixin.window;
 
 import com.mojang.blaze3d.platform.Window;
 import io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.bootstrap.ClientRendering;
+import io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.compatibility.ModRendering;
 import io.github.luasgraphicss.minemod.bridge.PresentPacing;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GLCapabilities;
@@ -34,8 +35,8 @@ abstract class WindowMixin {
                             value = "INVOKE",
                             target = "Lorg/lwjgl/opengl/GL;createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
                             remap = false))
-    private GLCapabilities minemod$skipOpenGlCapabilities() {
-        return null;
+    private GLCapabilities minemod$resolveOpenGlThroughTheProviderOfMods() {
+        return ModRendering.capabilities();
     }
 
     @Redirect(

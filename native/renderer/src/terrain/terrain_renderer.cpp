@@ -110,9 +110,10 @@ private:
 
 }
 
-TerrainRenderer::TerrainRenderer(const Device& device, PipelineCache& pipelines)
+TerrainRenderer::TerrainRenderer(const Device& device, PipelineCache& pipelines, VkFormat depth_format)
     : device_(device.get()),
       pipelines_(pipelines),
+      depth_format_(depth_format),
       vertex_shader_(create_shader_module(device, SpirvModule{terrain_vert})),
       fragment_shader_(create_shader_module(device, SpirvModule{terrain_frag})),
       textures_layout_(create_descriptor_layout(device, texture_bindings)),
@@ -179,7 +180,7 @@ GraphicsPipelineState TerrainRenderer::pipeline_state(const LayerState& state) c
         .depth = state.depth,
         .blending = state.blending,
         .color_format = frame_color_format,
-        .depth_format = frame_depth_format,
+        .depth_format = depth_format_,
     };
 }
 

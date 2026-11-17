@@ -13,6 +13,7 @@ dependencies {
     mappings(loom.officialMojangMappings())
     modCompileOnly(targetLibs.fabric.loader)
     api("minemod-vulkan.jvm:client-runtime")
+    api("minemod-vulkan.compatibility:lwjgl3")
 }
 
 tasks.withType<JavaCompile>().configureEach {

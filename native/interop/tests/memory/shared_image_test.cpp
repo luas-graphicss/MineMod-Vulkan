@@ -8,7 +8,7 @@
 #include "frame/frame_targets.hpp"
 #include "memory/external_support.hpp"
 #include "memory/shared_image.hpp"
-#include "support/descriptor_count.hpp"
+#include "support/open_handles.hpp"
 #include "support/sharing_device.hpp"
 #include "support/validated_device.hpp"
 
@@ -87,11 +87,11 @@ TEST_CASE("a device created without the sharing extension cannot share images") 
     CHECK_THROWS_AS(SharedImage(gpu.device(), color_target), renderer::UnsupportedSystem);
 }
 
-TEST_CASE("exported memory is a descriptor owned by the caller and sized for the image") {
+TEST_CASE("exported memory is a handle owned by the caller and sized for the image") {
     const SharingDevice gpu;
     const SharedImage image(gpu.device(), color_target);
 
-    const OwnedDescriptor memory = image.export_memory();
+    const ExportedHandle memory = image.export_memory();
 
     CHECK(memory.is_open());
     CHECK(image.allocation_size() >= color_bytes);
@@ -131,16 +131,16 @@ TEST_CASE("depth attachments are exported or refused as the device reports") {
     CHECK(gpu.validation_text() == "");
 }
 
-TEST_CASE("repeated exports and destructions leave no descriptor behind") {
+TEST_CASE("repeated exports and destructions leave no handle behind") {
     const SharingDevice gpu;
-    const std::ptrdiff_t open_before = open_descriptor_count();
+    const std::ptrdiff_t open_before = open_handle_count();
 
     for (int cycle = 0; cycle < export_cycles; ++cycle) {
         const SharedImage image(gpu.device(), color_target);
-        const OwnedDescriptor memory = image.export_memory();
+        const ExportedHandle memory = image.export_memory();
         REQUIRE(memory.is_open());
     }
 
-    CHECK(open_descriptor_count() == open_before);
+    CHECK(open_handle_count() == open_before);
     CHECK(gpu.validation_text() == "");
 }

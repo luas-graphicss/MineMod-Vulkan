@@ -38,6 +38,11 @@ public:
     void set_pacing(PresentPacing pacing) noexcept;
     std::optional<PresentationTarget> acquire(std::size_t frame_slot);
     void record_copy(VkCommandBuffer commands, const Image& transfer_source, const PresentationTarget& target) const;
+    void record_copy(
+        VkCommandBuffer commands,
+        VkImage transfer_source,
+        VkExtent2D source_extent,
+        const PresentationTarget& target) const;
     void present(const PresentationTarget& target);
 
 private:

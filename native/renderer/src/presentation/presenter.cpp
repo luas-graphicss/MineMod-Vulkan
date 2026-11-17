@@ -14,17 +14,18 @@ VkOffset3D far_corner(VkExtent2D extent) noexcept {
     return VkOffset3D{static_cast<std::int32_t>(extent.width), static_cast<std::int32_t>(extent.height), 1};
 }
 
-void blit_frame(VkCommandBuffer commands, const Image& source, const PresentationTarget& target) {
+void blit_frame(
+    VkCommandBuffer commands, VkImage source, VkExtent2D source_extent, const PresentationTarget& target) {
     const VkImageBlit2 region{
         .sType = VK_STRUCTURE_TYPE_IMAGE_BLIT_2,
         .srcSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1},
-        .srcOffsets = {VkOffset3D{0, 0, 0}, far_corner(source.extent())},
+        .srcOffsets = {VkOffset3D{0, 0, 0}, far_corner(source_extent)},
         .dstSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1},
         .dstOffsets = {VkOffset3D{0, 0, 0}, far_corner(target.extent)},
     };
     const VkBlitImageInfo2 blit{
         .sType = VK_STRUCTURE_TYPE_BLIT_IMAGE_INFO_2,
-        .srcImage = source.get(),
+        .srcImage = source,
         .srcImageLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
         .dstImage = target.image,
         .dstImageLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
@@ -98,8 +99,16 @@ std::optional<PresentationTarget> Presenter::acquire(std::size_t frame_slot) {
 
 void Presenter::record_copy(
     VkCommandBuffer commands, const Image& transfer_source, const PresentationTarget& target) const {
+    record_copy(commands, transfer_source.get(), transfer_source.extent(), target);
+}
+
+void Presenter::record_copy(
+    VkCommandBuffer commands,
+    VkImage transfer_source,
+    VkExtent2D source_extent,
+    const PresentationTarget& target) const {
     change_layout(commands, target.image, VK_IMAGE_ASPECT_COLOR_BIT, undefined_to_transfer_destination);
-    blit_frame(commands, transfer_source, target);
+    blit_frame(commands, transfer_source, source_extent, target);
     change_layout(commands, target.image, VK_IMAGE_ASPECT_COLOR_BIT, transfer_destination_to_present);
 }
 

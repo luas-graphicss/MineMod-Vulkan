@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <iterator>
 #include <utility>
 
 #include "commands/batch_option_commands.hpp"
@@ -23,7 +24,6 @@ namespace minemod::scene {
 
 namespace {
 
-constexpr std::array presentation_extensions{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
 constexpr std::string_view texture_write_pass = "write textures";
 constexpr VkExtent2D white_extent{1, 1};
 constexpr std::array white_texel{std::byte{0xFF}, std::byte{0xFF}, std::byte{0xFF}, std::byte{0xFF}};
@@ -43,11 +43,16 @@ constexpr renderer::SamplerDescription smooth_sampling{
     1,
 };
 
-std::span<const char* const> device_extensions(VkSurfaceKHR window_surface) noexcept {
-    if (window_surface == VK_NULL_HANDLE) {
-        return {};
+std::vector<const char*> required_extensions(const SessionSetup& setup) {
+    std::vector<const char*> extensions;
+    if (setup.window_surface != VK_NULL_HANDLE) {
+        extensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
     }
-    return presentation_extensions;
+    if (setup.shares_attachments) {
+        const std::span<const char* const> shared = sharing_extensions().attachments;
+        extensions.insert(extensions.end(), shared.begin(), shared.end());
+    }
+    return extensions;
 }
 
 std::optional<renderer::WindowSurface> adopt(const SceneHost& host, VkSurfaceKHR window_surface) {
@@ -57,13 +62,25 @@ std::optional<renderer::WindowSurface> adopt(const SceneHost& host, VkSurfaceKHR
     return std::optional<renderer::WindowSurface>(std::in_place, host.instance(), window_surface);
 }
 
-renderer::Device create_device(const SceneHost& host, VkSurfaceKHR window_surface) {
-    const std::span<const char* const> extensions = device_extensions(window_surface);
-    return renderer::Device(
-        renderer::select_device(
-            host.instance(),
-            renderer::DeviceRequirements{.extensions = extensions, .presentation_surface = window_surface}),
-        extensions);
+renderer::Device create_device(const SceneHost& host, const SessionSetup& setup) {
+    std::vector<const char*> extensions = required_extensions(setup);
+    const renderer::SelectedDevice selected = renderer::select_device(
+        host.instance(),
+        renderer::DeviceRequirements{.extensions = extensions, .presentation_surface = setup.window_surface});
+    if (setup.shares_attachments) {
+        std::ranges::copy_if(
+            sharing_extensions().semaphores, std::back_inserter(extensions), [&selected](const char* extension) {
+                return renderer::supports_extension(selected.handle, extension);
+            });
+    }
+    return renderer::Device(selected, extensions);
+}
+
+std::optional<SessionSharing> open_sharing(const renderer::Device& device, const SessionSetup& setup) {
+    if (!setup.shares_attachments) {
+        return std::nullopt;
+    }
+    return std::optional<SessionSharing>(std::in_place, device);
 }
 
 renderer::Texture create_white_texture(const renderer::Device& device) {
@@ -100,6 +117,14 @@ renderer::ImportedImage imported(
     return renderer::ImportedImage{image.get(), image.view(), image.extent(), aspect, entry, exit};
 }
 
+renderer::ImportedImage imported(
+    const FrameTarget& target,
+    VkExtent2D extent,
+    const renderer::ImageUse& entry,
+    const std::optional<renderer::ImageUse>& exit) {
+    return renderer::ImportedImage{target.image, target.view, extent, target.aspect, entry, exit};
+}
+
 void make_uploads_readable_by_draws(VkCommandBuffer commands) {
     const VkMemoryBarrier2 barrier{
         .sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER_2,
@@ -121,14 +146,15 @@ void make_uploads_readable_by_draws(VkCommandBuffer commands) {
 SceneSession::SceneSession(std::shared_ptr<const SceneHost> host, const SessionSetup& setup)
     : host_(std::move(host)),
       surface_(adopt(*host_, setup.window_surface)),
-      device_(create_device(*host_, setup.window_surface)),
+      device_(create_device(*host_, setup)),
+      sharing_(open_sharing(device_, setup)),
       limits_(setup.limits),
       extent_(setup.extent),
-      targets_(std::in_place, device_, setup.extent),
+      targets_(create_targets(setup.extent)),
       samplers_(device_),
       pipelines_(device_),
-      terrain_(device_, pipelines_),
-      batches_(device_, pipelines_),
+      terrain_(device_, pipelines_, targets_->depth_format()),
+      batches_(device_, pipelines_, targets_->depth_format()),
       blur_(device_, pipelines_, samplers_.sampler_for(smooth_sampling)),
       scene_(terrain_, batches_, blur_),
       reload_(device_),
@@ -200,7 +226,7 @@ minemod_result SceneSession::resize(VkExtent2D extent) {
         return MINEMOD_RESULT_OK;
     }
     retirements_.retire(last_frame_using_removed_resources(), std::move(*targets_));
-    targets_.emplace(device_, extent);
+    targets_.emplace(create_targets(extent));
     extent_ = extent;
     has_drawn_frame_ = false;
     return MINEMOD_RESULT_OK;
@@ -232,10 +258,10 @@ std::uint32_t SceneSession::presentation_state() const noexcept {
 }
 
 minemod_result SceneSession::read_frame(std::span<std::byte> rgba) {
-    if (!has_drawn_frame_) {
+    if (!has_drawn_frame_ || frame_.is_partly_drawn()) {
         return MINEMOD_RESULT_INVALID_ARGUMENT;
     }
-    const renderer::FramePixels pixels = renderer::read_back_color(device_, targets_->color());
+    const renderer::FramePixels pixels = renderer::read_back_color(device_, targets_->color().image, extent_);
     if (rgba.size() != pixels.rgba().size()) {
         return MINEMOD_RESULT_LENGTH_OUT_OF_BOUNDS;
     }
@@ -492,80 +518,20 @@ minemod_result SceneSession::connect_section_faces(std::span<const std::byte> pa
 }
 
 minemod_result SceneSession::end_frame() {
-    if (!frame_.is_open || (frame_.draws_world && !frame_.terrain)) {
+    const bool lacks_terrain = frame_.draws_world && !frame_.terrain;
+    if (!frame_.is_open || lacks_terrain || is_with_provider()) {
         return MINEMOD_RESULT_INVALID_ARGUMENT;
     }
     const renderer::FramesInFlight::Frame frame = recording();
     FrameSlot& slot = recording_slot();
-    upload_waiting_sections();
-    order_translucent_terrain();
-    select_reachable_sections();
-    if (frame_.uploaded_sections) {
-        make_uploads_readable_by_draws(frame.commands);
-    }
-
-    renderer::RenderGraph graph;
-    const renderer::ImageId color = graph.import_image(
-        "frame color",
-        imported(
-            targets_->color(),
-            VK_IMAGE_ASPECT_COLOR_BIT,
-            renderer::discarded_after(renderer::uses::transfer_source),
-            renderer::uses::transfer_source));
-    const renderer::ImageId depth = graph.import_image(
-        "frame depth",
-        imported(
-            targets_->depth(),
-            VK_IMAGE_ASPECT_DEPTH_BIT,
-            renderer::discarded_after(renderer::uses::depth_attachment),
-            std::nullopt));
-    std::vector<renderer::ImageId> written_textures = add_texture_writes(graph, slot);
-
-    std::optional<renderer::WorldStage> world;
-    if (frame_.draws_world) {
-        world = renderer::WorldStage{
-            VK_NULL_HANDLE,
-            *frame_.terrain,
-            frame_.batches[MINEMOD_BATCH_SKY],
-            frame_.batches[MINEMOD_BATCH_SOLID],
-            frame_.batches[MINEMOD_BATCH_BLENDED],
-        };
-    }
-    const std::span<const renderer::DrawBatch> interface = frame_.batches[MINEMOD_BATCH_INTERFACE];
-    const std::optional<renderer::BlurredBackdrop> backdrop = blurred_backdrop(slot);
-    std::optional<renderer::ImageId> scratch;
-    if (backdrop) {
-        scratch = graph.import_image(
-            "frame scratch",
-            imported(
-                targets_->scratch(),
-                VK_IMAGE_ASPECT_COLOR_BIT,
-                renderer::discarded_after(renderer::uses::sampled_by_fragment_shader),
-                std::nullopt));
-    }
-    const renderer::SceneFrame scene{
-        extent_,
-        frame_.clear_color,
-        world,
-        {VK_NULL_HANDLE, frame_.batches[MINEMOD_BATCH_HAND]},
-        {VK_NULL_HANDLE, interface.subspan(blurred_interface_batches())},
-        backdrop,
-    };
-    scene_.add_passes(
-        graph, renderer::SceneTargets{color, depth, std::move(written_textures), scratch}, scene, sections_);
-
-    slot.planned = std::make_unique<renderer::PlannedFrame>(device_, std::move(graph));
-    std::vector<renderer::PassSample> passes = pass_samples(slot.planned->record_timed(frame.commands));
+    record_part(PartEnding::ends_frame);
     submit_frame(frame);
 
-    for (const std::vector<renderer::DrawBatch>& batches : frame_.batches) {
-        counters_.batches_drawn += batches.size();
-    }
     counters_.peak_upload_bytes = std::max<std::uint64_t>(counters_.peak_upload_bytes, slot.uploads.used());
     counters_.peak_geometry_bytes = std::max<std::uint64_t>(counters_.peak_geometry_bytes, slot.geometry.used());
     ++counters_.frames_drawn;
     has_drawn_frame_ = true;
-    metrics_.finish_frame(usage_of(frame.number, slot), std::move(passes));
+    metrics_.finish_frame(usage_of(frame.number, slot), std::move(frame_.pass_samples));
     frame_.clear();
     return MINEMOD_RESULT_OK;
 }
@@ -604,6 +570,142 @@ minemod_scene_metrics SceneSession::metrics() const {
 
 std::string SceneSession::metrics_report() const {
     return metrics_.report(state(), limits_);
+}
+
+minemod_result SceneSession::describe_sharing(minemod_scene_sharing& sharing) const {
+    if (!sharing_) {
+        return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+    sharing = sharing_->describe(*targets_->shared(), extent_);
+    return MINEMOD_RESULT_OK;
+}
+
+minemod_result SceneSession::export_attachment(SharedAttachment attachment, std::int64_t& handle) const {
+    if (!sharing_) {
+        return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+    handle = targets_->shared()->export_memory(attachment);
+    return MINEMOD_RESULT_OK;
+}
+
+minemod_result SceneSession::export_semaphores(ExportedSemaphores& semaphores) {
+    if (!sharing_) {
+        return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+    semaphores = sharing_->export_semaphores();
+    return MINEMOD_RESULT_OK;
+}
+
+minemod_result SceneSession::release_to_provider(HandoffSynchronization synchronization) {
+    if (!sharing_ || !frame_.is_open || is_with_provider()) {
+        return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+    if (const minemod_result checked = sharing_->check_release(synchronization); checked != MINEMOD_RESULT_OK) {
+        return checked;
+    }
+    record_part(PartEnding::hands_over);
+    targets_->shared()->record_release(recording().commands);
+    recording_ = frames_.submit_part(sharing_->release_to_provider(synchronization));
+    if (synchronization == HandoffSynchronization::blocking) {
+        frames_.wait_for_submitted_parts();
+    }
+    return MINEMOD_RESULT_OK;
+}
+
+minemod_result SceneSession::reclaim_for_renderer() {
+    if (!is_with_provider()) {
+        return MINEMOD_RESULT_INVALID_ARGUMENT;
+    }
+    targets_->shared()->record_reclaim(recording().commands);
+    if (const std::optional<renderer::SubmitSemaphores> awaited = sharing_->reclaim_for_renderer()) {
+        recording_ = frames_.submit_part(*awaited);
+    }
+    return MINEMOD_RESULT_OK;
+}
+
+SessionTargets SceneSession::create_targets(VkExtent2D extent) {
+    if (sharing_) {
+        return SessionTargets(device_, extent, sharing_->create_targets(extent));
+    }
+    return SessionTargets(device_, extent);
+}
+
+bool SceneSession::is_with_provider() const noexcept {
+    return sharing_ && sharing_->is_with_provider();
+}
+
+void SceneSession::record_part(PartEnding ending) {
+    const renderer::FramesInFlight::Frame frame = recording();
+    const bool draws_terrain = frame_.terrain.has_value() && !frame_.progress.has_drawn_terrain;
+    upload_waiting_sections();
+    if (draws_terrain) {
+        order_translucent_terrain();
+        select_reachable_sections();
+    }
+    if (std::exchange(frame_.uploaded_sections, false)) {
+        make_uploads_readable_by_draws(frame.commands);
+    }
+    const PartBatches batches = undrawn_batches(frame_);
+    const bool has_nothing_new = !draws_terrain && batches.size() == 0 && !frame_.backdrop_blur;
+    if (ending == PartEnding::hands_over && frame_.is_partly_drawn() && has_nothing_new) {
+        return;
+    }
+    draw_part(ending, batches, draws_terrain);
+}
+
+void SceneSession::draw_part(PartEnding ending, const PartBatches& batches, bool draws_terrain) {
+    const renderer::FramesInFlight::Frame frame = recording();
+    FrameSlot& slot = recording_slot();
+    const PartTargets uses = part_targets(frame_, ending);
+    renderer::RenderGraph graph;
+    const renderer::ImageId color =
+        graph.import_image("frame color", imported(targets_->color(), extent_, uses.color.entry, uses.color.exit));
+    const renderer::ImageId depth =
+        graph.import_image("frame depth", imported(targets_->depth(), extent_, uses.depth.entry, uses.depth.exit));
+    const std::size_t texture_writes = frame_.texture_writes.size();
+    std::vector<renderer::ImageId> written_textures = add_texture_writes(graph, slot);
+
+    const bool continues_world = draws_terrain || batches.has_world_batches();
+    std::optional<renderer::WorldStage> world;
+    if (frame_.draws_world && (continues_world || !frame_.is_partly_drawn())) {
+        world = renderer::WorldStage{
+            VK_NULL_HANDLE,
+            draws_terrain ? frame_.terrain : std::nullopt,
+            batches.sky,
+            batches.solid,
+            batches.blended,
+        };
+    }
+    const std::optional<renderer::BlurredBackdrop> backdrop = blurred_backdrop(slot, batches.backdrop);
+    std::optional<renderer::ImageId> scratch;
+    if (backdrop) {
+        scratch = graph.import_image(
+            "frame scratch",
+            imported(
+                targets_->scratch(),
+                extent_,
+                renderer::discarded_after(renderer::uses::sampled_by_fragment_shader),
+                std::nullopt));
+    }
+    const renderer::SceneFrame scene{
+        extent_,
+        frame_.clear_color,
+        world,
+        {VK_NULL_HANDLE, batches.hand},
+        {VK_NULL_HANDLE, batches.interface},
+        backdrop,
+        {frame_.progress.stopped_at, ending == PartEnding::hands_over},
+    };
+    const std::optional<renderer::SceneStage> drawn_stage = scene_.add_passes(
+        graph, renderer::SceneTargets{color, depth, std::move(written_textures), scratch}, scene, sections_);
+
+    slot.planned.push_back(std::make_unique<renderer::PlannedFrame>(device_, std::move(graph)));
+    for (const renderer::PassTiming& timing : slot.planned.back()->record_timed(frame.commands)) {
+        frame_.pass_samples.push_back(renderer::PassSample{
+            std::string(timing.name), timing.cpu_time, draws_in(timing.name, batches, texture_writes)});
+    }
+    counters_.batches_drawn += batches.size();
+    frame_.finish_part(drawn_stage, draws_terrain);
 }
 
 void SceneSession::upload_waiting_sections() {
@@ -681,8 +783,9 @@ std::vector<renderer::ImageId> SceneSession::add_texture_writes(renderer::Render
         const renderer::Texture* texture;
         StagedTextureWrite write;
     };
-    std::vector<minemod_handle> touched = frame_.unread_textures;
-    for (const StagedTextureWrite& write : frame_.texture_writes) {
+    std::vector<minemod_handle> touched = std::exchange(frame_.unread_textures, {});
+    const std::vector<StagedTextureWrite> writes = std::exchange(frame_.texture_writes, {});
+    for (const StagedTextureWrite& write : writes) {
         touched.push_back(write.texture);
     }
     std::ranges::sort(touched);
@@ -706,8 +809,8 @@ std::vector<renderer::ImageId> SceneSession::add_texture_writes(renderer::Render
     }
 
     std::vector<Copy> copies;
-    copies.reserve(frame_.texture_writes.size());
-    for (const StagedTextureWrite& write : frame_.texture_writes) {
+    copies.reserve(writes.size());
+    for (const StagedTextureWrite& write : writes) {
         copies.push_back({&textures_.find(write.texture)->texture, write});
     }
     const VkBuffer staging = slot.uploads.buffer();
@@ -723,21 +826,17 @@ std::vector<renderer::ImageId> SceneSession::add_texture_writes(renderer::Render
     return images;
 }
 
-std::optional<renderer::BlurredBackdrop> SceneSession::blurred_backdrop(FrameSlot& slot) const {
+std::optional<renderer::BlurredBackdrop> SceneSession::blurred_backdrop(
+    FrameSlot& slot, std::span<const renderer::DrawBatch> batches) const {
     if (!frame_.backdrop_blur) {
         return std::nullopt;
     }
-    const std::span<const renderer::DrawBatch> interface = frame_.batches[MINEMOD_BATCH_INTERFACE];
     return renderer::BlurredBackdrop{
-        interface.first(blurred_interface_batches()),
+        batches,
         frame_.backdrop_blur->blur,
-        blur_.bind_source(slot.descriptors, targets_->color().view()),
-        blur_.bind_source(slot.descriptors, targets_->scratch().view()),
+        blur_.bind_source(slot.descriptors, targets_->color().view),
+        blur_.bind_source(slot.descriptors, targets_->scratch().view),
     };
-}
-
-std::size_t SceneSession::blurred_interface_batches() const noexcept {
-    return frame_.backdrop_blur ? frame_.backdrop_blur->interface_batches : 0;
 }
 
 void SceneSession::submit_frame(const renderer::FramesInFlight::Frame& frame) {
@@ -745,7 +844,7 @@ void SceneSession::submit_frame(const renderer::FramesInFlight::Frame& frame) {
     const std::optional<renderer::PresentationTarget> target =
         presenter_ ? presenter_->acquire(slot) : std::nullopt;
     if (target) {
-        presenter_->record_copy(frame.commands, targets_->color(), *target);
+        presenter_->record_copy(frame.commands, targets_->color().image, extent_, *target);
     }
     frames_.submit(target ? target->semaphores : renderer::SubmitSemaphores{});
     last_submitted_frame_ = frame.number;
@@ -756,34 +855,24 @@ void SceneSession::submit_frame(const renderer::FramesInFlight::Frame& frame) {
     }
 }
 
-std::vector<renderer::PassSample> SceneSession::pass_samples(std::span<const renderer::PassTiming> timings) const {
-    std::vector<renderer::PassSample> samples;
-    samples.reserve(timings.size());
-    for (const renderer::PassTiming& timing : timings) {
-        samples.push_back(renderer::PassSample{std::string(timing.name), timing.cpu_time, draws_in(timing.name)});
-    }
-    return samples;
-}
-
-std::uint32_t SceneSession::draws_in(std::string_view pass) const noexcept {
-    const auto batches_in = [this](std::size_t slot) {
-        return static_cast<std::uint32_t>(frame_.batches[slot].size());
+std::uint32_t SceneSession::draws_in(
+    std::string_view pass, const PartBatches& batches, std::size_t texture_writes) const noexcept {
+    const auto count = [](std::span<const renderer::DrawBatch> drawn) {
+        return static_cast<std::uint32_t>(drawn.size());
     };
     if (pass == renderer::world_pass) {
-        return batches_in(MINEMOD_BATCH_SKY) + batches_in(MINEMOD_BATCH_SOLID) + batches_in(MINEMOD_BATCH_BLENDED)
-            + scene_.recorded_terrain_draws();
+        return count(batches.sky) + count(batches.solid) + count(batches.blended) + scene_.recorded_terrain_draws();
     }
     if (pass == renderer::hand_pass) {
-        return batches_in(MINEMOD_BATCH_HAND);
+        return count(batches.hand);
     }
-    const auto blurred = static_cast<std::uint32_t>(blurred_interface_batches());
     if (pass == renderer::backdrop_pass) {
-        return blurred;
+        return count(batches.backdrop);
     }
     if (pass == renderer::interface_pass) {
-        return batches_in(MINEMOD_BATCH_INTERFACE) - blurred;
+        return count(batches.interface);
     }
-    return pass == texture_write_pass ? static_cast<std::uint32_t>(frame_.texture_writes.size()) : 0;
+    return pass == texture_write_pass ? static_cast<std::uint32_t>(texture_writes) : 0;
 }
 
 FrameUsage SceneSession::usage_of(std::uint64_t frame, const FrameSlot& slot) const noexcept {

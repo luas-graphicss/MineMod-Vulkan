@@ -16,6 +16,7 @@
 #include "draw/texture_transform.hpp"
 #include "draw/vertex_format.hpp"
 #include "draw/view_constants.hpp"
+#include "frame/frame_targets.hpp"
 #include "math/matrix.hpp"
 #include "pipelines/graphics_pipeline_state.hpp"
 #include "pipelines/pipeline_cache.hpp"
@@ -59,7 +60,7 @@ struct BatchPass {
 
 class BatchRenderer {
 public:
-    BatchRenderer(const Device& device, PipelineCache& pipelines);
+    BatchRenderer(const Device& device, PipelineCache& pipelines, VkFormat depth_format = frame_depth_format);
 
     VkDescriptorSet bind_view(
         DescriptorPools& pools, const ViewConstants& constants, const ViewTextures& textures) const;
@@ -85,6 +86,7 @@ private:
 
     VkDevice device_;
     PipelineCache& pipelines_;
+    VkFormat depth_format_;
     DeviceHandle<VkShaderModule> vertex_shader_;
     DeviceHandle<VkShaderModule> fragment_shader_;
     DeviceHandle<VkDescriptorSetLayout> view_layout_;

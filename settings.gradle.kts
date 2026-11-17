@@ -12,6 +12,17 @@ plugins {
 dependencyResolutionManagement {
     repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
     repositories {
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "MinecraftLibraries"
+                    url = uri("https://libraries.minecraft.net")
+                }
+            }
+            filter {
+                includeGroup("org.lwjgl.lwjgl")
+            }
+        }
         mavenCentral()
     }
 }
@@ -34,4 +45,9 @@ include(":compatibility:dispatch")
 include(":compatibility:interop")
 include(":compatibility:translation")
 include(":compatibility:bridges")
+include(":compatibility:layer")
+include(":compatibility:natives")
+include(":compatibility:runtime")
+include(":compatibility:lwjgl3")
+include(":compatibility:lwjgl2")
 include(":jvm:client-runtime")

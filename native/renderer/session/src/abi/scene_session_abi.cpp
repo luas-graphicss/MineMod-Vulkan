@@ -5,59 +5,27 @@
 #include <cstdint>
 #include <cstring>
 #include <memory>
-#include <new>
 #include <span>
-#include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include <vulkan/vulkan.h>
 
+#include "abi/scene_handles.hpp"
 #include "device/instance.hpp"
-#include "device/vulkan_error.hpp"
-#include "host/scene_host.hpp"
 #include "minemod/abi/negotiation.h"
-#include "session/scene_session.hpp"
 
 static_assert(sizeof(minemod_scene_host_config) == 16 + sizeof(void*));
 static_assert(sizeof(minemod_scene_session_config) == 48);
 static_assert(sizeof(minemod_scene_counters) == 80);
 static_assert(sizeof(minemod_scene_metrics) == 64);
 
-struct minemod_scene_host {
-    std::shared_ptr<const minemod::scene::SceneHost> core;
-};
-
-struct minemod_scene_session {
-    minemod_scene_session(
-        std::shared_ptr<const minemod::scene::SceneHost> host, const minemod::scene::SessionSetup& setup)
-        : core(std::move(host), setup) {}
-
-    minemod::scene::SceneSession core;
-};
-
 namespace {
 
+using minemod::scene::run_guarded;
 using minemod::scene::SceneHost;
 using minemod::scene::SceneSession;
-
-template <typename Operation>
-minemod_result run_guarded(Operation&& operation) noexcept {
-    try {
-        return operation();
-    } catch (const std::bad_alloc&) {
-        return MINEMOD_RESULT_OUT_OF_MEMORY;
-    } catch (const std::length_error&) {
-        return MINEMOD_RESULT_LIMIT_EXCEEDED;
-    } catch (const std::invalid_argument&) {
-        return MINEMOD_RESULT_MALFORMED_STREAM;
-    } catch (const minemod::renderer::UnsupportedSystem&) {
-        return MINEMOD_RESULT_UNSUPPORTED_CAPABILITY;
-    } catch (...) {
-        return MINEMOD_RESULT_INTERNAL_ERROR;
-    }
-}
 
 minemod_result check_abi_version(minemod_abi_version version) noexcept {
     const minemod_negotiation_request request{
@@ -91,7 +59,8 @@ bool is_within(std::uint64_t value, std::uint64_t smallest, std::uint64_t larges
 
 minemod_result check_session_config(const minemod_scene_session_config& config) noexcept {
     const bool has_area = config.width != 0 && config.height != 0;
-    if (config.struct_bytes != sizeof(minemod_scene_session_config) || config.reserved != 0 || !has_area
+    const bool has_known_flags = (config.flags & ~MINEMOD_SCENE_SESSION_SHARED_ATTACHMENTS) == 0;
+    if (config.struct_bytes != sizeof(minemod_scene_session_config) || !has_known_flags || !has_area
         || config.max_textures == 0 || config.max_sections == 0) {
         return MINEMOD_RESULT_INVALID_ARGUMENT;
     }
@@ -120,6 +89,7 @@ minemod::scene::SessionSetup setup_from(const minemod_scene_session_config& conf
             config.max_textures,
             config.max_sections,
         },
+        (config.flags & MINEMOD_SCENE_SESSION_SHARED_ATTACHMENTS) != 0,
     };
 }
 

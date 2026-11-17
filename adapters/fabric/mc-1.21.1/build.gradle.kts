@@ -17,7 +17,8 @@ val hostArchitecture = when (val reported = System.getProperty("os.arch")) {
 }
 val nativePlatform = (if (isWindows) "windows" else "linux") + "-" + hostArchitecture
 val nativePreset = if (isWindows) "windows-client" else "linux-client"
-val nativeLibraryName = if (isWindows) "minemod_jni.dll" else "libminemod_jni.so"
+val nativeLibraryNames =
+    if (isWindows) listOf("minemod_jni.dll") else listOf("libminemod_jni.so", "libminemod_gl_provider_jni.so")
 
 version = modVersion
 
@@ -41,10 +42,12 @@ dependencies {
     modImplementation(targetLibs.fabric.loader)
     implementation(project(path = gameAdapter.path, configuration = "namedElements"))
     implementation("minemod-vulkan.jvm:client-runtime")
+    implementation("minemod-vulkan.compatibility:lwjgl3")
     bundledRuntime("minemod-vulkan.jvm:client-runtime")
+    bundledRuntime("minemod-vulkan.compatibility:lwjgl3")
 }
 
-val builtNativeLibrary = repositoryRoot.resolve("build/$nativePreset/jni/$nativeLibraryName")
+val builtNativeLibraries = nativeLibraryNames.map { repositoryRoot.resolve("build/$nativePreset/jni/$it") }
 val jniJavaHome = javaToolchains.compilerFor(java.toolchain).map { it.metadata.installationPath.asFile.absolutePath }
 
 val configureNativeLibrary by tasks.registering(Exec::class) {
@@ -58,32 +61,33 @@ val configureNativeLibrary by tasks.registering(Exec::class) {
 
 val buildNativeLibrary by tasks.registering(Exec::class) {
     group = LifecycleBasePlugin.BUILD_GROUP
-    description = "Builds the JNI library that the mod bundles."
+    description = "Builds the JNI libraries that the mod bundles."
     dependsOn(configureNativeLibrary)
     workingDir = repositoryRoot
     commandLine("cmake", "--build", "--preset", nativePreset)
-    outputs.file(builtNativeLibrary)
+    outputs.files(builtNativeLibraries)
     outputs.upToDateWhen { false }
 }
 
 val stageNativeLibrary by tasks.registering {
     group = LifecycleBasePlugin.BUILD_GROUP
-    description = "Stages the JNI library next to its SHA-256."
-    val builtLibrary = builtNativeLibrary
+    description = "Stages each JNI library next to its SHA-256."
+    val builtLibraries = builtNativeLibraries
     val stagedDirectory = layout.buildDirectory.dir("native-library")
     val platformDirectory = "natives/$nativePlatform"
-    val libraryName = nativeLibraryName
-    inputs.files(buildNativeLibrary).withPropertyName("builtLibrary")
+    inputs.files(buildNativeLibrary).withPropertyName("builtLibraries")
     inputs.property("platformDirectory", platformDirectory)
     outputs.dir(stagedDirectory)
     doLast {
         val target = stagedDirectory.get().dir(platformDirectory).asFile
         target.deleteRecursively()
         target.mkdirs()
-        val contents = builtLibrary.readBytes()
-        val digest = MessageDigest.getInstance("SHA-256").digest(contents)
-        target.resolve(libraryName).writeBytes(contents)
-        target.resolve("$libraryName.sha256").writeText(digest.joinToString("") { "%02x".format(it) })
+        builtLibraries.forEach { builtLibrary ->
+            val contents = builtLibrary.readBytes()
+            val digest = MessageDigest.getInstance("SHA-256").digest(contents)
+            target.resolve(builtLibrary.name).writeBytes(contents)
+            target.resolve("${builtLibrary.name}.sha256").writeText(digest.joinToString("") { "%02x".format(it) })
+        }
     }
 }
 

@@ -67,8 +67,8 @@ SharedImage::SharedImage(const renderer::Device& device, const SharedImageDescri
         vkBindImageMemory(device.get(), image_.get(), memory_.get(), 0), "binding shared image memory");
 }
 
-OwnedDescriptor SharedImage::export_memory() const {
-    return memory_export_.export_descriptor(memory_.get());
+ExportedHandle SharedImage::export_memory() const {
+    return memory_export_.export_handle(memory_.get());
 }
 
 }

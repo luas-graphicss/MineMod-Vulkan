@@ -6,6 +6,7 @@
 
 #include <doctest.h>
 
+#include "device/device_handle.hpp"
 #include "frame/frames_in_flight.hpp"
 #include "lifetime/retirement_queue.hpp"
 #include "resources/buffer.hpp"
@@ -18,12 +19,19 @@ using namespace minemod::renderer;
 using namespace minemod::renderer::test_support;
 
 constexpr std::uint32_t frame_total = 5;
+constexpr std::uint32_t part_total = 3;
 constexpr VkDeviceSize mark_bytes = sizeof(std::uint32_t);
 
 std::uint32_t mark_of(const std::vector<std::byte>& marks, std::uint32_t frame) {
     std::uint32_t mark = 0;
     std::memcpy(&mark, marks.data() + frame * mark_bytes, mark_bytes);
     return mark;
+}
+
+DeviceHandle<VkSemaphore> create_semaphore(const Device& device) {
+    const VkSemaphoreCreateInfo create_info{.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO};
+    return create_device_handle<VkSemaphore>(
+        device.get(), create_info, vkCreateSemaphore, vkDestroySemaphore, "creating a semaphore between parts");
 }
 
 }
@@ -68,10 +76,74 @@ TEST_CASE("a resource retired in a frame is released once that frame completed")
     CHECK(gpu.validation_text() == "");
 }
 
+TEST_CASE("a frame submitted in parts keeps its number and runs every part") {
+    const ValidatedDevice gpu;
+    const Buffer marks(gpu.device(), part_total * mark_bytes, VK_BUFFER_USAGE_TRANSFER_DST_BIT, host_memory);
+    {
+        FramesInFlight frames(gpu.device(), 2);
+        FramesInFlight::Frame frame = frames.begin();
+        for (std::uint32_t part = 0; part + 1 < part_total; ++part) {
+            vkCmdFillBuffer(frame.commands, marks.get(), part * mark_bytes, mark_bytes, part + 1);
+            frame = frames.submit_part();
+            CHECK(frame.number == 0);
+        }
+        vkCmdFillBuffer(frame.commands, marks.get(), (part_total - 1) * mark_bytes, mark_bytes, part_total);
+        frames.submit();
+
+        CHECK(frames.begin().number == 1);
+        frames.submit();
+        frames.begin();
+        CHECK(frames.completed_frame() == std::uint64_t{0});
+        frames.submit();
+    }
+
+    const std::vector<std::byte> stored = marks.read();
+    for (std::uint32_t part = 0; part < part_total; ++part) {
+        CHECK(mark_of(stored, part) == part + 1);
+    }
+    CHECK(gpu.validation_text() == "");
+}
+
+TEST_CASE("the submitted parts of a frame can be waited for while it is still recorded") {
+    const ValidatedDevice gpu;
+    const Buffer marks(gpu.device(), mark_bytes, VK_BUFFER_USAGE_TRANSFER_DST_BIT, host_memory);
+    FramesInFlight frames(gpu.device(), 2);
+
+    const FramesInFlight::Frame first_part = frames.begin();
+    vkCmdFillBuffer(first_part.commands, marks.get(), 0, mark_bytes, 7);
+    frames.submit_part();
+    frames.wait_for_submitted_parts();
+
+    CHECK(mark_of(marks.read(), 0) == 7);
+    frames.submit();
+    CHECK(gpu.validation_text() == "");
+}
+
+TEST_CASE("a part waits for the semaphore that an earlier part of the frame signals") {
+    const ValidatedDevice gpu;
+    const Buffer marks(gpu.device(), 2 * mark_bytes, VK_BUFFER_USAGE_TRANSFER_DST_BIT, host_memory);
+    const DeviceHandle<VkSemaphore> handed_over = create_semaphore(gpu.device());
+    {
+        FramesInFlight frames(gpu.device(), 2);
+        FramesInFlight::Frame frame = frames.begin();
+        vkCmdFillBuffer(frame.commands, marks.get(), 0, mark_bytes, 1);
+        frame = frames.submit_part({.signal = handed_over.get()});
+        vkCmdFillBuffer(frame.commands, marks.get(), mark_bytes, mark_bytes, 2);
+        frames.submit({.wait = handed_over.get(), .wait_stage = VK_PIPELINE_STAGE_2_ALL_COMMANDS_BIT});
+    }
+
+    const std::vector<std::byte> stored = marks.read();
+    CHECK(mark_of(stored, 0) == 1);
+    CHECK(mark_of(stored, 1) == 2);
+    CHECK(gpu.validation_text() == "");
+}
+
 TEST_CASE("a frame must be submitted before the next one begins") {
     const ValidatedDevice gpu;
     FramesInFlight frames(gpu.device(), 2);
     CHECK_THROWS_AS(frames.submit(), std::logic_error);
+    CHECK_THROWS_AS(frames.submit_part(), std::logic_error);
+    CHECK_THROWS_AS(frames.wait_for_submitted_parts(), std::logic_error);
 
     frames.begin();
 

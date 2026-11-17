@@ -1,9 +1,11 @@
 package io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.bootstrap;
 
+import io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.compatibility.ModRendering;
 import io.github.luasgraphicss.minemod.adapters.minecraft.v1_21_1.window.GlfwWindowSurface;
 import io.github.luasgraphicss.minemod.client.opengl.OpenGlObjects;
 import io.github.luasgraphicss.minemod.client.session.ClientRenderer;
 import io.github.luasgraphicss.minemod.client.session.DeviceValidation;
+import io.github.luasgraphicss.minemod.client.session.SceneAttachments;
 import java.nio.file.Path;
 import java.util.Optional;
 
@@ -27,7 +29,14 @@ public final class ClientRendering {
         }
         DeviceValidation validation =
                 Boolean.getBoolean(VALIDATION_PROPERTY) ? DeviceValidation.ENABLED : DeviceValidation.DISABLED;
-        ClientRenderer started = ClientRenderer.start(library, new GlfwWindowSurface(window), validation);
+        SceneAttachments attachments = ModRendering.isPrepared() ? SceneAttachments.SHARED : SceneAttachments.PRIVATE;
+        ClientRenderer started = ClientRenderer.start(library, new GlfwWindowSurface(window), validation, attachments);
+        try {
+            ModRendering.attach(started);
+        } catch (RuntimeException failure) {
+            started.close();
+            throw failure;
+        }
         openGl = started.openGl();
         renderer = started;
     }
@@ -57,6 +66,7 @@ public final class ClientRendering {
         ClientRenderer stopped = renderer;
         renderer = null;
         if (stopped != null) {
+            ModRendering.detach();
             stopped.close();
         }
     }

@@ -17,18 +17,44 @@ public final class SharingNegotiator {
             HandlePlatform platform,
             List<SharingRequest> requests,
             ExternalSupportQuery query) {
+        List<String> rejections =
+                deviceRejections(renderer, provider, providerExtensions, platform.requiredExtensions());
+        if (!query.binarySemaphoresShareable()) {
+            rejections.add("binary semaphores cannot be shared on this device");
+        }
+        return planned(requests, query, rejections);
+    }
+
+    public static SharingOutcome negotiateMemory(
+            DeviceIdentity renderer,
+            DeviceIdentity provider,
+            Collection<String> providerExtensions,
+            HandlePlatform platform,
+            List<SharingRequest> requests,
+            ExternalSupportQuery query) {
+        return planned(
+                requests, query, deviceRejections(renderer, provider, providerExtensions, platform.memoryExtensions()));
+    }
+
+    private static List<String> deviceRejections(
+            DeviceIdentity renderer,
+            DeviceIdentity provider,
+            Collection<String> providerExtensions,
+            List<String> neededExtensions) {
         List<String> rejections = new ArrayList<>();
         if (!renderer.isSameGpuAs(provider)) {
             rejections.add("the provider runs on a different GPU or driver than the renderer");
         }
-        for (String extension : platform.requiredExtensions()) {
+        for (String extension : neededExtensions) {
             if (!providerExtensions.contains(extension)) {
                 rejections.add("the provider lacks " + extension);
             }
         }
-        if (!query.binarySemaphoresShareable()) {
-            rejections.add("binary semaphores cannot be shared on this device");
-        }
+        return rejections;
+    }
+
+    private static SharingOutcome planned(
+            List<SharingRequest> requests, ExternalSupportQuery query, List<String> rejections) {
         List<PlannedShare> shares = new ArrayList<>();
         for (SharingRequest request : requests) {
             ExternalSupport support = query.supportFor(request);

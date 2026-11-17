@@ -23,6 +23,7 @@ import io.github.luasgraphicss.minemod.contract.handle.ResourceKind;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import org.junit.jupiter.api.Test;
 
@@ -367,6 +368,118 @@ class DrawRecorderTest {
         assertEquals(1, full.droppedDraws());
     }
 
+    @Test
+    void aPartHoldsWhatWasRecordedAndLeavesTheFrameOpen() {
+        recorder.draw(triangle(IDENTITY).build());
+
+        assertEquals(
+                Arrays.asList(SceneOpcode.BEGIN_FRAME, SceneOpcode.SET_VIEW, SceneOpcode.DRAW_BATCH),
+                writtenPart(recorder).opcodes());
+        assertTrue(recorder.isPartlyWritten());
+    }
+
+    @Test
+    void theRestOfAFrameFollowsItsPartWithoutBeginningAgain() {
+        recorder.draw(triangle(IDENTITY).build());
+        writtenPart(recorder);
+        recorder.draw(triangle(IDENTITY).build());
+        recorder.draw(triangle(HALVED).build());
+
+        RecordedStream rest = written(recorder);
+
+        assertEquals(
+                Arrays.asList(
+                        SceneOpcode.SET_VIEW, SceneOpcode.DRAW_BATCH, SceneOpcode.DRAW_BATCH, SceneOpcode.END_FRAME),
+                rest.opcodes());
+        assertEquals(0, rest.payload(1).getInt(VIEW_OFFSET));
+        assertEquals(1, rest.payload(2).getInt(VIEW_OFFSET));
+    }
+
+    @Test
+    void optionsLeftByAPartAreNotWrittenAgain() {
+        recorder.draw(triangle(IDENTITY).clip(0, 0, 8, 8).build());
+        writtenPart(recorder);
+        recorder.draw(triangle(IDENTITY).clip(0, 0, 8, 8).build());
+        recorder.draw(triangle(IDENTITY).build());
+
+        assertEquals(
+                Arrays.asList(
+                        SceneOpcode.DRAW_BATCH, SceneOpcode.CLEAR_CLIP, SceneOpcode.DRAW_BATCH, SceneOpcode.END_FRAME),
+                written(recorder).opcodes());
+    }
+
+    @Test
+    void aPartWrittenInTheSkyLeavesTheTerrainToTheNextOne() {
+        Fog fog = new Fog(0.5f, 0.6f, 0.7f, 1.0f, 16.0f, 64.0f, FogShape.CYLINDER);
+        recorder.enterWorld();
+        recorder.terrain(new TerrainState(IDENTITY, 0.0, 64.0, 0.0, fog, ATLAS, LIGHTMAP));
+        recorder.draw(triangle(IDENTITY).build());
+
+        assertEquals(
+                Arrays.asList(SceneOpcode.BEGIN_FRAME, SceneOpcode.SET_VIEW, SceneOpcode.DRAW_BATCH),
+                writtenPart(recorder).opcodes());
+
+        recorder.enter(BatchSlot.SOLID);
+        recorder.draw(triangle(IDENTITY).build());
+
+        assertEquals(
+                Arrays.asList(SceneOpcode.SET_TERRAIN, SceneOpcode.DRAW_BATCH, SceneOpcode.END_FRAME),
+                written(recorder).opcodes());
+    }
+
+    @Test
+    void aPartWrittenPastTheSkyCarriesTheTerrainOnce() {
+        Fog fog = new Fog(0.5f, 0.6f, 0.7f, 1.0f, 16.0f, 64.0f, FogShape.CYLINDER);
+        recorder.enterWorld();
+        recorder.terrain(new TerrainState(IDENTITY, 0.0, 64.0, 0.0, fog, ATLAS, LIGHTMAP));
+        recorder.enter(BatchSlot.SOLID);
+        recorder.draw(triangle(IDENTITY).build());
+
+        assertEquals(
+                Arrays.asList(
+                        SceneOpcode.BEGIN_FRAME, SceneOpcode.SET_VIEW, SceneOpcode.SET_TERRAIN, SceneOpcode.DRAW_BATCH),
+                writtenPart(recorder).opcodes());
+        assertEquals(Collections.singletonList(SceneOpcode.END_FRAME), written(recorder).opcodes());
+    }
+
+    @Test
+    void depthIsClearedAgainAfterAPart() {
+        recorder.draw(triangle(IDENTITY).build());
+        recorder.clearDepth();
+        writtenPart(recorder);
+        recorder.clearDepth();
+
+        assertEquals(Arrays.asList(SceneOpcode.CLEAR_DEPTH, SceneOpcode.END_FRAME), written(recorder).opcodes());
+    }
+
+    @Test
+    void eachPartHasTheRoomOfAStream() {
+        DrawRecorder narrow = new DrawRecorder(32 * 1024, 4);
+
+        assertTrue(narrow.draw(triangle(IDENTITY).build()));
+        assertFalse(narrow.draw(triangle(IDENTITY).build()));
+        writtenPart(narrow);
+
+        assertTrue(narrow.draw(triangle(IDENTITY).build()));
+    }
+
+    @Test
+    void theWorldIsRefusedOnceAPartWasWrittenWithoutIt() {
+        writtenPart(recorder);
+
+        assertThrows(IllegalStateException.class, recorder::enterWorld);
+    }
+
+    @Test
+    void beginningAFrameForgetsThePartsOfTheOneBefore() {
+        recorder.draw(triangle(IDENTITY).build());
+        writtenPart(recorder);
+        recorder.beginFrame();
+
+        assertFalse(recorder.isPartlyWritten());
+        assertEquals(Arrays.asList(SceneOpcode.BEGIN_FRAME, SceneOpcode.END_FRAME), written(recorder).opcodes());
+    }
+
     private static GameDraw.Builder triangle(float[] projection) {
         ByteBuffer vertices = ByteBuffer.allocate(48).order(ByteOrder.LITTLE_ENDIAN);
         for (int corner = 0; corner < 3; corner++) {
@@ -375,6 +488,12 @@ class DrawRecorderTest {
         vertices.flip();
         return GameDraw.builder(POSITION_COLOR, PrimitiveMode.TRIANGLES, vertices, 3)
                 .view(GameView.builder(projection).build());
+    }
+
+    private static RecordedStream writtenPart(DrawRecorder frame) {
+        RecordedStream stream = new RecordedStream();
+        frame.writePart(stream.scene());
+        return stream;
     }
 
     private static RecordedStream written(DrawRecorder frame) {

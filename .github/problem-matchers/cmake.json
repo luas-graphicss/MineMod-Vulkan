@@ -1,0 +1,30 @@
+{
+  "problemMatcher": [
+    {
+      "owner": "cmake-located",
+      "severity": "error",
+      "pattern": [
+        {
+          "regexp": "^CMake Error (?:at|in) (.+?)(?::(\\d+) \\(.+\\))?:$",
+          "file": 1,
+          "line": 2
+        },
+        {
+          "regexp": "^(?:\\s+(.*))?$",
+          "message": 1,
+          "loop": true
+        }
+      ]
+    },
+    {
+      "owner": "cmake",
+      "severity": "error",
+      "pattern": [
+        {
+          "regexp": "^CMake Error: (.+)$",
+          "message": 1
+        }
+      ]
+    }
+  ]
+}

@@ -15,7 +15,16 @@ if(TARGET minemod::scene_session)
         src/reload/scene_reload_calls.cpp
         src/scene/scene_calls.cpp
         src/scene/scene_host_calls.cpp
-        src/scene/scene_session_calls.cpp)
+        src/scene/scene_session_calls.cpp
+        src/sharing/scene_sharing_calls.cpp)
+    if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        target_sources(minemod_jni PRIVATE src/sharing/exported_descriptors.cpp)
+    elseif(WIN32)
+        target_sources(minemod_jni PRIVATE src/sharing/exported_nt_handles.cpp)
+        target_compile_definitions(minemod_jni PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
+    else()
+        target_sources(minemod_jni PRIVATE src/sharing/no_exported_handles.cpp)
+    endif()
     target_link_libraries(minemod_jni PRIVATE minemod::scene_session)
 else()
     target_sources(minemod_jni PRIVATE src/scene/no_scene_calls.cpp)

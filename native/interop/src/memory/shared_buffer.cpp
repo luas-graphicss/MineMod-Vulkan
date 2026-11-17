@@ -53,8 +53,8 @@ SharedBuffer::SharedBuffer(const renderer::Device& device, const SharedBufferDes
         vkBindBufferMemory(device.get(), buffer_.get(), memory_.get(), 0), "binding shared buffer memory");
 }
 
-OwnedDescriptor SharedBuffer::export_memory() const {
-    return memory_export_.export_descriptor(memory_.get());
+ExportedHandle SharedBuffer::export_memory() const {
+    return memory_export_.export_handle(memory_.get());
 }
 
 }

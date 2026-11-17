@@ -8,6 +8,16 @@ glMultiTexCoord{1,2,3,4}{d,f,i,s}{,v} IMMEDIATE_MODE FORWARD NONE
 glSecondaryColor3{b,d,f,i,s,ub,ui,us}{,v} IMMEDIATE_MODE FORWARD NONE
 glFogCoord{d,f}{,v} IMMEDIATE_MODE FORWARD NONE
 glEdgeFlag{,v} IMMEDIATE_MODE FORWARD NONE
+glIndex{d,f,i,s,ub}{,v} IMMEDIATE_MODE FORWARD NONE
+glVertexP{2,3,4}ui{,v} IMMEDIATE_MODE FORWARD NONE
+glTexCoordP{1,2,3,4}ui{,v} IMMEDIATE_MODE FORWARD NONE
+glMultiTexCoordP{1,2,3,4}ui{,v} IMMEDIATE_MODE FORWARD NONE
+glNormalP3ui{,v} IMMEDIATE_MODE FORWARD NONE
+glColorP{3,4}ui{,v} IMMEDIATE_MODE FORWARD NONE
+glSecondaryColorP3ui{,v} IMMEDIATE_MODE FORWARD NONE
+glEvalCoord{1,2}{d,f}{,v} IMMEDIATE_MODE FORWARD NONE
+glEvalPoint{1,2} IMMEDIATE_MODE FORWARD NONE
+glEvalMesh{1,2} IMMEDIATE_MODE TRANSLATE DRAW
 glRect{d,f,i,s}{,v} IMMEDIATE_MODE TRANSLATE DRAW
 
 glMatrixMode MATRIX_STACK TRANSLATE NONE
@@ -37,7 +47,21 @@ glTexEnv{f,i}{,v} FIXED_FUNCTION FORWARD NONE
 gl{ClipPlane,LineStipple,PolygonStipple,PixelZoom} FIXED_FUNCTION FORWARD NONE
 glPixelTransfer{f,i} FIXED_FUNCTION FORWARD NONE
 glRasterPos{2,3,4}{d,f,i,s}{,v} FIXED_FUNCTION FORWARD NONE
+glWindowPos{2,3}{d,f,i,s}{,v} FIXED_FUNCTION FORWARD NONE
 gl{DrawPixels,Bitmap,CopyPixels} FIXED_FUNCTION TRANSLATE DRAW
+glMap{1,2}{d,f} FIXED_FUNCTION FORWARD NONE
+glMapGrid{1,2}{d,f} FIXED_FUNCTION FORWARD NONE
+glGetMap{d,f,i}v FIXED_FUNCTION FORWARD NONE
+glPixelMap{f,ui,us}v FIXED_FUNCTION FORWARD NONE
+glGetPixelMap{f,ui,us}v FIXED_FUNCTION FORWARD NONE
+glGet{ClipPlane,PolygonStipple} FIXED_FUNCTION FORWARD NONE
+glGet{Light,Material,TexEnv}{f,i}v FIXED_FUNCTION FORWARD NONE
+glGetTexGen{d,f,i}v FIXED_FUNCTION FORWARD NONE
+gl{IndexMask,ClearIndex,ClearAccum} FIXED_FUNCTION FORWARD NONE
+glAccum FIXED_FUNCTION TRANSLATE DRAW
+gl{RenderMode,FeedbackBuffer,SelectBuffer,PassThrough} FIXED_FUNCTION FORWARD NONE
+gl{InitNames,LoadName,PushName,PopName} FIXED_FUNCTION FORWARD NONE
+gl{AreTexturesResident,PrioritizeTextures} FIXED_FUNCTION OBJECTS NONE
 
 gl{Enable,Disable}ClientState CLIENT_ARRAYS FORWARD NONE
 glClientActiveTexture CLIENT_ARRAYS FORWARD NONE
@@ -56,7 +80,7 @@ gl{Scissor,Viewport} STATE TRANSLATE NONE
 glClear{Color,Depth,Stencil} STATE TRANSLATE NONE
 glPixelStore{f,i} STATE TRANSLATE NONE
 glActiveTexture STATE TRANSLATE NONE
-gl{DepthRange,LineWidth,PointSize,Hint,SampleCoverage,ClampColor,ProvokingVertex,PrimitiveRestartIndex} STATE FORWARD NONE
+gl{DepthRange,LineWidth,PointSize,Hint,SampleCoverage,SampleMaski,ClampColor,ProvokingVertex,PrimitiveRestartIndex} STATE FORWARD NONE
 glPointParameter{f,i}{,v} STATE FORWARD NONE
 
 glClear DRAW TRANSLATE DRAW
@@ -79,6 +103,7 @@ glTexSubImage{1D,2D,3D} TEXTURE TRANSLATE DRAW
 glCompressedTexSubImage{1D,2D,3D} TEXTURE TRANSLATE DRAW
 glCopyTexSubImage{1D,2D,3D} TEXTURE TRANSLATE DRAW
 glGenerateMipmap TEXTURE TRANSLATE DRAW
+glTexBuffer TEXTURE TRANSLATE NONE 2:BUFFER
 glTexParameter{f,i}{,v} TEXTURE FORWARD NONE
 glTexParameterI{iv,uiv} TEXTURE FORWARD NONE
 glGetTexParameter{f,i}v TEXTURE FORWARD NONE
@@ -91,7 +116,7 @@ glIsBuffer BUFFER OBJECTS NONE
 glBindBuffer BUFFER TRANSLATE NONE 1:BUFFER
 glBindBuffer{Base,Range} BUFFER TRANSLATE NONE 2:BUFFER
 glBuffer{Data,SubData} BUFFER FORWARD NONE
-glGetBuffer{SubData,Parameteriv,Pointerv} BUFFER FORWARD NONE
+glGetBuffer{SubData,Parameteriv,Parameteri64v,Pointerv} BUFFER FORWARD NONE
 glMapBuffer{,Range} BUFFER FORWARD NONE
 gl{UnmapBuffer,FlushMappedBufferRange,CopyBufferSubData} BUFFER FORWARD NONE
 
@@ -106,7 +131,9 @@ glVertexAttrib4N{b,i,s,ub,ui,us}v VERTEX_ARRAY FORWARD NONE
 glVertexAttrib4Nub VERTEX_ARRAY FORWARD NONE
 glVertexAttrib4{b,i,ub,ui,us}v VERTEX_ARRAY FORWARD NONE
 glVertexAttribI{1,2,3,4}{i,ui}{,v} VERTEX_ARRAY FORWARD NONE
-glGetVertexAttrib{d,f,i}v VERTEX_ARRAY STATE_QUERY NONE
+glVertexAttribI4{b,s,ub,us}v VERTEX_ARRAY FORWARD NONE
+glVertexAttribP{1,2,3,4}ui{,v} VERTEX_ARRAY FORWARD NONE
+glGetVertexAttrib{d,f,i,Ii,Iui}v VERTEX_ARRAY STATE_QUERY NONE
 glGetVertexAttribPointerv VERTEX_ARRAY FORWARD NONE
 
 glGenFramebuffers FRAMEBUFFER OBJECTS NONE
@@ -133,6 +160,7 @@ gl{ShaderSource,CompileShader,GetShaderiv,GetShaderInfoLog,GetShaderSource} SHAD
 gl{Attach,Detach}Shader SHADER TRANSLATE NONE 0:SHADER_OR_PROGRAM 1:SHADER_OR_PROGRAM
 gl{LinkProgram,ValidateProgram,UseProgram,GetProgramiv,GetProgramInfoLog} SHADER TRANSLATE NONE 0:SHADER_OR_PROGRAM
 gl{BindAttribLocation,GetAttribLocation,BindFragDataLocation,GetFragDataLocation} SHADER TRANSLATE NONE 0:SHADER_OR_PROGRAM
+gl{BindFragDataLocationIndexed,GetFragDataIndex} SHADER TRANSLATE NONE 0:SHADER_OR_PROGRAM
 gl{GetUniformLocation,GetActiveUniform,GetActiveAttrib} SHADER TRANSLATE NONE 0:SHADER_OR_PROGRAM
 gl{GetUniformBlockIndex,UniformBlockBinding,GetUniformIndices} SHADER TRANSLATE NONE 0:SHADER_OR_PROGRAM
 glGetActiveUniform{Blockiv,BlockName,siv,Name} SHADER TRANSLATE NONE 0:SHADER_OR_PROGRAM
@@ -178,5 +206,6 @@ gl{Flush,Finish} SUBMISSION FORWARD NONE
 
 glGetError CONTEXT_QUERY ERRORS NONE
 glGetString{,i} CONTEXT_QUERY CAPABILITIES NONE
-glGetInteger{v,i_v} CONTEXT_QUERY STATE_QUERY NONE
+glGetInteger{v,i_v,64i_v} CONTEXT_QUERY STATE_QUERY NONE
 glGet{Float,Double,Boolean,Integer64}v CONTEXT_QUERY FORWARD NONE
+glGet{Booleani_v,Pointerv,Multisamplefv} CONTEXT_QUERY FORWARD NONE

@@ -23,6 +23,8 @@ public:
     bool shows(std::uint32_t x, std::uint32_t y, const Rgb& expected) const;
     std::string describe(std::uint32_t x, std::uint32_t y) const;
 
+    friend bool operator==(const DrawnFrame&, const DrawnFrame&) = default;
+
 private:
     std::uint32_t width_;
     std::vector<std::uint8_t> rgba_;

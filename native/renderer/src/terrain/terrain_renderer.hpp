@@ -8,6 +8,7 @@
 #include "descriptors/descriptor_pools.hpp"
 #include "device/device.hpp"
 #include "device/device_handle.hpp"
+#include "frame/frame_targets.hpp"
 #include "pipelines/graphics_pipeline_state.hpp"
 #include "pipelines/pipeline_cache.hpp"
 #include "terrain/terrain_frame.hpp"
@@ -25,7 +26,7 @@ struct TerrainTextures {
 
 class TerrainRenderer {
 public:
-    TerrainRenderer(const Device& device, PipelineCache& pipelines);
+    TerrainRenderer(const Device& device, PipelineCache& pipelines, VkFormat depth_format = frame_depth_format);
 
     VkDescriptorSet bind_textures(DescriptorPools& pools, const TerrainTextures& textures) const;
     std::uint32_t record(
@@ -39,6 +40,7 @@ private:
 
     VkDevice device_;
     PipelineCache& pipelines_;
+    VkFormat depth_format_;
     DeviceHandle<VkShaderModule> vertex_shader_;
     DeviceHandle<VkShaderModule> fragment_shader_;
     DeviceHandle<VkDescriptorSetLayout> textures_layout_;

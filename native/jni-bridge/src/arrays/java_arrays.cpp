@@ -48,6 +48,15 @@ jbyteArray new_bytes(JNIEnv& env, std::string_view bytes) noexcept {
     return array;
 }
 
+bool store_bytes(JNIEnv& env, jbyteArray target, std::span<const std::uint8_t> bytes) noexcept {
+    const auto length = static_cast<jsize>(bytes.size());
+    if (target == nullptr || env.GetArrayLength(target) != length) {
+        return false;
+    }
+    env.SetByteArrayRegion(target, 0, length, reinterpret_cast<const jbyte*>(bytes.data()));
+    return true;
+}
+
 jintArray new_words(JNIEnv& env, std::span<const std::uint32_t> words) noexcept {
     if (words.size() > max_array_length) {
         return nullptr;

@@ -8,11 +8,11 @@
 #include "device/device.hpp"
 #include "device/device_handle.hpp"
 #include "memory/exportable_memory.hpp"
-#include "memory/owned_descriptor.hpp"
+#include "memory/exported_handle.hpp"
 
 namespace minemod::interop {
 
-inline constexpr std::array<const char*, 1> shared_image_extensions{VK_KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME};
+extern const std::array<const char*, 1> shared_image_extensions;
 
 struct SharedImageDescription {
     VkExtent2D extent;
@@ -33,7 +33,7 @@ public:
         return allocation_size_;
     }
 
-    OwnedDescriptor export_memory() const;
+    ExportedHandle export_memory() const;
 
 private:
     MemoryExport memory_export_;
