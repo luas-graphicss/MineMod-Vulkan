@@ -6,7 +6,6 @@ import io.github.luasgraphicss.minemod.adapters.transformers.release.ReleasePlan
 import io.github.luasgraphicss.minemod.adapters.transformers.rewrite.CallSiteRewriter;
 import io.github.luasgraphicss.minemod.verification.hooks.catalog.LibraryCall;
 import io.github.luasgraphicss.minemod.verification.hooks.catalog.PresentationCalls;
-import io.github.luasgraphicss.minemod.verification.hooks.model.HookPoint;
 import io.github.luasgraphicss.minemod.verification.hooks.model.ReleaseHooks;
 import io.github.luasgraphicss.minemod.verification.hooks.plan.ReleasePlans;
 import io.github.luasgraphicss.minemod.verification.hooks.scan.CallSite;
@@ -34,8 +33,8 @@ public final class ClientVerification {
             failures.add(violation.description());
         }
 
-        Map<String, Integer> pinned = pinnedSitesOf(hooks);
-        Map<String, Integer> found = sitesOf(new CallSiteScanner(calls).scan(client));
+        Map<String, Integer> pinned = PinnedSites.pinnedBy(hooks);
+        Map<String, Integer> found = PinnedSites.foundAt(new CallSiteScanner(calls).scan(client));
         if (!found.equals(pinned)) {
             failures.add("the client calls " + found + ", the manifest pins " + pinned);
             return failures;
@@ -49,29 +48,14 @@ public final class ClientVerification {
             byte[] rewritten = rewriter.rewrite(className, client.classFile(className).orElseThrow()).classFile();
             List<CallSite> left = new CallSiteScanner(calls).scan(rewritten);
             if (!left.isEmpty()) {
-                failures.add(className + " still calls the library after the redirect: " + sitesOf(left));
+                failures.add(className + " still calls the library after the redirect: " + PinnedSites.foundAt(left));
             }
-            sitesOf(new CallSiteScanner(probeCalls).scan(rewritten)).forEach((site, count) -> redirected.merge(site, count, Integer::sum));
+            PinnedSites.foundAt(new CallSiteScanner(probeCalls).scan(rewritten))
+                    .forEach((site, count) -> redirected.merge(site, count, Integer::sum));
         }
         if (!redirected.equals(pinned)) {
             failures.add("the redirect reached " + redirected + ", the manifest pins " + pinned);
         }
         return failures;
-    }
-
-    private static Map<String, Integer> pinnedSitesOf(ReleaseHooks hooks) {
-        Map<String, Integer> sites = new TreeMap<>();
-        for (HookPoint point : hooks.points()) {
-            sites.put(point.hook() + " in " + point.within(), point.matches());
-        }
-        return sites;
-    }
-
-    private static Map<String, Integer> sitesOf(List<CallSite> sites) {
-        Map<String, Integer> counted = new TreeMap<>();
-        for (CallSite site : sites) {
-            counted.merge(site.call().hook() + " in " + site.within(), 1, Integer::sum);
-        }
-        return counted;
     }
 }
