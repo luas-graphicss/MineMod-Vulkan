@@ -29,17 +29,13 @@ public final class ScenarioEvidence {
     public void write(RepositoryScenario scenario, ScenarioReport report) throws IOException {
         Path file = repositoryRoot.resolve(repositoryPathOf(scenario));
         Files.createDirectories(file.getParent());
-        Files.writeString(file, render(report));
+        Files.writeString(file, report.observationsAsText());
     }
 
     public boolean matches(RepositoryScenario scenario, ScenarioReport report) throws IOException {
         Path file = repositoryRoot.resolve(repositoryPathOf(scenario));
         return Files.isRegularFile(file)
                 && Files.size(file) <= MAX_BYTES
-                && Files.readString(file).equals(render(report));
-    }
-
-    private static String render(ScenarioReport report) {
-        return String.join("\n", report.observations()) + "\n";
+                && Files.readString(file).equals(report.observationsAsText());
     }
 }

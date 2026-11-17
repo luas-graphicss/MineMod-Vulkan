@@ -19,7 +19,7 @@ public final class VerificationCli {
               verification hooks refresh [--cache <directory>] [--root <directory>]
               verification adapters refresh [--cache <directory>] [--root <directory>]
               verification evidence refresh [--root <directory>]
-              verification scenario <name> [--cache <directory>] [--root <directory>]
+              verification scenario <name> [--cache <directory>] [--report <file>] [--root <directory>]
               verification compare --suite <name> [--root <directory>]
               verification capabilities [--context <compatibility|core>] [--root <directory>]
             """;

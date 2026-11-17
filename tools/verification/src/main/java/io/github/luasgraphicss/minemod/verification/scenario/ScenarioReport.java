@@ -11,4 +11,8 @@ public record ScenarioReport(List<String> observations, List<String> failures) {
     public boolean passed() {
         return failures.isEmpty();
     }
+
+    public String observationsAsText() {
+        return String.join("\n", observations) + "\n";
+    }
 }
