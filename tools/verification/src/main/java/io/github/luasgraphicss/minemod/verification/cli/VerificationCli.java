@@ -16,7 +16,8 @@ public final class VerificationCli {
               verification check --profile <name> [--root <directory>]
               verification targets refresh [--root <directory>]
               verification build-matrix --manifest <file> [--root <directory>]
-              verification scenario <name> [--root <directory>]
+              verification hooks refresh [--cache <directory>] [--root <directory>]
+              verification scenario <name> [--cache <directory>] [--root <directory>]
               verification compare --suite <name> [--root <directory>]
               verification capabilities [--context <compatibility|core>] [--root <directory>]
             """;
@@ -33,11 +34,12 @@ public final class VerificationCli {
             Path repositoryRoot = Path.of(invocation.option("root").orElse("")).toAbsolutePath().normalize();
             List<String> command = invocation.command();
             if (command.size() == 2 && command.get(0).equals(ScenarioCommand.COMMAND)) {
-                return ScenarioCommand.run(invocation, command.get(1), output);
+                return ScenarioCommand.run(invocation, command.get(1), repositoryRoot, output);
             }
             return switch (invocation.commandLine()) {
                 case "check" -> CheckCommand.run(invocation, repositoryRoot, output);
                 case "targets refresh" -> RefreshTargetsCommand.run(invocation, repositoryRoot, output);
+                case "hooks refresh" -> RefreshHooksCommand.run(invocation, repositoryRoot, output);
                 case "build-matrix" -> BuildMatrixCommand.run(invocation, repositoryRoot, output);
                 case "compare" -> CompareCommand.run(invocation, output);
                 case "capabilities" -> CapabilitiesCommand.run(invocation, output);

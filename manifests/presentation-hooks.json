@@ -1,0 +1,2048 @@
+{
+  "schemaVersion": 1,
+  "releases": [
+    {
+      "release": "1.12.2",
+      "clientSha1": "0f275bc1547d01fa5f56ba34bdc87d981ee12daf",
+      "windowing": "lwjgl2-display",
+      "points": [
+        {
+          "id": "display-create",
+          "hook": "display-create",
+          "callee": "org/lwjgl/opengl/Display.create(Lorg/lwjgl/opengl/PixelFormat;)V",
+          "within": "bib.at()V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "display-create-default",
+          "hook": "display-create-default",
+          "callee": "org/lwjgl/opengl/Display.create()V",
+          "within": "bib.at()V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "display-update",
+          "hook": "display-update",
+          "callee": "org/lwjgl/opengl/Display.update()V",
+          "within": "bib.i()V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "display-vsync#1",
+          "hook": "display-vsync",
+          "callee": "org/lwjgl/opengl/Display.setVSyncEnabled(Z)V",
+          "within": "bib.aq()V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "display-vsync#2",
+          "hook": "display-vsync",
+          "callee": "org/lwjgl/opengl/Display.setVSyncEnabled(Z)V",
+          "within": "bib.r()V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "display-vsync#3",
+          "hook": "display-vsync",
+          "callee": "org/lwjgl/opengl/Display.setVSyncEnabled(Z)V",
+          "within": "bid.a(Lbid$a;I)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "display-destroy",
+          "hook": "display-destroy",
+          "callee": "org/lwjgl/opengl/Display.destroy()V",
+          "within": "bib.h()V",
+          "named": null,
+          "matches": 2
+        }
+      ]
+    },
+    {
+      "release": "1.13",
+      "clientSha1": "c0b970952cdd279912da384cdbfc0c26e6c6090b",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "cfs.<init>(Lcfi;Lcfr;Lcnf$a;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "cfs.<init>(Lcfi;Lcfr;Lcnf$a;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "cfs.<init>(Lcfi;Lcfr;Lcnf$a;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "cfs.a(Z)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "cfs.c()V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "cfs.close()V",
+          "named": null,
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.13.1",
+      "clientSha1": "8de235e5ec3a7fce168056ea395d21cbdec18d7c",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "cgc.<init>(Lcfs;Lcgb;Lcnp$a;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "cgc.<init>(Lcfs;Lcgb;Lcnp$a;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "cgc.<init>(Lcfs;Lcgb;Lcnp$a;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "cgc.a(Z)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "cgc.c()V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "cgc.close()V",
+          "named": null,
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.13.2",
+      "clientSha1": "30bfe37a8db404db11c7edf02cb5165817afb4d9",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "cgd.<init>(Lcft;Lcgc;Lcnq$a;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "cgd.<init>(Lcft;Lcgc;Lcnq$a;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "cgd.<init>(Lcft;Lcgc;Lcnq$a;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "cgd.a(Z)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "cgd.c()V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "cgd.close()V",
+          "named": null,
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.14",
+      "clientSha1": "7a762a59345c13af7d87111207a93f5a8607f6c0",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "cub.<init>(Lcuc;Lcty;Lctp;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "cub.<init>(Lcuc;Lcty;Lctp;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "cub.<init>(Lcuc;Lcty;Lctp;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "cub.c(Z)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "cub.b(Z)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "cub.close()V",
+          "named": null,
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.14.1",
+      "clientSha1": "55ba86ddcbc3579397f41910463ffd4056e1e523",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "cud.<init>(Lcue;Lcua;Lctr;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "cud.<init>(Lcue;Lcua;Lctr;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "cud.<init>(Lcue;Lcua;Lctr;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "cud.c(Z)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "cud.b(Z)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "cud.close()V",
+          "named": null,
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.14.2",
+      "clientSha1": "ca6c5a139045967229975c0c0b7f93e78b4314c2",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "cud.<init>(Lcue;Lcua;Lctr;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "cud.<init>(Lcue;Lcua;Lctr;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "cud.<init>(Lcue;Lcua;Lctr;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "cud.c(Z)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "cud.b(Z)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "cud.close()V",
+          "named": null,
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.14.3",
+      "clientSha1": "af100b34ec7ef2b8b9cf7775b544d21d690dddec",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "cuh.<init>(Lcui;Lcue;Lctv;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "cuh.<init>(Lcui;Lcue;Lctv;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "cuh.<init>(Lcui;Lcue;Lctv;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "cuh.c(Z)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "cuh.b(Z)V",
+          "named": null,
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "cuh.close()V",
+          "named": null,
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.14.4",
+      "clientSha1": "8c325a0c5bd674dd747d6ebaa4c791fd363ad8a9",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "cuo.<init>(Lcup;Lcul;Lcuc;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "cuo.<init>(Lcup;Lcul;Lcuc;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "cuo.<init>(Lcup;Lcul;Lcuc;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "cuo.c(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateDisplay(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "cuo.b(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "cuo.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.15",
+      "clientSha1": "7b07fd09d1e3aae1bc7a1304fedc73bfe5d81800",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "cxu.<init>(Lcxv;Lcxq;Lcxe;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "cxu.<init>(Lcxv;Lcxq;Lcxe;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "cxu.<init>(Lcxv;Lcxq;Lcxe;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "cxu.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "cxu.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.15.1",
+      "clientSha1": "8b11614bea9293592a947ea8f4fd72981ea66677",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "cxu.<init>(Lcxv;Lcxq;Lcxe;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "cxu.<init>(Lcxv;Lcxq;Lcxe;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "cxu.<init>(Lcxv;Lcxq;Lcxe;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "cxu.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "cxu.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.15.2",
+      "clientSha1": "e3f78cd16f9eb9a52307ed96ebec64241cc5b32d",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "cxx.<init>(Lcxy;Lcxt;Lcxh;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "cxx.<init>(Lcxy;Lcxt;Lcxh;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "cxx.<init>(Lcxy;Lcxt;Lcxh;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "cxx.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "cxx.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.16",
+      "clientSha1": "228fdf45541c4c2fe8aec4f20e880cb8fcd46621",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "dgy.<init>(Ldgz;Ldgu;Ldgi;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "dgy.<init>(Ldgz;Ldgu;Ldgi;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "dgy.<init>(Ldgz;Ldgu;Ldgi;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "dgy.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "dgy.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.16.1",
+      "clientSha1": "c9abbe8ee4fa490751ca70635340b7cf00db83ff",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "dgy.<init>(Ldgz;Ldgu;Ldgi;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "dgy.<init>(Ldgz;Ldgu;Ldgi;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "dgy.<init>(Ldgz;Ldgu;Ldgi;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "dgy.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "dgy.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.16.2",
+      "clientSha1": "653e97a2d1d76f87653f02242d243cdee48a5144",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "dew.<init>(Ldex;Ldes;Ldeg;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "dew.<init>(Ldex;Ldes;Ldeg;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "dew.<init>(Ldex;Ldes;Ldeg;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "dew.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "dew.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.16.3",
+      "clientSha1": "1321521b2caf934f7fc9665aab7e059a7b2bfcdf",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "dew.<init>(Ldex;Ldes;Ldeg;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "dew.<init>(Ldex;Ldes;Ldeg;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "dew.<init>(Ldex;Ldes;Ldeg;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "dew.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "dew.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.16.4",
+      "clientSha1": "1952d94a0784e7abda230aae6a1e8fc0522dba99",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "dez.<init>(Ldfa;Ldev;Ldej;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "dez.<init>(Ldfa;Ldev;Ldej;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "dez.<init>(Ldfa;Ldev;Ldej;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "dez.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "dez.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.16.5",
+      "clientSha1": "37fd3c903861eeff3bc24b71eed48f828b5269c8",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "dez.<init>(Ldfa;Ldev;Ldej;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "dez.<init>(Ldfa;Ldev;Ldej;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "dez.<init>(Ldfa;Ldev;Ldej;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "dez.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "dez.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.17",
+      "clientSha1": "1cf89c77ed5e72401b869f66410934804f3d6f52",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "dpq.<init>(Ldpr;Ldpn;Ldpd;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "dpq.<init>(Ldpr;Ldpn;Ldpd;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "dpq.<init>(Ldpr;Ldpn;Ldpd;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "dpq.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "dpq.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.17.1",
+      "clientSha1": "8d9b65467c7913fcf6f5b2e729d44a1e00fde150",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "dpr.<init>(Ldps;Ldpo;Ldpd;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "dpr.<init>(Ldps;Ldpo;Ldpd;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "dpr.<init>(Ldps;Ldpo;Ldpd;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "dpr.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "dpr.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.18",
+      "clientSha1": "d49eb6caed53d23927648c97451503442f9e26fd",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "drp.<init>(Ldrq;Ldrn;Ldrc;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "drp.<init>(Ldrq;Ldrn;Ldrc;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "drp.<init>(Ldrq;Ldrn;Ldrc;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "drp.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "drp.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.18.1",
+      "clientSha1": "7e46fb47609401970e2818989fa584fd467cd036",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "drp.<init>(Ldrq;Ldrn;Ldrc;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "drp.<init>(Ldrq;Ldrn;Ldrc;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "drp.<init>(Ldrq;Ldrn;Ldrc;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "drp.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "drp.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.18.2",
+      "clientSha1": "2e9a3e3107cca00d6bc9c97bf7d149cae163ef21",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "dsr.<init>(Ldss;Ldsp;Ldse;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "dsr.<init>(Ldss;Ldsp;Ldse;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "dsr.<init>(Ldss;Ldsp;Ldse;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "dsr.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "dsr.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.19",
+      "clientSha1": "c0898ec7c6a5a2eaa317770203a1554260699994",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "dyx.<init>(Ldyy;Ldyv;Ldyk;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "dyx.<init>(Ldyy;Ldyv;Ldyk;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "dyx.<init>(Ldyy;Ldyv;Ldyk;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "dyx.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "dyx.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.19.1",
+      "clientSha1": "90d438c3e432add8848a9f9f368ce5a52f6bc4a7",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "dzu.<init>(Ldzv;Ldzs;Ldzh;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "dzu.<init>(Ldzv;Ldzs;Ldzh;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "dzu.<init>(Ldzv;Ldzs;Ldzh;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "dzu.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "dzu.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.19.2",
+      "clientSha1": "055b30d860ead928cba3849ba920c88b6950b654",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "dzu.<init>(Ldzv;Ldzs;Ldzh;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "dzu.<init>(Ldzv;Ldzs;Ldzh;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "dzu.<init>(Ldzv;Ldzs;Ldzh;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "dzu.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "dzu.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.19.3",
+      "clientSha1": "977727ec9ab8b4631e5c12839f064092f17663f8",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "edh.<init>(Ledi;Ledf;Lecv;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "edh.<init>(Ledi;Ledf;Lecv;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "edh.<init>(Ledi;Ledf;Lecv;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "edh.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "edh.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.19.4",
+      "clientSha1": "958928a560c9167687bea0cefeb7375da1e552a8",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "egi.<init>(Legj;Legg;Lefw;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "egi.<init>(Legj;Legg;Lefw;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "egi.<init>(Legj;Legg;Lefw;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "egi.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "egi.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.20",
+      "clientSha1": "e575a48efda46cf88111ba05b624ef90c520eef1",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "ehn.<init>(Leho;Lehl;Leha;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "ehn.<init>(Leho;Lehl;Leha;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "ehn.<init>(Leho;Lehl;Leha;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "ehn.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "ehn.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.20.1",
+      "clientSha1": "0c3ec587af28e5a785c0b4a7b8a30f9a8f78f838",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "ehn.<init>(Leho;Lehl;Leha;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "ehn.<init>(Leho;Lehl;Leha;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "ehn.<init>(Leho;Lehl;Leha;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "ehn.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "ehn.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.20.2",
+      "clientSha1": "82d1974e75fc984c5ed4b038e764e50958ac61a0",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "ekt.<init>(Leku;Lekr;Lekg;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "ekt.<init>(Leku;Lekr;Lekg;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "ekt.<init>(Leku;Lekr;Lekg;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "ekt.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "ekt.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.20.3",
+      "clientSha1": "b178a327a96f2cf1c9f98a45e5588d654a3e4369",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "epf.<init>(Lepg;Lepd;Leos;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "epf.<init>(Lepg;Lepd;Leos;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "epf.<init>(Lepg;Lepd;Leos;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "epf.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "epf.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.20.4",
+      "clientSha1": "fd19469fed4a4b4c15b2d5133985f0e3e7816a8a",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "epf.<init>(Lepg;Lepd;Leos;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "epf.<init>(Lepg;Lepd;Leos;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "epf.<init>(Lepg;Lepd;Leos;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "epf.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "epf.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.20.5",
+      "clientSha1": "c6b92b2374a629f20802bb284f98a4ee790e950a",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "ezd.<init>(Leze;Lezb;Leyq;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "ezd.<init>(Leze;Lezb;Leyq;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "ezd.<init>(Leze;Lezb;Leyq;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "ezd.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "ezd.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.20.6",
+      "clientSha1": "05b6f1c6b46a29d6ea82b4e0d42190e42402030f",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "eze.<init>(Lezf;Lezc;Leyr;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "eze.<init>(Lezf;Lezc;Leyr;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "eze.<init>(Lezf;Lezc;Leyr;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "eze.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "eze.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.21",
+      "clientSha1": "0e9a07b9bb3390602f977073aa12884a4ce12431",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "fam.<init>(Lfan;Lfak;Lfaa;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "fam.<init>(Lfan;Lfak;Lfaa;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "fam.<init>(Lfan;Lfak;Lfaa;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "fam.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "fam.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    },
+    {
+      "release": "1.21.1",
+      "clientSha1": "30c73b1c5da787909b2f73340419fdf13b9def88",
+      "windowing": "glfw",
+      "points": [
+        {
+          "id": "window-create",
+          "hook": "window-create",
+          "callee": "org/lwjgl/glfw/GLFW.glfwCreateWindow(IILjava/lang/CharSequence;JJ)J",
+          "within": "fam.<init>(Lfan;Lfak;Lfaa;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "context-current",
+          "hook": "context-current",
+          "callee": "org/lwjgl/glfw/GLFW.glfwMakeContextCurrent(J)V",
+          "within": "fam.<init>(Lfan;Lfak;Lfaa;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "capabilities",
+          "hook": "capabilities",
+          "callee": "org/lwjgl/opengl/GL.createCapabilities()Lorg/lwjgl/opengl/GLCapabilities;",
+          "within": "fam.<init>(Lfan;Lfak;Lfaa;Ljava/lang/String;Ljava/lang/String;)V",
+          "named": "com/mojang/blaze3d/platform/Window.<init>(Lcom/mojang/blaze3d/platform/WindowEventHandler;Lcom/mojang/blaze3d/platform/ScreenManager;Lcom/mojang/blaze3d/platform/DisplayData;Ljava/lang/String;Ljava/lang/String;)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-buffers",
+          "hook": "swap-buffers",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V",
+          "within": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "named": "com/mojang/blaze3d/systems/RenderSystem.flipFrame(J)V",
+          "matches": 1
+        },
+        {
+          "id": "swap-interval",
+          "hook": "swap-interval",
+          "callee": "org/lwjgl/glfw/GLFW.glfwSwapInterval(I)V",
+          "within": "fam.a(Z)V",
+          "named": "com/mojang/blaze3d/platform/Window.updateVsync(Z)V",
+          "matches": 1
+        },
+        {
+          "id": "window-destroy",
+          "hook": "window-destroy",
+          "callee": "org/lwjgl/glfw/GLFW.glfwDestroyWindow(J)V",
+          "within": "fam.close()V",
+          "named": "com/mojang/blaze3d/platform/Window.close()V",
+          "matches": 1
+        }
+      ]
+    }
+  ]
+}

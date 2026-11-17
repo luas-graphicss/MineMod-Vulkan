@@ -1,6 +1,7 @@
 package io.github.luasgraphicss.minemod.verification.check;
 
 import io.github.luasgraphicss.minemod.verification.compatibility.CompatibilityCasesCheck;
+import io.github.luasgraphicss.minemod.verification.hooks.PresentationHooksCheck;
 import io.github.luasgraphicss.minemod.verification.layer.CallCatalogCheck;
 import io.github.luasgraphicss.minemod.verification.layer.DifferentialCheck;
 import io.github.luasgraphicss.minemod.verification.layer.ScenariosCheck;
@@ -11,7 +12,9 @@ import java.util.Optional;
 public record CheckProfile(String name, List<Check> checks) {
     private static final List<CheckProfile> PROFILES = List.of(
             new CheckProfile("foundation", List.of(new TargetMatrixCheck())),
-            new CheckProfile("ecosystem", List.of(new TargetMatrixCheck(), new CompatibilityCasesCheck())),
+            new CheckProfile(
+                    "ecosystem",
+                    List.of(new TargetMatrixCheck(), new PresentationHooksCheck(), new CompatibilityCasesCheck())),
             new CheckProfile(
                     "compatibility", List.of(new CallCatalogCheck(), new ScenariosCheck(), new DifferentialCheck())));
 

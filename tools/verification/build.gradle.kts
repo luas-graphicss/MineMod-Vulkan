@@ -9,7 +9,9 @@ java {
 }
 
 dependencies {
+    implementation(libs.asm)
     implementation(libs.jackson.databind)
+    implementation(project(":adapters:transformers"))
     implementation(project(":compatibility:contexts"))
     implementation(project(":compatibility:interop"))
     implementation(project(":compatibility:translation"))
