@@ -1,10 +1,12 @@
 [versions]
+asm = "9.11.1"
 jackson = "2.23.0"
 junit = "5.14.4"
 lwjgl2 = "2.9.4-nightly-20150209"
 lwjgl3 = "3.3.3"
 
 [libraries]
+asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 lwjgl2-core = { module = "org.lwjgl.lwjgl:lwjgl", version.ref = "lwjgl2" }
 lwjgl2-platform = { module = "org.lwjgl.lwjgl:lwjgl-platform", version.ref = "lwjgl2" }
