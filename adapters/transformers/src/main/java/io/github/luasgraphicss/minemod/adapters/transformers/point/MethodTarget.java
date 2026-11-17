@@ -20,6 +20,18 @@ public final class MethodTarget {
         this.descriptor = requireExact(DESCRIPTOR, descriptor, "descriptor is not an exact method descriptor");
     }
 
+    public static MethodTarget parse(String written) {
+        int descriptorStart = written.indexOf('(');
+        int nameStart = descriptorStart < 0 ? -1 : written.lastIndexOf('.', descriptorStart);
+        if (nameStart < 1) {
+            throw new IllegalArgumentException("a method is written as owner.name(descriptor): " + written);
+        }
+        return new MethodTarget(
+                written.substring(0, nameStart),
+                written.substring(nameStart + 1, descriptorStart),
+                written.substring(descriptorStart));
+    }
+
     public String owner() {
         return owner;
     }

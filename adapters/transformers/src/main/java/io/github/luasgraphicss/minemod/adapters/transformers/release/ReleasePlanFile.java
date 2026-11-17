@@ -50,16 +50,11 @@ public final class ReleasePlanFile {
     }
 
     private MethodTarget methodOf(String key) {
-        String method = required(key);
-        int descriptorStart = method.indexOf('(');
-        int nameStart = descriptorStart < 0 ? -1 : method.lastIndexOf('.', descriptorStart);
-        if (nameStart < 1) {
-            throw new IllegalArgumentException(key + " is not written as owner.name(descriptor): " + method);
+        try {
+            return MethodTarget.parse(required(key));
+        } catch (IllegalArgumentException malformed) {
+            throw new IllegalArgumentException(key + ": " + malformed.getMessage(), malformed);
         }
-        return new MethodTarget(
-                method.substring(0, nameStart),
-                method.substring(nameStart + 1, descriptorStart),
-                method.substring(descriptorStart));
     }
 
     private int matchesOf(String key) {
