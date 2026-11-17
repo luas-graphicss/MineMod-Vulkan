@@ -18,7 +18,7 @@ val hostArchitecture = when (val reported = System.getProperty("os.arch")) {
 val nativePlatform = (if (isWindows) "windows" else "linux") + "-" + hostArchitecture
 val nativePreset = if (isWindows) "windows-client" else "linux-client"
 val nativeLibraryNames =
-    if (isWindows) listOf("minemod_jni.dll") else listOf("libminemod_jni.so", "libminemod_gl_provider_jni.so")
+    listOf("minemod_jni", "minemod_gl_provider_jni").map { if (isWindows) "$it.dll" else "lib$it.so" }
 
 version = modVersion
 
@@ -43,8 +43,10 @@ dependencies {
     implementation(project(path = gameAdapter.path, configuration = "namedElements"))
     implementation("minemod-vulkan.jvm:client-runtime")
     implementation("minemod-vulkan.compatibility:lwjgl3")
+    implementation("minemod-vulkan.adapters:renderer-ownership")
     bundledRuntime("minemod-vulkan.jvm:client-runtime")
     bundledRuntime("minemod-vulkan.compatibility:lwjgl3")
+    bundledRuntime("minemod-vulkan.adapters:renderer-ownership")
 }
 
 val builtNativeLibraries = nativeLibraryNames.map { repositoryRoot.resolve("build/$nativePreset/jni/$it") }
