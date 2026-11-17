@@ -38,3 +38,20 @@ add_dependencies(minemod_gl_provider_tests minemod_fake_provider)
 minemod_configure_target(minemod_gl_provider_tests)
 
 add_test(NAME gl_provider COMMAND minemod_gl_provider_tests)
+
+set(MINEMOD_PROVIDER_BUNDLE "" CACHE PATH "Directory of a staged provider bundle that the bundle tests load")
+if(MINEMOD_PROVIDER_BUNDLE)
+    cmake_path(SET minemod_staged_bundle_directory NORMALIZE "${MINEMOD_PROVIDER_BUNDLE}")
+
+    add_executable(minemod_gl_provider_bundle_tests
+        bundle/staged_bundle_test.cpp
+        support/staged_bundle.cpp)
+    target_include_directories(minemod_gl_provider_bundle_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+    target_compile_definitions(minemod_gl_provider_bundle_tests
+        PRIVATE MINEMOD_PROVIDER_BUNDLE_DIRECTORY="${minemod_staged_bundle_directory}")
+    target_link_libraries(minemod_gl_provider_bundle_tests PRIVATE minemod::gl_provider minemod_doctest_main)
+    minemod_configure_target(minemod_gl_provider_bundle_tests)
+
+    add_test(NAME gl_provider_bundle COMMAND minemod_gl_provider_bundle_tests)
+    set_tests_properties(gl_provider_bundle PROPERTIES LABELS vulkan-device)
+endif()
