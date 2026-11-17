@@ -59,6 +59,10 @@ void write_byte(JNIEnv*, jclass, jlong address, jbyte value) noexcept {
     write(address, value);
 }
 
+void write_bytes(JNIEnv* env, jclass, jlong address, jbyteArray source, jint offset, jint count) noexcept {
+    env->GetByteArrayRegion(source, offset, count, reinterpret_cast<jbyte*>(static_cast<std::uintptr_t>(address)));
+}
+
 }
 
 bool register_memory_natives(JNIEnv& env) noexcept {
@@ -71,6 +75,7 @@ bool register_memory_natives(JNIEnv& env) noexcept {
         minemod::jni::native_method("writeLong", "(JJ)V", &write_long),
         minemod::jni::native_method("readByte", "(J)B", &read_byte),
         minemod::jni::native_method("writeByte", "(JB)V", &write_byte),
+        minemod::jni::native_method("writeBytes", "(J[BII)V", &write_bytes),
     };
     return minemod::jni::register_natives(env, binding_class, methods);
 }

@@ -50,4 +50,9 @@ public final class JniMemory implements NativeMemory {
     public void writeByte(long address, byte value) {
         NativeBinding.writeByte(address, value);
     }
+
+    @Override
+    public void writeBytes(long address, byte[] source, int offset, int count) {
+        NativeBinding.writeBytes(address, source, offset, count);
+    }
 }

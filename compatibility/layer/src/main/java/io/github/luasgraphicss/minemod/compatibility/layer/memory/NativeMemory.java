@@ -16,4 +16,6 @@ public interface NativeMemory {
     byte readByte(long address);
 
     void writeByte(long address, byte value);
+
+    void writeBytes(long address, byte[] source, int offset, int count);
 }

@@ -64,6 +64,21 @@ public final class HeapMemory implements NativeMemory {
         bytes.put(offsetOf(address), value);
     }
 
+    @Override
+    public void writeBytes(long address, byte[] source, int offset, int count) {
+        ByteBuffer destination = bytes.duplicate();
+        destination.position(offsetOf(address));
+        destination.put(source, offset, count);
+    }
+
+    public byte[] readBytes(long address, int count) {
+        byte[] copy = new byte[count];
+        ByteBuffer source = bytes.duplicate();
+        source.position(offsetOf(address));
+        source.get(copy);
+        return copy;
+    }
+
     public int liveAllocations() {
         return live.size();
     }
