@@ -4,6 +4,7 @@ import io.github.luasgraphicss.minemod.bridge.SceneSharing;
 import io.github.luasgraphicss.minemod.client.compatibility.handoff.RecordedFrame;
 import io.github.luasgraphicss.minemod.client.compatibility.handoff.SceneHandoff;
 import io.github.luasgraphicss.minemod.client.compatibility.sharing.SceneImports;
+import io.github.luasgraphicss.minemod.compatibility.interop.platform.HandlePlatform;
 import io.github.luasgraphicss.minemod.compatibility.layer.memory.ScratchInts;
 import io.github.luasgraphicss.minemod.compatibility.natives.memory.JniMemory;
 import io.github.luasgraphicss.minemod.compatibility.runtime.scene.SceneSource;
@@ -27,7 +28,7 @@ public final class SharedScene implements SceneSource, AutoCloseable {
 
     @Override
     public SceneTextures attach(ProviderCalls provider, ScratchInts scratch) {
-        imports = new SceneImports(sharing, provider, memory);
+        imports = new SceneImports(sharing, provider, memory, HandlePlatform.current());
         return imports.current().textures();
     }
 

@@ -11,6 +11,7 @@ import io.github.luasgraphicss.minemod.bridge.sharing.SharedAttachments;
 import io.github.luasgraphicss.minemod.client.compatibility.support.SharedSession;
 import io.github.luasgraphicss.minemod.compatibility.interop.device.DeviceIdentity;
 import io.github.luasgraphicss.minemod.compatibility.interop.negotiation.PlannedShare;
+import io.github.luasgraphicss.minemod.compatibility.interop.platform.HandlePlatform;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -91,7 +92,8 @@ class SessionAttachmentsTest {
     private PlannedShare shareOf(SharedAttachment attachment) {
         SharedAttachments shared = sharing.describe();
         DeviceIdentity sameGpu = new DeviceIdentity(shared.deviceUuid(), shared.driverUuid());
-        return SceneNegotiation.negotiate(shared, sameGpu, SceneNegotiation.PLATFORM.requiredExtensions())
+        HandlePlatform platform = HandlePlatform.current();
+        return SceneNegotiation.negotiate(shared, sameGpu, platform.requiredExtensions(), platform)
                 .share(attachment);
     }
 }

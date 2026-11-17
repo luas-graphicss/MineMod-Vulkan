@@ -32,7 +32,9 @@ public final class SceneHandoff implements AttachmentHandoff, AutoCloseable {
         HandoffSynchronization synchronization = imported.plan().synchronization();
         SessionHandoff renderer = new SessionHandoff(sharing, synchronization);
         if (synchronization == HandoffSynchronization.SEMAPHORES) {
-            return new SceneHandoff(frame, new SemaphoreHandoffSource(sharing, renderer, provider, memory), imported);
+            HandoffSource semaphores =
+                    new SemaphoreHandoffSource(sharing, renderer, provider, memory, imported.plan().platform());
+            return new SceneHandoff(frame, semaphores, imported);
         }
         AttachmentHandoff blocking = new SharedAttachmentHandoff(new BlockingSharingBackend(renderer, provider));
         return new SceneHandoff(frame, attachments -> blocking, imported);

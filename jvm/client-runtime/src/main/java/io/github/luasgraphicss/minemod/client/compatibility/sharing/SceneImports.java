@@ -6,6 +6,7 @@ import io.github.luasgraphicss.minemod.bridge.sharing.SharedAttachments;
 import io.github.luasgraphicss.minemod.compatibility.interop.device.DeviceIdentity;
 import io.github.luasgraphicss.minemod.compatibility.interop.handle.HandleLedger;
 import io.github.luasgraphicss.minemod.compatibility.interop.negotiation.PlannedShare;
+import io.github.luasgraphicss.minemod.compatibility.interop.platform.HandlePlatform;
 import io.github.luasgraphicss.minemod.compatibility.interop.resource.SharedResource;
 import io.github.luasgraphicss.minemod.compatibility.interop.resource.SharedResourcePool;
 import io.github.luasgraphicss.minemod.compatibility.layer.memory.NativeMemory;
@@ -34,20 +35,21 @@ public final class SceneImports implements AutoCloseable {
     private final SharedResourcePool pool;
     private final DeviceIdentity providerDevice;
     private final List<String> providerExtensions;
+    private final HandlePlatform platform;
     private ImportedAttachments current;
 
-    public SceneImports(SceneSharing sharing, ProviderCalls provider, NativeMemory memory) {
+    public SceneImports(SceneSharing sharing, ProviderCalls provider, NativeMemory memory, HandlePlatform platform) {
         this.sharing = Objects.requireNonNull(sharing, "sharing");
         this.provider = Objects.requireNonNull(provider, "provider");
+        this.platform = Objects.requireNonNull(platform, "platform");
         this.providerDevice = ProviderDevice.identify(provider, memory);
         this.providerExtensions = ProviderExtensions.list(provider, memory);
         this.attachments = new SessionAttachments(sharing);
         this.scratch = new ScratchInts(memory, 1);
         this.imports = new ProviderMemoryImports(
-                provider, scratch, new ErrorLedger(() -> (int) provider.invoke("glGetError", NO_ARGUMENTS)));
+                provider, scratch, new ErrorLedger(() -> (int) provider.invoke("glGetError", NO_ARGUMENTS)), platform);
         this.pool = new SharedResourcePool(
-                new SplitResourceBackend(attachments, imports),
-                new HandleLedger(SceneNegotiation.PLATFORM, sharing::closeExported));
+                new SplitResourceBackend(attachments, imports), new HandleLedger(platform, sharing::closeExported));
         try {
             this.current = importAttachments();
         } catch (RuntimeException failure) {
@@ -97,7 +99,7 @@ public final class SceneImports implements AutoCloseable {
 
     private ImportedAttachments importAttachments() {
         SharedAttachments shared = sharing.describe();
-        SharingPlan plan = SceneNegotiation.negotiate(shared, providerDevice, providerExtensions);
+        SharingPlan plan = SceneNegotiation.negotiate(shared, providerDevice, providerExtensions, platform);
         int boundTexture = boundTexture();
         try {
             SharedResource color = pool.create(plan.share(SharedAttachment.COLOR));
