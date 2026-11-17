@@ -1,0 +1,27 @@
+fabric-1.14.4-fixture-suite (FABRIC 1.14.4): 9 mod(s) on a CALLBACK_ARRAY, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+fabric-1.15.2-fixture-suite (FABRIC 1.15.2): 9 mod(s) on a CALLBACK_ARRAY, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+fabric-1.16.5-fixture-suite (FABRIC 1.16.5): 9 mod(s) on a CALLBACK_ARRAY, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+fabric-1.17.1-fixture-suite (FABRIC 1.17.1): 9 mod(s) on a CALLBACK_ARRAY, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+fabric-1.18.2-fixture-suite (FABRIC 1.18.2): 9 mod(s) on a CALLBACK_ARRAY, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+fabric-1.19.4-fixture-suite (FABRIC 1.19.4): 9 mod(s) on a CALLBACK_ARRAY, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+fabric-1.20.6-fixture-suite (FABRIC 1.20.6): 9 mod(s) on a CALLBACK_ARRAY, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+fabric-1.21.1-fixture-suite (FABRIC 1.21.1): 9 mod(s) on a CALLBACK_ARRAY, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+fabric-1.21.1-unbridged-renderer (FABRIC 1.21.1): refused before the world: TERRAIN_GEOMETRY has no bridge for this exact renderer version, claimed by [minemod-fixture-chunk-renderer 2.0.0]
+forge-1.12.2-fixture-suite (FORGE 1.12.2): 9 mod(s) on a PRIORITY_BUS, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+forge-1.13.2-fixture-suite (FORGE 1.13.2): 9 mod(s) on a PRIORITY_BUS, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+forge-1.14.4-fixture-suite (FORGE 1.14.4): 9 mod(s) on a PRIORITY_BUS, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+forge-1.15.2-fixture-suite (FORGE 1.15.2): 9 mod(s) on a PRIORITY_BUS, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+forge-1.16.5-fixture-suite (FORGE 1.16.5): 9 mod(s) on a PRIORITY_BUS, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+forge-1.17.1-fixture-suite (FORGE 1.17.1): 9 mod(s) on a PRIORITY_BUS, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+forge-1.18.2-fixture-suite (FORGE 1.18.2): 9 mod(s) on a PRIORITY_BUS, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+forge-1.19.4-fixture-suite (FORGE 1.19.4): 9 mod(s) on a PRIORITY_BUS, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+forge-1.20.6-fixture-suite (FORGE 1.20.6): 9 mod(s) on a PRIORITY_BUS, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+forge-1.21.1-fixture-suite (FORGE 1.21.1): 9 mod(s) on a PRIORITY_BUS, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+neoforge-1.20.6-fixture-suite (NEOFORGE 1.20.6): 9 mod(s) on a PRIORITY_BUS, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+neoforge-1.21.1-fixture-suite (NEOFORGE 1.21.1): 9 mod(s) on a PRIORITY_BUS, 6 frames in 2 worlds, 4 bridge(s) with 18 submission(s), with a shader pack
+recovery drill on fabric-1.14.4-fixture-suite: MineMod Vulkan on Minecraft 1.14.4, fabric
+recovery drill on fabric-1.14.4-fixture-suite: settings: compatibility.mod-opengl=true; shaders.pack=; diagnostics.overlay=true; recovery.failed-launches-before-safe-mode=2
+recovery drill on fabric-1.14.4-fixture-suite: settings rejected: none
+recovery drill on fabric-1.14.4-fixture-suite: renderers: TERRAIN_GEOMETRY bridged for minemod-fixture-chunk-renderer 1.0.0; SHADER_PIPELINE bridged for minemod-fixture-shader-loader 1.0.0
+recovery drill on fabric-1.14.4-fixture-suite: bridges: minemod-fixture-machines: fluid surfaces of the translucent pass SATISFIED; minemod-fixture-machines: cable meshes of the translucent pass SATISFIED; minemod-fixture-chunk-renderer: chunk meshes of the terrain pass SATISFIED; minemod-fixture-shader-loader: passes of the shader pack SATISFIED
+recovery drill on fabric-1.14.4-fixture-suite: recovery: safe mode, the last 2 launch(es) ended before the first frame

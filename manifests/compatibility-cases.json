@@ -1,4 +1,1751 @@
 {
   "schemaVersion": 1,
-  "cases": []
+  "cases": [
+    {
+      "id": "fabric-1.14.4-fixture-suite",
+      "release": "1.14.4",
+      "loader": "fabric",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "fabric-1.15.2-fixture-suite",
+      "release": "1.15.2",
+      "loader": "fabric",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "fabric-1.16.5-fixture-suite",
+      "release": "1.16.5",
+      "loader": "fabric",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "fabric-1.17.1-fixture-suite",
+      "release": "1.17.1",
+      "loader": "fabric",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "fabric-1.18.2-fixture-suite",
+      "release": "1.18.2",
+      "loader": "fabric",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "fabric-1.19.4-fixture-suite",
+      "release": "1.19.4",
+      "loader": "fabric",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "fabric-1.20.6-fixture-suite",
+      "release": "1.20.6",
+      "loader": "fabric",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "fabric-1.21.1-fixture-suite",
+      "release": "1.21.1",
+      "loader": "fabric",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "forge-1.12.2-fixture-suite",
+      "release": "1.12.2",
+      "loader": "forge",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "forge-1.13.2-fixture-suite",
+      "release": "1.13.2",
+      "loader": "forge",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "forge-1.14.4-fixture-suite",
+      "release": "1.14.4",
+      "loader": "forge",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "forge-1.15.2-fixture-suite",
+      "release": "1.15.2",
+      "loader": "forge",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "forge-1.16.5-fixture-suite",
+      "release": "1.16.5",
+      "loader": "forge",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "forge-1.17.1-fixture-suite",
+      "release": "1.17.1",
+      "loader": "forge",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "forge-1.18.2-fixture-suite",
+      "release": "1.18.2",
+      "loader": "forge",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "forge-1.19.4-fixture-suite",
+      "release": "1.19.4",
+      "loader": "forge",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "forge-1.20.6-fixture-suite",
+      "release": "1.20.6",
+      "loader": "forge",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "forge-1.21.1-fixture-suite",
+      "release": "1.21.1",
+      "loader": "forge",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "neoforge-1.20.6-fixture-suite",
+      "release": "1.20.6",
+      "loader": "neoforge",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "neoforge-1.21.1-fixture-suite",
+      "release": "1.21.1",
+      "loader": "neoforge",
+      "categories": [
+        "gameplay",
+        "interfaces",
+        "maps",
+        "models",
+        "technical-content",
+        "cpu-optimizations",
+        "renderer-replacements",
+        "shader-loaders",
+        "capture"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-inventory",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-minimap",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-models",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-machines",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-scheduler",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        },
+        {
+          "id": "minemod-fixture-recorder",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "verified",
+      "reason": "Own fixtures stand in for one mod of each category on a simulated loader; no third-party mod ran.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "fabric-1.21.1-unbridged-renderer",
+      "release": "1.21.1",
+      "loader": "fabric",
+      "categories": [
+        "renderer-replacements",
+        "interfaces"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-chunk-renderer",
+          "version": "2.0.0"
+        },
+        {
+          "id": "minemod-fixture-overlay",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "composed-mod-session",
+      "scenario": "modpack-matrix",
+      "outcome": "requires-bridge",
+      "reason": "The fixture renderer replaces terrain geometry and no bridge names version 2.0.0, so the world stays closed with a diagnosis.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/modpack-matrix.txt",
+          "sha256": "d9888d143559abfc7bb9e21f4e15fcd18c5635c367813566d16f4b86cd220ae3"
+        }
+      ]
+    },
+    {
+      "id": "fixture-shader-packs-fabric-1.21.1",
+      "release": "1.21.1",
+      "loader": "fabric",
+      "categories": [
+        "shader-loaders"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "shader-pack-data-flow",
+      "scenario": "shader-integration",
+      "outcome": "verified",
+      "reason": "Fixture packs prove the order of passes, buffer flips, depth snapshots, shadows, history and the compute gate on a symbolic backend; no shader pack ran on a GPU.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/shader-integration.txt",
+          "sha256": "1a8cacfb09c7d1332af96afdda47fcdf0b6b517e603fcdec875a4c923abb8e5b"
+        }
+      ]
+    },
+    {
+      "id": "fixture-shader-packs-neoforge-1.21.1",
+      "release": "1.21.1",
+      "loader": "neoforge",
+      "categories": [
+        "shader-loaders"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "shader-pack-data-flow",
+      "scenario": "shader-integration",
+      "outcome": "verified",
+      "reason": "Fixture packs prove the order of passes, buffer flips, depth snapshots, shadows, history and the compute gate on a symbolic backend; no shader pack ran on a GPU.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/shader-integration.txt",
+          "sha256": "1a8cacfb09c7d1332af96afdda47fcdf0b6b517e603fcdec875a4c923abb8e5b"
+        }
+      ]
+    },
+    {
+      "id": "fixture-shader-packs-forge-1.12.2",
+      "release": "1.12.2",
+      "loader": "forge",
+      "categories": [
+        "shader-loaders"
+      ],
+      "mods": [
+        {
+          "id": "minemod-fixture-shader-loader",
+          "version": "1.0.0"
+        }
+      ],
+      "capability": "shader-pack-data-flow",
+      "scenario": "shader-integration",
+      "outcome": "verified",
+      "reason": "Fixture packs prove the order of passes, buffer flips, depth snapshots, shadows, history and the compute gate on a symbolic backend; no shader pack ran on a GPU.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/shader-integration.txt",
+          "sha256": "1a8cacfb09c7d1332af96afdda47fcdf0b6b517e603fcdec875a4c923abb8e5b"
+        }
+      ]
+    },
+    {
+      "id": "sodium-0.8.13-fabric-1.21.1",
+      "release": "1.21.1",
+      "loader": "fabric",
+      "categories": [
+        "renderer-replacements"
+      ],
+      "mods": [
+        {
+          "id": "sodium",
+          "version": "0.8.13+mc1.21.1"
+        }
+      ],
+      "capability": "renderer-ownership",
+      "scenario": "renderer-conflicts",
+      "outcome": "requires-bridge",
+      "reason": "sodium replaces terrain geometry and terrain draws; no bridge names this version, so the world stays closed with a diagnosis. Identity read from sodium-fabric-0.8.13+mc1.21.1.jar (SHA-1 003c114c85ca88ef3362e018deb6aca0c682d6a1); the mod was not run.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/renderer-conflicts.txt",
+          "sha256": "c8daf6bd1c9c73093110a9bcc87a154a127b712354945ca89aa0154c9166a5af"
+        }
+      ]
+    },
+    {
+      "id": "sodium-0.5.13-fabric-1.20.1",
+      "release": "1.20.1",
+      "loader": "fabric",
+      "categories": [
+        "renderer-replacements"
+      ],
+      "mods": [
+        {
+          "id": "sodium",
+          "version": "0.5.13+mc1.20.1"
+        }
+      ],
+      "capability": "renderer-ownership",
+      "scenario": "renderer-conflicts",
+      "outcome": "requires-bridge",
+      "reason": "sodium replaces terrain geometry and terrain draws; no bridge names this version, so the world stays closed with a diagnosis. Identity read from sodium-fabric-0.5.13+mc1.20.1.jar (SHA-1 bcdbf37d9494e405cba210d7a80ed58e756297b5); the mod was not run.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/renderer-conflicts.txt",
+          "sha256": "c8daf6bd1c9c73093110a9bcc87a154a127b712354945ca89aa0154c9166a5af"
+        }
+      ]
+    },
+    {
+      "id": "sodium-0.2.0-fabric-1.16.5",
+      "release": "1.16.5",
+      "loader": "fabric",
+      "categories": [
+        "renderer-replacements"
+      ],
+      "mods": [
+        {
+          "id": "sodium",
+          "version": "0.2.0+build.4"
+        }
+      ],
+      "capability": "renderer-ownership",
+      "scenario": "renderer-conflicts",
+      "outcome": "requires-bridge",
+      "reason": "sodium replaces terrain geometry and terrain draws; no bridge names this version, so the world stays closed with a diagnosis. Identity read from sodium-fabric-mc1.16.5-0.2.0+build.4.jar (SHA-1 bf03460f1f82f355d1fe23a27ee81c3ed24e54dc); the mod was not run.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/renderer-conflicts.txt",
+          "sha256": "c8daf6bd1c9c73093110a9bcc87a154a127b712354945ca89aa0154c9166a5af"
+        }
+      ]
+    },
+    {
+      "id": "iris-1.8.14-beta.1-fabric-1.21.1",
+      "release": "1.21.1",
+      "loader": "fabric",
+      "categories": [
+        "shader-loaders"
+      ],
+      "mods": [
+        {
+          "id": "iris",
+          "version": "1.8.14-beta.1+mc1.21.1"
+        }
+      ],
+      "capability": "renderer-ownership",
+      "scenario": "renderer-conflicts",
+      "outcome": "requires-bridge",
+      "reason": "iris replaces the shader pipeline; no bridge names this version, so the world stays closed with a diagnosis. Identity read from iris-fabric-1.8.14-beta.1+mc1.21.1.jar (SHA-1 6776c0340845887477bfa463acc736ce7fcb6de5); the mod was not run.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/renderer-conflicts.txt",
+          "sha256": "c8daf6bd1c9c73093110a9bcc87a154a127b712354945ca89aa0154c9166a5af"
+        }
+      ]
+    },
+    {
+      "id": "iris-1.7.6-fabric-1.20.1",
+      "release": "1.20.1",
+      "loader": "fabric",
+      "categories": [
+        "shader-loaders"
+      ],
+      "mods": [
+        {
+          "id": "iris",
+          "version": "1.7.6+mc1.20.1"
+        }
+      ],
+      "capability": "renderer-ownership",
+      "scenario": "renderer-conflicts",
+      "outcome": "requires-bridge",
+      "reason": "iris replaces the shader pipeline; no bridge names this version, so the world stays closed with a diagnosis. Identity read from iris-1.7.6+mc1.20.1.jar (SHA-1 880c0b9ce38bb4997645793407c1801df83f4233); the mod was not run.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/renderer-conflicts.txt",
+          "sha256": "c8daf6bd1c9c73093110a9bcc87a154a127b712354945ca89aa0154c9166a5af"
+        }
+      ]
+    },
+    {
+      "id": "embeddium-0.3.31-forge-1.20.1",
+      "release": "1.20.1",
+      "loader": "forge",
+      "categories": [
+        "renderer-replacements"
+      ],
+      "mods": [
+        {
+          "id": "embeddium",
+          "version": "0.3.31+mc1.20.1"
+        }
+      ],
+      "capability": "renderer-ownership",
+      "scenario": "renderer-conflicts",
+      "outcome": "requires-bridge",
+      "reason": "embeddium replaces terrain geometry and terrain draws; no bridge names this version, so the world stays closed with a diagnosis. Identity read from embeddium-0.3.31+mc1.20.1.jar (SHA-1 bb2fa8f3e493af16af9160d049f96c614a1faf2f); the mod was not run.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/renderer-conflicts.txt",
+          "sha256": "c8daf6bd1c9c73093110a9bcc87a154a127b712354945ca89aa0154c9166a5af"
+        }
+      ]
+    },
+    {
+      "id": "embeddium-1.0.15-neoforge-1.21.1",
+      "release": "1.21.1",
+      "loader": "neoforge",
+      "categories": [
+        "renderer-replacements"
+      ],
+      "mods": [
+        {
+          "id": "embeddium",
+          "version": "1.0.15+mc1.21.1"
+        }
+      ],
+      "capability": "renderer-ownership",
+      "scenario": "renderer-conflicts",
+      "outcome": "requires-bridge",
+      "reason": "embeddium replaces terrain geometry and terrain draws; no bridge names this version, so the world stays closed with a diagnosis. Identity read from embeddium-1.0.15+mc1.21.1.jar (SHA-1 56063839172a000d079272794bad366f2ad4cbbd); the mod was not run.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/renderer-conflicts.txt",
+          "sha256": "c8daf6bd1c9c73093110a9bcc87a154a127b712354945ca89aa0154c9166a5af"
+        }
+      ]
+    },
+    {
+      "id": "oculus-1.8.0-forge-1.20.1",
+      "release": "1.20.1",
+      "loader": "forge",
+      "categories": [
+        "shader-loaders"
+      ],
+      "mods": [
+        {
+          "id": "oculus",
+          "version": "1.8.0"
+        }
+      ],
+      "capability": "renderer-ownership",
+      "scenario": "renderer-conflicts",
+      "outcome": "requires-bridge",
+      "reason": "oculus replaces the shader pipeline; no bridge names this version, so the world stays closed with a diagnosis. Identity read from oculus-mc1.20.1-1.8.0.jar (SHA-1 984f774e71790deaec674c7587bd24e0711871b2); the mod was not run.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/renderer-conflicts.txt",
+          "sha256": "c8daf6bd1c9c73093110a9bcc87a154a127b712354945ca89aa0154c9166a5af"
+        }
+      ]
+    },
+    {
+      "id": "rubidium-0.6.2c-forge-1.19.2",
+      "release": "1.19.2",
+      "loader": "forge",
+      "categories": [
+        "renderer-replacements"
+      ],
+      "mods": [
+        {
+          "id": "rubidium",
+          "version": "0.6.2c"
+        }
+      ],
+      "capability": "renderer-ownership",
+      "scenario": "renderer-conflicts",
+      "outcome": "requires-bridge",
+      "reason": "rubidium replaces terrain geometry and terrain draws; no bridge names this version, so the world stays closed with a diagnosis. Identity read from rubidium-mc1.19.2-0.6.2c.jar (SHA-1 e67ef350e8247d83b33459dae8951f396ae341df); the mod was not run.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/renderer-conflicts.txt",
+          "sha256": "c8daf6bd1c9c73093110a9bcc87a154a127b712354945ca89aa0154c9166a5af"
+        }
+      ]
+    },
+    {
+      "id": "rubidium-0.5.6-forge-1.18.2",
+      "release": "1.18.2",
+      "loader": "forge",
+      "categories": [
+        "renderer-replacements"
+      ],
+      "mods": [
+        {
+          "id": "rubidium",
+          "version": "0.5.6"
+        }
+      ],
+      "capability": "renderer-ownership",
+      "scenario": "renderer-conflicts",
+      "outcome": "requires-bridge",
+      "reason": "rubidium replaces terrain geometry and terrain draws; no bridge names this version, so the world stays closed with a diagnosis. Identity read from rubidium-0.5.6.jar (SHA-1 1ce63fa6642a71b2e1b175bbdc0f61ac12669a67); the mod was not run.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/renderer-conflicts.txt",
+          "sha256": "c8daf6bd1c9c73093110a9bcc87a154a127b712354945ca89aa0154c9166a5af"
+        }
+      ]
+    },
+    {
+      "id": "canvas-20.0.2625-fabric-1.20.1",
+      "release": "1.20.1",
+      "loader": "fabric",
+      "categories": [
+        "renderer-replacements"
+      ],
+      "mods": [
+        {
+          "id": "canvas",
+          "version": "20.0.2625"
+        }
+      ],
+      "capability": "renderer-ownership",
+      "scenario": "renderer-conflicts",
+      "outcome": "requires-bridge",
+      "reason": "canvas replaces terrain geometry, terrain draws, entity draws and the shader pipeline; no bridge names this version, so the world stays closed with a diagnosis. Identity read from canvas-fabric-20.0.2625.jar (SHA-1 2f1fd493a3a2b24640ed55978826bfe071319a50); the mod was not run.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/renderer-conflicts.txt",
+          "sha256": "c8daf6bd1c9c73093110a9bcc87a154a127b712354945ca89aa0154c9166a5af"
+        }
+      ]
+    },
+    {
+      "id": "vulkanmod-0.6.7-fabric-1.21.1",
+      "release": "1.21.1",
+      "loader": "fabric",
+      "categories": [
+        "renderer-replacements"
+      ],
+      "mods": [
+        {
+          "id": "vulkanmod",
+          "version": "0.6.7+1.21.1"
+        }
+      ],
+      "capability": "renderer-ownership",
+      "scenario": "renderer-conflicts",
+      "outcome": "unsupported",
+      "reason": "vulkanmod replaces presentation and frame submission, which belong to the native renderer alone; the world stays closed with a diagnosis. Identity read from VulkanMod-0.6.7+1.21.1.jar (SHA-1 c395ce86667e0f8201ead23b5a12cb91a0b5b215); the mod was not run.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/renderer-conflicts.txt",
+          "sha256": "c8daf6bd1c9c73093110a9bcc87a154a127b712354945ca89aa0154c9166a5af"
+        }
+      ]
+    },
+    {
+      "id": "sodium-0.8.13-neoforge-1.21.1",
+      "release": "1.21.1",
+      "loader": "neoforge",
+      "categories": [
+        "renderer-replacements"
+      ],
+      "mods": [
+        {
+          "id": "sodium",
+          "version": "0.8.13+mc1.21.1"
+        }
+      ],
+      "capability": "renderer-ownership",
+      "scenario": "renderer-conflicts",
+      "outcome": "requires-bridge",
+      "reason": "sodium replaces terrain geometry and terrain draws; no bridge names this version, so the world stays closed with a diagnosis. Identity read from sodium-neoforge-0.8.13+mc1.21.1.jar (SHA-1 1757289be21ed18db5b0d90703fa3db1b2de5693); the mod was not run.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/renderer-conflicts.txt",
+          "sha256": "c8daf6bd1c9c73093110a9bcc87a154a127b712354945ca89aa0154c9166a5af"
+        }
+      ]
+    },
+    {
+      "id": "iris-1.8.14-beta.1-neoforge-1.21.1",
+      "release": "1.21.1",
+      "loader": "neoforge",
+      "categories": [
+        "shader-loaders"
+      ],
+      "mods": [
+        {
+          "id": "iris",
+          "version": "1.8.14-beta.1+mc1.21.1"
+        }
+      ],
+      "capability": "renderer-ownership",
+      "scenario": "renderer-conflicts",
+      "outcome": "requires-bridge",
+      "reason": "iris replaces the shader pipeline; no bridge names this version, so the world stays closed with a diagnosis. Identity read from iris-neoforge-1.8.14-beta.1+mc1.21.1.jar (SHA-1 1bd129cf7bce65d6b1c0543045f0620c98a0f885); the mod was not run.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/renderer-conflicts.txt",
+          "sha256": "c8daf6bd1c9c73093110a9bcc87a154a127b712354945ca89aa0154c9166a5af"
+        }
+      ]
+    },
+    {
+      "id": "sodium-with-iris-fabric-1.21.1",
+      "release": "1.21.1",
+      "loader": "fabric",
+      "categories": [
+        "renderer-replacements",
+        "shader-loaders"
+      ],
+      "mods": [
+        {
+          "id": "sodium",
+          "version": "0.8.13+mc1.21.1"
+        },
+        {
+          "id": "iris",
+          "version": "1.8.14-beta.1+mc1.21.1"
+        }
+      ],
+      "capability": "renderer-ownership",
+      "scenario": "renderer-conflicts",
+      "outcome": "requires-bridge",
+      "reason": "Together they replace terrain geometry, terrain draws and the shader pipeline; no bridge names these versions, so the world stays closed with a diagnosis. Identities read from the published artifacts; neither mod was run.",
+      "evidence": [
+        {
+          "path": "docs/compatibility/reports/renderer-conflicts.txt",
+          "sha256": "c8daf6bd1c9c73093110a9bcc87a154a127b712354945ca89aa0154c9166a5af"
+        }
+      ]
+    }
+  ]
 }

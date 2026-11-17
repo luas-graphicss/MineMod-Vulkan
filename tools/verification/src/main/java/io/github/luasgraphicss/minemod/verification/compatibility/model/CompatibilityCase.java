@@ -37,5 +37,10 @@ public record CompatibilityCase(
 
     public record ModRelease(String id, String version) {}
 
+    public CompatibilityCase withEvidence(List<Evidence> pinned) {
+        return new CompatibilityCase(
+                id, release, loader, categories, mods, capability, scenario, outcome, reason, List.copyOf(pinned));
+    }
+
     public record Evidence(String path, String sha256) {}
 }

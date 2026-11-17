@@ -1,11 +1,15 @@
 package io.github.luasgraphicss.minemod.verification.scenario;
 
+import io.github.luasgraphicss.minemod.verification.ecosystem.EcosystemScenarios;
 import io.github.luasgraphicss.minemod.verification.scenario.transformers.ProductionTransformersScenario;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public final class RepositoryScenarioCatalog {
-    private static final List<RepositoryScenario> SCENARIOS = List.of(new ProductionTransformersScenario());
+    private static final List<RepositoryScenario> SCENARIOS = Stream.concat(
+                    Stream.of(new ProductionTransformersScenario()), EcosystemScenarios.all().stream())
+            .toList();
 
     private RepositoryScenarioCatalog() {}
 

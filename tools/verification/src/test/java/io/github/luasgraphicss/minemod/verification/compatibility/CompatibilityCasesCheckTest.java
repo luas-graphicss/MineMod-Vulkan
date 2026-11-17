@@ -23,6 +23,7 @@ class CompatibilityCasesCheckTest {
                 .map(Check::name)
                 .toList();
 
-        assertEquals(List.of("target-matrix", "presentation-hooks", "compatibility-cases"), checks);
+        assertEquals(
+                List.of("target-matrix", "presentation-hooks", "compatibility-cases", "ecosystem-scenarios"), checks);
     }
 }

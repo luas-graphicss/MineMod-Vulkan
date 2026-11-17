@@ -1,0 +1,4 @@
+chained-passes: shadows, deferred lighting over the depth without translucents and 2 composites reach the frame as final(composite1(composite(translucents@f3 over deferred(opaque@f3, depth(opaque)@f3, shadows@f3), translucents@f3 over opaque@f3), depth(opaque+translucents)@f3))
+history-buffer: a buffer that is not cleared carries each frame into the next: final(composite(translucents@f3 over opaque@f3, composite(translucents@f2 over opaque@f2, composite(translucents@f1 over opaque@f1, empty))))
+compute-bloom: refused without compute, planned with it
+custom-uniform: refused with 2 diagnosed problem(s)
