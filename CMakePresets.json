@@ -71,6 +71,14 @@
       }
     },
     {
+      "name": "linux-provider",
+      "inherits": "linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "MINEMOD_BUILD_RENDERER": "OFF"
+      }
+    },
+    {
       "name": "windows-provider",
       "inherits": "windows",
       "cacheVariables": {
@@ -131,6 +139,10 @@
         "minemod_jni",
         "minemod_gl_provider_jni"
       ]
+    },
+    {
+      "name": "linux-provider",
+      "configurePreset": "linux-provider"
     },
     {
       "name": "windows-provider",
@@ -198,6 +210,21 @@
       }
     },
     {
+      "name": "linux-provider",
+      "configurePreset": "linux-provider",
+      "output": {
+        "outputOnFailure": true
+      },
+      "filter": {
+        "include": {
+          "name": "^gl_provider"
+        }
+      },
+      "execution": {
+        "noTestsAction": "error"
+      }
+    },
+    {
       "name": "windows-provider",
       "configurePreset": "windows-provider",
       "configuration": "RelWithDebInfo",
@@ -206,8 +233,11 @@
       },
       "filter": {
         "include": {
-          "name": "^gl_provider$"
+          "name": "^gl_provider"
         }
+      },
+      "execution": {
+        "noTestsAction": "error"
       }
     }
   ]
