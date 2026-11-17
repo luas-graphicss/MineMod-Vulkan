@@ -1,0 +1,13 @@
+name: Vulkan SDK on Windows
+description: Installs the pinned Vulkan SDK and its loader on a Windows runner and exports VULKAN_SDK.
+
+runs:
+  using: composite
+  steps:
+    - name: Install the pinned Vulkan SDK and loader
+      shell: pwsh
+      run: >
+        & "$env:GITHUB_ACTION_PATH/install.ps1"
+        -Version '1.4.363.0'
+        -SdkSha256 '94a82d378f7a5e3e54c9db7d2fb7016af136e14ac0a18dbf0f2f67a36352d141'
+        -LoaderSha256 'a25a927aa8b9f0371048f1861cf88ac3b9bc9b1fb332c42d897c8ab32695769a'

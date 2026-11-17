@@ -239,3 +239,65 @@ jobs:
 
       - name: Test
         run: ctest --preset windows-provider
+
+  native-windows:
+    name: Native ${{ matrix.preset }}
+    runs-on: windows-2025
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        preset:
+          - windows-debug
+          - windows-release
+    env:
+      PRESET: ${{ matrix.preset }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Annotate the diagnostics of CMake, of MSVC and of the tests
+        run: |
+          echo "::add-matcher::.github/problem-matchers/cmake.json"
+          echo "::add-matcher::.github/problem-matchers/msvc.json"
+
+      - name: Install the Vulkan SDK and the Vulkan loader
+        uses: ./.github/actions/vulkan-sdk
+
+      - name: Configure
+        run: cmake --preset "$env:PRESET"
+
+      - name: Build
+        run: cmake --build --preset "$env:PRESET" --parallel
+
+      - name: Test what needs no Vulkan device
+        run: ctest --preset "$env:PRESET" --label-exclude vulkan-device
+
+  client-windows:
+    name: Client libraries on Windows
+    runs-on: windows-2025
+    timeout-minutes: 30
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Annotate the diagnostics of CMake and of MSVC
+        run: |
+          echo "::add-matcher::.github/problem-matchers/cmake.json"
+          echo "::add-matcher::.github/problem-matchers/msvc.json"
+
+      - name: Install the Vulkan SDK and the Vulkan loader
+        uses: ./.github/actions/vulkan-sdk
+
+      - name: Configure
+        run: cmake --preset windows-client
+
+      - name: Build the libraries that the client loads
+        run: cmake --build --preset windows-client --parallel
+
+      - name: Build the stand-in that shares the attachments of the renderer
+        run: cmake --build --preset windows-scene-host --parallel
