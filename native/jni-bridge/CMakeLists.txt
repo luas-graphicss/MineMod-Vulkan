@@ -18,14 +18,28 @@ if(TARGET minemod::scene_session)
         src/scene/scene_session_calls.cpp
         src/sharing/scene_sharing_calls.cpp)
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-        target_sources(minemod_jni PRIVATE src/sharing/exported_descriptors.cpp)
+        find_package(X11 REQUIRED)
+        target_sources(minemod_jni PRIVATE
+            src/sharing/exported_descriptors.cpp
+            src/window/awt_surface_calls.cpp
+            src/window/linux/awt_native_interface.cpp
+            src/window/linux/drawing_surface.cpp)
+        target_include_directories(minemod_jni SYSTEM PRIVATE "${X11_INCLUDE_DIR}")
+        target_link_libraries(minemod_jni PRIVATE ${CMAKE_DL_LIBS})
     elseif(WIN32)
-        target_sources(minemod_jni PRIVATE src/sharing/exported_nt_handles.cpp)
+        target_sources(minemod_jni PRIVATE
+            src/sharing/exported_nt_handles.cpp
+            src/window/awt_surface_calls.cpp
+            src/window/windows/awt_native_interface.cpp
+            src/window/windows/drawing_surface.cpp)
         target_compile_definitions(minemod_jni PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN)
     else()
-        target_sources(minemod_jni PRIVATE src/sharing/no_exported_handles.cpp)
+        target_sources(minemod_jni PRIVATE
+            src/sharing/no_exported_handles.cpp
+            src/window/no_awt_surface_calls.cpp)
     endif()
-    target_link_libraries(minemod_jni PRIVATE minemod::scene_session)
+    find_package(Vulkan REQUIRED)
+    target_link_libraries(minemod_jni PRIVATE minemod::scene_session Vulkan::Vulkan)
 else()
     target_sources(minemod_jni PRIVATE src/scene/no_scene_calls.cpp)
 endif()
