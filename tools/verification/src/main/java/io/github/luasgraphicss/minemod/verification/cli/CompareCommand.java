@@ -4,6 +4,7 @@ import io.github.luasgraphicss.minemod.verification.differential.DifferentialRes
 import io.github.luasgraphicss.minemod.verification.differential.DifferentialSuite;
 import io.github.luasgraphicss.minemod.verification.differential.provider.SystemProvider;
 import io.github.luasgraphicss.minemod.verification.differential.simulated.SimulatedComparison;
+import io.github.luasgraphicss.minemod.verification.visual.VisualSuite;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Path;
@@ -16,7 +17,11 @@ final class CompareCommand {
 
     private CompareCommand() {}
 
-    static int run(Invocation invocation, Path repositoryRoot, PrintStream output) throws IOException {
+    static int run(Invocation invocation, Path repositoryRoot, PrintStream output)
+            throws IOException, InterruptedException {
+        if (invocation.option("suite").filter(VisualSuite.NAME::equals).isPresent()) {
+            return VisualCompareCommand.run(invocation, repositoryRoot, output);
+        }
         invocation.allowOnly(Set.of("suite", PROVIDER, NATIVES, "root"));
         String suite = invocation.requiredOption("suite");
         if (!suite.equals(DifferentialSuite.NAME)) {
