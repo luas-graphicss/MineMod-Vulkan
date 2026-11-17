@@ -1,0 +1,27 @@
+[project]
+name = "provider-bundle"
+version = "0.1.0"
+description = "Builds and verifies the pinned Mesa/Zink bundle of the OpenGL provider"
+requires-python = ">=3.9"
+
+[project.optional-dependencies]
+dev = [
+    "mypy==2.4.1",
+    "pytest==9.2.0",
+    "ruff==0.17.5",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "tests"]
+testpaths = ["tests"]
+addopts = ["-p", "no:cacheprovider"]
+
+[tool.mypy]
+strict = true
+files = ["src", "tests"]
+mypy_path = ["src", "tests"]
+
+[tool.ruff]
+target-version = "py39"
+line-length = 120
+src = ["src", "tests"]

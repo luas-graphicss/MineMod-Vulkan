@@ -1,0 +1,4 @@
+FROM docker.io/library/debian:bullseye-slim@sha256:70509c95d1857a3704c0a5d92ee2e0adac95f612a9386889d70760bfd7c1ebba
+
+COPY provision.sh packages.txt /opt/provider-toolchain/
+RUN sh /opt/provider-toolchain/provision.sh

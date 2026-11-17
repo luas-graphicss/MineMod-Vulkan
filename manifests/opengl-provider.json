@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "mesa": {
+    "version": "24.2.8",
+    "source": {
+      "url": "https://archive.mesa3d.org/mesa-24.2.8.tar.xz",
+      "sha256": "999d0a854f43864fc098266aaf25600ce7961318a1e2e358bff94a7f53580e30"
+    }
+  },
+  "meson": {
+    "url": "https://github.com/mesonbuild/meson/releases/download/1.5.2/meson-1.5.2.tar.gz",
+    "sha256": "f955e09ab0d71ef180ae85df65991d58ed8430323de7d77a37e11c9ea630910b"
+  },
+  "sourceDateEpoch": 1732752000,
+  "staticLibraries": {
+    "libdrm": {
+      "source": {
+        "url": "https://dri.freedesktop.org/libdrm/libdrm-2.4.123.tar.xz",
+        "sha256": "a2b98567a149a74b0f50e91e825f9c0315d86e7be9b74394dae8b298caadb79e"
+      },
+      "mesonOptions": {
+        "buildtype": "release",
+        "default_library": "static",
+        "wrap_mode": "nodownload",
+        "intel": "disabled",
+        "radeon": "disabled",
+        "amdgpu": "disabled",
+        "nouveau": "disabled",
+        "vmwgfx": "disabled",
+        "omap": "disabled",
+        "exynos": "disabled",
+        "freedreno": "disabled",
+        "tegra": "disabled",
+        "vc4": "disabled",
+        "etnaviv": "disabled",
+        "cairo-tests": "disabled",
+        "man-pages": "disabled",
+        "valgrind": "disabled",
+        "udev": "false",
+        "tests": "false",
+        "install-test-programs": "false"
+      }
+    }
+  },
+  "mesonOptions": {
+    "buildtype": "release",
+    "b_ndebug": "true",
+    "strip": "true",
+    "wrap_mode": "nodownload",
+    "gallium-drivers": ["zink"],
+    "vulkan-drivers": [],
+    "vulkan-layers": [],
+    "opengl": "true",
+    "shared-glapi": "enabled",
+    "egl": "enabled",
+    "glx": "disabled",
+    "gbm": "disabled",
+    "gles1": "disabled",
+    "gles2": "disabled",
+    "glvnd": "disabled",
+    "llvm": "disabled",
+    "draw-use-llvm": "false",
+    "shader-cache": "disabled",
+    "zlib": "disabled",
+    "zstd": "disabled",
+    "xmlconfig": "disabled",
+    "expat": "disabled",
+    "valgrind": "disabled",
+    "libunwind": "disabled",
+    "lmsensors": "disabled",
+    "gallium-vdpau": "disabled",
+    "gallium-va": "disabled",
+    "gallium-xa": "disabled",
+    "gallium-omx": "disabled",
+    "gallium-nine": "false",
+    "gallium-opencl": "disabled",
+    "gallium-rusticl": "false",
+    "gallium-d3d12-video": "disabled",
+    "gallium-d3d12-graphics": "disabled",
+    "microsoft-clc": "disabled",
+    "spirv-to-dxil": "false",
+    "osmesa": "false",
+    "perfetto": "false",
+    "build-tests": "false",
+    "tools": [],
+    "video-codecs": []
+  },
+  "bundles": {
+    "linux-x86_64": {
+      "entry": "libEGL.so.1",
+      "dependencies": ["libglapi.so.0", "libgallium-24.2.8.so"],
+      "driverSettings": {
+        "GALLIUM_DRIVER": "zink",
+        "MESA_LOADER_DRIVER_OVERRIDE": "zink"
+      },
+      "staticLibraries": ["libdrm"],
+      "mesonOptions": {
+        "platforms": [],
+        "egl-native-platform": "surfaceless",
+        "dri3": "disabled",
+        "c_link_args": ["-static-libgcc"],
+        "cpp_link_args": ["-static-libgcc", "-static-libstdc++"]
+      },
+      "artifacts": {
+        "libglapi.so.0": "lib/libglapi.so.0.0.0",
+        "libgallium-24.2.8.so": "lib/libgallium-24.2.8.so",
+        "libEGL.so.1": "lib/libEGL.so.1.0.0"
+      },
+      "sha256": {
+        "libglapi.so.0": "6ae41bd39b689b3b18bbb95a3b7774d0c976e30e7e590fb8247fdb80e54baca7",
+        "libgallium-24.2.8.so": "6a21aadad3502085d9287aabb092aea05b1dbd69df40021c5fe1d0a64c169e39",
+        "libEGL.so.1": "25484f3aa5fafe1606a5fab6ed8e93d93a20357bc6c65cefdd5808353e294d91"
+      }
+    },
+    "windows-x86_64": {
+      "entry": "libEGL.dll",
+      "dependencies": ["libglapi.dll", "libgallium_wgl.dll"],
+      "driverSettings": {
+        "GALLIUM_DRIVER": "zink"
+      },
+      "crossFile": "cross/x86_64-w64-mingw32.ini",
+      "mesonOptions": {
+        "platforms": ["windows"],
+        "c_link_args": ["-static", "-static-libgcc", "-Wl,--no-insert-timestamp"],
+        "cpp_link_args": ["-static", "-static-libgcc", "-static-libstdc++", "-Wl,--no-insert-timestamp"]
+      },
+      "artifacts": {
+        "libglapi.dll": "bin/libglapi.dll",
+        "libgallium_wgl.dll": "bin/libgallium_wgl.dll",
+        "libEGL.dll": "bin/libEGL.dll"
+      },
+      "sha256": {
+        "libglapi.dll": "4d71e04f8089ab168c4da381e5c0729d01666d120156fd3a4e730109b51b9340",
+        "libgallium_wgl.dll": "b6b2b957bc267d8e211f221ed69b563e04e74b430138320bac48dd1dcc63f28c",
+        "libEGL.dll": "1284774bff613d4cdb9df778140936dbb566322ac88a5ecce0d91a0bb934095b"
+      }
+    }
+  }
+}
