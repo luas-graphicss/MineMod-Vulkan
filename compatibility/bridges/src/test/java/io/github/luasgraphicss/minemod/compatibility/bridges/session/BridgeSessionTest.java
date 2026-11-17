@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 class BridgeSessionTest {
     private static final String QUERY_RESULT = "query result across native draws";
     private static final String FEEDBACK = "transform feedback across native draws";
+    private static final String FLUID_SURFACES = "fluid surfaces in the translucent pass";
 
     private final List<String> journal = new ArrayList<>();
     private final BridgeRegistry registry = new BridgeRegistry();
@@ -94,5 +95,38 @@ class BridgeSessionTest {
         session.attachAll();
 
         assertEquals(Arrays.asList("occlusion attached", "feedback attached"), journal);
+    }
+
+    @Test
+    void theBridgesOfOnePassAreServedInTheOrderOfThePass() {
+        session.attachAll();
+        journal.clear();
+
+        List<String> failures = session.servePass(
+                Arrays.asList(FEEDBACK, "an operation no bridge serves", QUERY_RESULT), new long[] {7});
+
+        assertTrue(failures.isEmpty());
+        assertEquals(
+                Arrays.asList(
+                        "feedback serves " + FEEDBACK + "[7]", "occlusion serves " + QUERY_RESULT + "[7]"),
+                journal);
+    }
+
+    @Test
+    void aBridgeThatFailsDoesNotStopTheOthersOfItsPass() {
+        registry.register(new RecordingBridge("fluids", journal, FLUID_SURFACES) {
+            @Override
+            public long serve(String operation, long[] arguments) {
+                throw new IllegalStateException("the fluid mesh was released");
+            }
+        });
+        session.attachAll();
+        journal.clear();
+
+        List<String> failures = session.servePass(Arrays.asList(FLUID_SURFACES, QUERY_RESULT), new long[0]);
+
+        assertEquals(
+                Collections.singletonList("fluids in \"" + FLUID_SURFACES + "\": the fluid mesh was released"), failures);
+        assertEquals(Collections.singletonList("occlusion serves " + QUERY_RESULT + "[]"), journal);
     }
 }

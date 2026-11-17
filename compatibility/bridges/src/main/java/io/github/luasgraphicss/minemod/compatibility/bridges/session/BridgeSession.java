@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public final class BridgeSession {
     private final BridgeRegistry registry;
@@ -39,6 +40,22 @@ public final class BridgeSession {
                 .filter(attached::containsKey)
                 .orElseThrow(() -> new IllegalStateException("no attached bridge serves \"" + operation + "\""));
         return bridge.serve(operation, arguments.clone());
+    }
+
+    public synchronized List<String> servePass(List<String> operationsInOrder, long[] arguments) {
+        List<String> failures = new ArrayList<>();
+        for (String operation : operationsInOrder) {
+            Optional<RenderBridge> bridge = registry.bridgeFor(operation).filter(attached::containsKey);
+            if (!bridge.isPresent()) {
+                continue;
+            }
+            try {
+                bridge.get().serve(operation, arguments.clone());
+            } catch (RuntimeException failure) {
+                failures.add(bridge.get().descriptor().id() + " in \"" + operation + "\": " + failure.getMessage());
+            }
+        }
+        return failures;
     }
 
     public synchronized boolean serves(String operation) {
