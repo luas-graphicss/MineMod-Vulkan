@@ -1,6 +1,7 @@
 package io.github.luasgraphicss.minemod.verification.scenario;
 
 import io.github.luasgraphicss.minemod.verification.ecosystem.EcosystemScenarios;
+import io.github.luasgraphicss.minemod.verification.scenario.bootstrap.ClientBootstrapScenario;
 import io.github.luasgraphicss.minemod.verification.scenario.matrix.VanillaMatrixScenario;
 import io.github.luasgraphicss.minemod.verification.scenario.transformers.ProductionTransformersScenario;
 import java.util.List;
@@ -9,7 +10,10 @@ import java.util.stream.Stream;
 
 public final class RepositoryScenarioCatalog {
     private static final List<RepositoryScenario> SCENARIOS = Stream.concat(
-                    Stream.of(new ProductionTransformersScenario(), new VanillaMatrixScenario()),
+                    Stream.of(
+                            new ProductionTransformersScenario(),
+                            new VanillaMatrixScenario(),
+                            new ClientBootstrapScenario()),
                     EcosystemScenarios.all().stream())
             .toList();
 
