@@ -21,6 +21,27 @@ class VerificationCliTest {
     }
 
     @Test
+    void adaptersProfilePassesOnTheRepository() {
+        int exitCode = run("check", "--profile", "adapters", "--root", System.getProperty("minemod.repositoryRoot"));
+
+        assertEquals(VerificationCli.EXIT_OK, exitCode, text(output));
+        assertTrue(text(output).contains("check adapter-modules: ok"), text(output));
+    }
+
+    @Test
+    void theBuildMatrixHasTheAdaptersOfEveryCombination() {
+        int exitCode = run(
+                "build-matrix",
+                "--manifest",
+                "manifests/minecraft-targets.json",
+                "--root",
+                System.getProperty("minemod.repositoryRoot"));
+
+        assertEquals(VerificationCli.EXIT_OK, exitCode, text(output));
+        assertTrue(text(output).contains("build matrix: 73 of 73 combinations have their adapters"), text(output));
+    }
+
+    @Test
     void compatibilityProfilePassesOnTheRepository() {
         int exitCode = run("check", "--profile", "compatibility");
 

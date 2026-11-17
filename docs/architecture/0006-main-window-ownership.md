@@ -17,8 +17,10 @@ Minecraft 1.12.2 creates its window through `Display` in LWJGL 2, which also cre
 
 `minemod_harness` creates a swapchain on a `VK_EXT_headless_surface` surface and presents frames with zero validation messages. That exercises acquire, blit and present. It involves no window, no input and no game.
 
+Every release has the calls with which the game opens, presents, paces and closes its window pinned and redirected to one owner, in the names each loader runs. For 1.13 and 1.13.1 a Java agent does it in memory from a launcher profile that inherits the unmodified version: a child JVM started with that profile redirected every pinned call of both production clients and left the client jars untouched. `docs/development/release-adapters.md` says what those checks leave out. No owner other than the windowing library of the game is installed outside 1.21.1.
+
 ## Needed before acceptance
 
 - A minimal bootstrap on 1.21.1 with Fabric and on 1.12.2 with Forge: a window without the vanilla context, resize, minimise, focus, keyboard, captured mouse and close.
-- The launch path of 1.13 and 1.13.1, which have no loader, without redistributing the game or touching its authentication.
+- A launch of 1.13 and 1.13.1 from the launcher with the profile of the agent, on the Java 8 those releases ship with.
 - A check that no run loads both LWJGL generations.

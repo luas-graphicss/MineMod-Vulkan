@@ -10,6 +10,7 @@ dependencies {
     api(project(":jvm:native-bridge"))
     api(project(":compatibility:runtime"))
 
+    testImplementation(testFixtures(project(":compatibility:layer")))
     testImplementation(testFixtures(project(":compatibility:runtime")))
     testImplementation(project(":compatibility:lwjgl3"))
     testImplementation(libs.lwjgl3.core)

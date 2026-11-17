@@ -2,6 +2,7 @@ package io.github.luasgraphicss.minemod.compatibility.layer.sharing;
 
 import io.github.luasgraphicss.minemod.compatibility.interop.negotiation.ShareableResource;
 import io.github.luasgraphicss.minemod.compatibility.interop.negotiation.SharingRequest;
+import io.github.luasgraphicss.minemod.compatibility.interop.platform.HandlePlatform;
 import io.github.luasgraphicss.minemod.compatibility.layer.memory.ScratchInts;
 import io.github.luasgraphicss.minemod.compatibility.state.error.ErrorLedger;
 import io.github.luasgraphicss.minemod.compatibility.translation.provider.ProviderCalls;
@@ -14,24 +15,30 @@ public final class ProviderMemoryImports {
     private static final int GL_NO_ERROR = 0;
     private static final int GL_TEXTURE_2D = 0x0DE1;
     private static final int GL_ARRAY_BUFFER = 0x8892;
-    private static final int GL_HANDLE_TYPE_OPAQUE_FD = 0x9586;
     private static final int ONE = 1;
     private static final long NO_OFFSET = 0;
     private final Map<Integer, Imported> imports = new HashMap<>();
     private final ProviderCalls provider;
     private final ScratchInts scratch;
     private final ErrorLedger errors;
+    private final HandleImports handles;
 
     public ProviderMemoryImports(ProviderCalls provider, ScratchInts scratch, ErrorLedger errors) {
+        this(provider, scratch, errors, HandlePlatform.current());
+    }
+
+    public ProviderMemoryImports(
+            ProviderCalls provider, ScratchInts scratch, ErrorLedger errors, HandlePlatform platform) {
         this.provider = Objects.requireNonNull(provider, "provider");
         this.scratch = Objects.requireNonNull(scratch, "scratch");
         this.errors = Objects.requireNonNull(errors, "errors");
+        this.handles = HandleImports.on(platform);
     }
 
-    public int importMemory(SharingRequest request, long allocationSize, long fileDescriptor) {
+    public int importMemory(SharingRequest request, long allocationSize, long handle) {
         int earlierError = errors.take();
         try {
-            return importChecked(request, allocationSize, fileDescriptor);
+            return importChecked(request, allocationSize, handle);
         } finally {
             if (earlierError != GL_NO_ERROR) {
                 errors.raise(earlierError);
@@ -39,10 +46,9 @@ public final class ProviderMemoryImports {
         }
     }
 
-    private int importChecked(SharingRequest request, long allocationSize, long fileDescriptor) {
+    private int importChecked(SharingRequest request, long allocationSize, long handle) {
         int memoryObject = generate("glCreateMemoryObjectsEXT");
-        provider.invoke(
-                "glImportMemoryFdEXT", new long[] {memoryObject, allocationSize, GL_HANDLE_TYPE_OPAQUE_FD, fileDescriptor});
+        handles.memory(provider, memoryObject, allocationSize, handle);
         boolean isBuffer = request.resource() == ShareableResource.BUFFER;
         int object = unusedName(isBuffer ? "glGenBuffers" : "glGenTextures", isBuffer ? "glDeleteBuffers" : "glDeleteTextures");
         if (isBuffer) {

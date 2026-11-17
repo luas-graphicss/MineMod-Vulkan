@@ -50,6 +50,7 @@ public final class ModRendering {
         ModOpenGl opened = ModOpenGl.open(setup, renderer.sharing(), () -> GameFrame.submitPart(renderer));
         try {
             opened.install(new DispatchInstaller(dispatch, dispatch), BindingGeneration.LWJGL3);
+            opened.mirror(renderer.openGl().textures());
         } catch (RuntimeException failure) {
             opened.close();
             throw failure;

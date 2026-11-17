@@ -28,20 +28,20 @@ class SceneNegotiationTest {
     private static final long DEPTH_STENCIL_BYTES = 8L * WIDTH * HEIGHT;
     private static final byte RENDERER_GPU = 1;
     private static final byte ANOTHER_GPU = 2;
+    private static final HandlePlatform PLATFORM = HandlePlatform.LINUX_FILE_DESCRIPTOR;
 
-    private final List<String> providerExtensions =
-            new ArrayList<>(HandlePlatform.LINUX_FILE_DESCRIPTOR.requiredExtensions());
+    private final List<String> providerExtensions = new ArrayList<>(PLATFORM.requiredExtensions());
 
     @Test
     void semaphoresSynchronizeTheHandoffWhereBothSidesShareThem() {
-        SharingPlan plan = SceneNegotiation.negotiate(sessionSharing(true), gpu(RENDERER_GPU), providerExtensions);
+        SharingPlan plan = negotiate(sessionSharing(true), gpu(RENDERER_GPU));
 
         assertEquals(HandoffSynchronization.SEMAPHORES, plan.synchronization());
     }
 
     @Test
     void theHandoffBlocksWhereTheRendererSharesNoSemaphore() {
-        SharingPlan plan = SceneNegotiation.negotiate(sessionSharing(false), gpu(RENDERER_GPU), providerExtensions);
+        SharingPlan plan = negotiate(sessionSharing(false), gpu(RENDERER_GPU));
 
         assertEquals(HandoffSynchronization.BLOCKING, plan.synchronization());
     }
@@ -50,14 +50,14 @@ class SceneNegotiationTest {
     void theHandoffBlocksWhereTheProviderLacksASemaphoreExtension() {
         providerExtensions.remove("GL_EXT_semaphore_fd");
 
-        SharingPlan plan = SceneNegotiation.negotiate(sessionSharing(true), gpu(RENDERER_GPU), providerExtensions);
+        SharingPlan plan = negotiate(sessionSharing(true), gpu(RENDERER_GPU));
 
         assertEquals(HandoffSynchronization.BLOCKING, plan.synchronization());
     }
 
     @Test
     void eachAttachmentIsPlannedWithItsOwnFormatAndTheSizeOfTheSession() {
-        SharingPlan plan = SceneNegotiation.negotiate(sessionSharing(true), gpu(RENDERER_GPU), providerExtensions);
+        SharingPlan plan = negotiate(sessionSharing(true), gpu(RENDERER_GPU));
 
         SharingRequest color = plan.share(SharedAttachment.COLOR).request();
         SharingRequest depthStencil = plan.share(SharedAttachment.DEPTH_STENCIL).request();
@@ -74,7 +74,7 @@ class SceneNegotiationTest {
     void aProviderOnAnotherGpuIsRefused() {
         SharingRefused refused = assertThrows(
                 SharingRefused.class,
-                () -> SceneNegotiation.negotiate(sessionSharing(true), gpu(ANOTHER_GPU), providerExtensions));
+                () -> negotiate(sessionSharing(true), gpu(ANOTHER_GPU)));
 
         assertEquals(
                 "the renderer and the OpenGL provider cannot share the scene: "
@@ -88,12 +88,16 @@ class SceneNegotiationTest {
 
         SharingRefused refused = assertThrows(
                 SharingRefused.class,
-                () -> SceneNegotiation.negotiate(sessionSharing(false), gpu(RENDERER_GPU), providerExtensions));
+                () -> negotiate(sessionSharing(false), gpu(RENDERER_GPU)));
 
         assertEquals(
                 "the renderer and the OpenGL provider cannot share the scene: "
                         + "the provider lacks GL_EXT_memory_object; the provider lacks GL_EXT_memory_object_fd",
                 refused.getMessage());
+    }
+
+    private SharingPlan negotiate(SharedAttachments shared, DeviceIdentity provider) {
+        return SceneNegotiation.negotiate(shared, provider, providerExtensions, PLATFORM);
     }
 
     private static SharedAttachments sessionSharing(boolean sharesSemaphores) {

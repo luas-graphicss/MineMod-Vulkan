@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.github.luasgraphicss.minemod.verification.compatibility.model.CompatibilityManifest;
+import io.github.luasgraphicss.minemod.verification.json.RepositoryJson;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,5 +30,9 @@ public final class CompatibilityManifestFile {
             throw new IOException(path + " exceeds " + MAX_BYTES + " bytes");
         }
         return MAPPER.readValue(path.toFile(), CompatibilityManifest.class);
+    }
+
+    public static void writeTo(Path repositoryRoot, CompatibilityManifest manifest) throws IOException {
+        RepositoryJson.write(repositoryRoot.resolve(REPOSITORY_PATH), manifest);
     }
 }

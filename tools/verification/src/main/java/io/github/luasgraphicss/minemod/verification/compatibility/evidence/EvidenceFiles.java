@@ -38,6 +38,22 @@ public final class EvidenceFiles {
         return violations;
     }
 
+    public static CompatibilityManifest pinnedToFiles(Path repositoryRoot, CompatibilityManifest manifest)
+            throws IOException {
+        Path root = repositoryRoot.toAbsolutePath().normalize();
+        List<CompatibilityCase> cases = new ArrayList<>();
+        for (CompatibilityCase entry : manifest.cases()) {
+            List<Evidence> pinned = new ArrayList<>();
+            for (Evidence evidence : entry.evidence()) {
+                Path file = root.resolve(evidence.path()).normalize();
+                boolean isReadable = file.startsWith(root) && Files.isRegularFile(file);
+                pinned.add(isReadable ? new Evidence(evidence.path(), sha256Of(file)) : evidence);
+            }
+            cases.add(entry.withEvidence(pinned));
+        }
+        return new CompatibilityManifest(manifest.schemaVersion(), cases);
+    }
+
     private static String sha256Of(Path file) throws IOException {
         MessageDigest digest = sha256();
         byte[] buffer = new byte[BUFFER_BYTES];

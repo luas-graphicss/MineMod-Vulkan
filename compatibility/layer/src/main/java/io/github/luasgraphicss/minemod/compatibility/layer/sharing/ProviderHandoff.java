@@ -1,5 +1,6 @@
 package io.github.luasgraphicss.minemod.compatibility.layer.sharing;
 
+import io.github.luasgraphicss.minemod.compatibility.interop.platform.HandlePlatform;
 import io.github.luasgraphicss.minemod.compatibility.layer.memory.NativeInts;
 import io.github.luasgraphicss.minemod.compatibility.layer.memory.NativeMemory;
 import io.github.luasgraphicss.minemod.compatibility.layer.memory.ScratchInts;
@@ -10,7 +11,6 @@ public final class ProviderHandoff implements AutoCloseable {
     public static final int LAYOUT_COLOR_ATTACHMENT = 0x958E;
     public static final int LAYOUT_DEPTH_STENCIL_ATTACHMENT = 0x958F;
     private static final long[] NO_ARGUMENTS = new long[0];
-    private static final int GL_HANDLE_TYPE_OPAQUE_FD = 0x9586;
     private static final long NO_BUFFERS = 0;
     private final ProviderCalls provider;
     private final NativeMemory memory;
@@ -41,10 +41,11 @@ public final class ProviderHandoff implements AutoCloseable {
         this.providerSignal = providerSignal;
     }
 
-    public static int importSemaphore(ProviderCalls provider, ScratchInts scratch, long fileDescriptor) {
+    public static int importSemaphore(
+            ProviderCalls provider, ScratchInts scratch, HandlePlatform platform, long handle) {
         provider.invoke("glGenSemaphoresEXT", new long[] {1, scratch.address()});
         int semaphore = scratch.first();
-        provider.invoke("glImportSemaphoreFdEXT", new long[] {semaphore, GL_HANDLE_TYPE_OPAQUE_FD, fileDescriptor});
+        HandleImports.on(platform).semaphore(provider, semaphore, handle);
         return semaphore;
     }
 

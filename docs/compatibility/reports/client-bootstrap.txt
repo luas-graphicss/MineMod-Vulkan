@@ -1,0 +1,6 @@
+1.13: profile 1.13-minemod-vulkan inherits 1.13, keeps net.minecraft.client.main.Main and adds one agent with the pinned libraries [org.ow2.asm:asm:9.11.1]; the install holds nothing of the game
+1.13: the agent redirected the 6 pinned calls of client c0b970952cdd in the classes a child JVM defined; the client on disk kept its SHA-1
+1.13: the agent refused the client of 1.12.2 before any of its classes was defined
+1.13.1: profile 1.13.1-minemod-vulkan inherits 1.13.1, keeps net.minecraft.client.main.Main and adds one agent with the pinned libraries [org.ow2.asm:asm:9.11.1]; the install holds nothing of the game
+1.13.1: the agent redirected the 6 pinned calls of client 8de235e5ec3a in the classes a child JVM defined; the client on disk kept its SHA-1
+1.13.1: the agent refused the client of 1.12.2 before any of its classes was defined

@@ -5,7 +5,9 @@ import io.github.luasgraphicss.minemod.bridge.sharing.AttachmentDescription;
 import io.github.luasgraphicss.minemod.bridge.sharing.HandoffSemaphores;
 import io.github.luasgraphicss.minemod.bridge.sharing.SharedAttachment;
 import io.github.luasgraphicss.minemod.client.compatibility.sharing.ImportedAttachments;
+import io.github.luasgraphicss.minemod.compatibility.interop.handle.HandleLedger;
 import io.github.luasgraphicss.minemod.compatibility.interop.handoff.SharedAttachmentHandoff;
+import io.github.luasgraphicss.minemod.compatibility.interop.platform.HandlePlatform;
 import io.github.luasgraphicss.minemod.compatibility.layer.memory.NativeMemory;
 import io.github.luasgraphicss.minemod.compatibility.layer.memory.ScratchInts;
 import io.github.luasgraphicss.minemod.compatibility.layer.sharing.ProviderHandoff;
@@ -32,22 +34,29 @@ final class SemaphoreHandoffSource implements HandoffSource {
     private ProviderHandoff current;
 
     SemaphoreHandoffSource(
-            SceneSharing sharing, RendererHandoff renderer, ProviderCalls provider, NativeMemory memory) {
+            SceneSharing sharing,
+            RendererHandoff renderer,
+            ProviderCalls provider,
+            NativeMemory memory,
+            HandlePlatform platform) {
         this.sharing = sharing;
         this.renderer = renderer;
         this.provider = provider;
         this.memory = memory;
         this.scratch = new ScratchInts(memory, 1);
+        HandleLedger handles = new HandleLedger(platform, sharing::closeExported);
         HandoffSemaphores exported = sharing.exportSemaphores();
+        handles.exported(exported.rendererDone());
+        handles.exported(exported.providerDone());
         try {
-            this.rendererDone = importedOrClosed(exported.rendererDone());
+            this.rendererDone = importedOrClosed(handles, platform, exported.rendererDone());
         } catch (RuntimeException failure) {
-            sharing.closeExported(exported.providerDone());
+            handles.abandoned(exported.providerDone());
             scratch.close();
             throw failure;
         }
         try {
-            this.providerDone = importedOrClosed(exported.providerDone());
+            this.providerDone = importedOrClosed(handles, platform, exported.providerDone());
         } catch (RuntimeException failure) {
             delete(rendererDone);
             scratch.close();
@@ -84,14 +93,15 @@ final class SemaphoreHandoffSource implements HandoffSource {
         scratch.close();
     }
 
-    private int importedOrClosed(long descriptor) {
-        int semaphore = ProviderHandoff.importSemaphore(provider, scratch, descriptor);
+    private int importedOrClosed(HandleLedger handles, HandlePlatform platform, long handle) {
+        int semaphore = ProviderHandoff.importSemaphore(provider, scratch, platform, handle);
         int error = (int) provider.invoke("glGetError", NO_ARGUMENTS);
         if (error == GL_NO_ERROR) {
+            handles.imported(handle);
             return semaphore;
         }
         delete(semaphore);
-        sharing.closeExported(descriptor);
+        handles.abandoned(handle);
         throw new IllegalStateException(
                 "the provider refused to import a handoff semaphore with error 0x" + Integer.toHexString(error));
     }

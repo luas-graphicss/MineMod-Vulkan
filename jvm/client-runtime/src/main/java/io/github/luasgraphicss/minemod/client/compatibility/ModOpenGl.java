@@ -5,11 +5,16 @@ import io.github.luasgraphicss.minemod.client.compatibility.frame.MixedFrame;
 import io.github.luasgraphicss.minemod.client.compatibility.handoff.RecordedFrame;
 import io.github.luasgraphicss.minemod.client.compatibility.scene.SharedScene;
 import io.github.luasgraphicss.minemod.client.compatibility.state.WrapperCalls;
+import io.github.luasgraphicss.minemod.client.compatibility.textures.LayerAliases;
+import io.github.luasgraphicss.minemod.client.compatibility.textures.MirroredTextures;
+import io.github.luasgraphicss.minemod.client.compatibility.textures.ProviderTextures;
+import io.github.luasgraphicss.minemod.client.opengl.textures.TextureObjects;
 import io.github.luasgraphicss.minemod.compatibility.dispatch.binding.BindingGeneration;
 import io.github.luasgraphicss.minemod.compatibility.dispatch.install.DispatchInstaller;
 import io.github.luasgraphicss.minemod.compatibility.layer.CompatibilityLayer;
 import io.github.luasgraphicss.minemod.compatibility.natives.binding.NativeBinding;
 import io.github.luasgraphicss.minemod.compatibility.natives.gate.CallGate;
+import io.github.luasgraphicss.minemod.compatibility.natives.memory.JniMemory;
 import io.github.luasgraphicss.minemod.compatibility.provider.diagnosis.ProviderDiagnosis;
 import io.github.luasgraphicss.minemod.compatibility.provider.load.ProviderLoadException;
 import io.github.luasgraphicss.minemod.compatibility.runtime.CompatibilitySession;
@@ -27,6 +32,8 @@ public final class ModOpenGl implements AutoCloseable {
     private final CompatibilityLayer layer;
     private final MixedFrame frame;
     private final WrapperCalls wrapperCalls = new WrapperCalls();
+    private TextureObjects gameTextures;
+    private MirroredTextures mirroredTextures;
     private long presentedFrames;
 
     private ModOpenGl(
@@ -73,6 +80,22 @@ public final class ModOpenGl implements AutoCloseable {
         return wrapperCalls;
     }
 
+    public void mirror(TextureObjects textures) {
+        if (gameTextures != null) {
+            throw new IllegalStateException("the textures of the game are already mirrored for mods");
+        }
+        MirroredTextures copies = new MirroredTextures(
+                new LayerAliases(layer), new ProviderTextures(scene.provider(), new JniMemory()));
+        try {
+            textures.mirrorTo(copies);
+        } catch (RuntimeException failure) {
+            copies.close();
+            throw failure;
+        }
+        gameTextures = textures;
+        mirroredTextures = copies;
+    }
+
     public void beforeNativeWork() {
         frame.beforeNativeWork();
     }
@@ -90,6 +113,10 @@ public final class ModOpenGl implements AutoCloseable {
 
     @Override
     public void close() {
+        if (gameTextures != null) {
+            gameTextures.stopMirroring();
+            mirroredTextures.close();
+        }
         scene.close();
         context.close();
         session.close();

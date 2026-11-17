@@ -4,6 +4,7 @@ import io.github.luasgraphicss.minemod.bridge.SceneSharing;
 import io.github.luasgraphicss.minemod.client.compatibility.handoff.RecordedFrame;
 import io.github.luasgraphicss.minemod.client.compatibility.handoff.SceneHandoff;
 import io.github.luasgraphicss.minemod.client.compatibility.sharing.SceneImports;
+import io.github.luasgraphicss.minemod.compatibility.interop.platform.HandlePlatform;
 import io.github.luasgraphicss.minemod.compatibility.layer.memory.ScratchInts;
 import io.github.luasgraphicss.minemod.compatibility.natives.memory.JniMemory;
 import io.github.luasgraphicss.minemod.compatibility.runtime.scene.SceneSource;
@@ -17,6 +18,7 @@ public final class SharedScene implements SceneSource, AutoCloseable {
     private final JniMemory memory = new JniMemory();
     private final SceneSharing sharing;
     private final RecordedFrame frame;
+    private ProviderCalls provider;
     private SceneImports imports;
     private SceneHandoff handoff;
 
@@ -26,14 +28,15 @@ public final class SharedScene implements SceneSource, AutoCloseable {
     }
 
     @Override
-    public SceneTextures attach(ProviderCalls provider, ScratchInts scratch) {
-        imports = new SceneImports(sharing, provider, memory);
+    public SceneTextures attach(ProviderCalls calls, ScratchInts scratch) {
+        provider = calls;
+        imports = new SceneImports(sharing, calls, memory, HandlePlatform.current());
         return imports.current().textures();
     }
 
-    public AttachmentHandoff handoffThrough(ProviderCalls provider) {
+    public AttachmentHandoff handoffThrough(ProviderCalls calls) {
         try {
-            handoff = SceneHandoff.open(frame, sharing, provider, memory, imports.current());
+            handoff = SceneHandoff.open(frame, sharing, calls, memory, imports.current());
         } catch (RuntimeException failure) {
             imports.close();
             throw failure;
@@ -51,6 +54,10 @@ public final class SharedScene implements SceneSource, AutoCloseable {
 
     public SceneImports imports() {
         return imports;
+    }
+
+    public ProviderCalls provider() {
+        return provider;
     }
 
     @Override

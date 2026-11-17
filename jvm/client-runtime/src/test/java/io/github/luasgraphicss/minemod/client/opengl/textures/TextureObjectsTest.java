@@ -3,19 +3,25 @@ package io.github.luasgraphicss.minemod.client.opengl.textures;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.github.luasgraphicss.minemod.client.frame.StreamBudget;
 import io.github.luasgraphicss.minemod.client.support.RecordedStream;
 import io.github.luasgraphicss.minemod.client.textures.TexelArea;
 import io.github.luasgraphicss.minemod.client.textures.TexturePublisher;
+import io.github.luasgraphicss.minemod.client.textures.TextureShape;
 import io.github.luasgraphicss.minemod.codec.scene.SceneOpcode;
 import io.github.luasgraphicss.minemod.contract.handle.HandleAllocator;
 import io.github.luasgraphicss.minemod.contract.handle.ResourceHandle;
 import io.github.luasgraphicss.minemod.contract.handle.ResourceKind;
 import java.nio.ByteBuffer;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Deque;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class TextureObjectsTest {
@@ -203,6 +209,78 @@ class TextureObjectsTest {
         assertEquals(0, textures.sourceBytes(DEPTH_COMPONENT, 4, 2));
     }
 
+    @Test
+    void aMirrorNamesTheTexturesItFollows() {
+        textures.mirrorTo(new RecordingMirror(40, 41));
+
+        assertEquals(40, textures.generate());
+        assertEquals(41, textures.generate());
+    }
+
+    @Test
+    void aMirrorFollowsTheParametersTheShapeAndTheTexelsOfATexture() {
+        RecordingMirror mirror = new RecordingMirror(40);
+        textures.mirrorTo(mirror);
+        textures.bind(textures.generate());
+        textures.setParameter(TEXTURE_2D, MINIFICATION_FILTER, NEAREST);
+        textures.specify(TEXTURE_2D, 0, RGBA, 4, 4);
+
+        write(new TexelArea(0, 0, 0, 4, 4), RED, 1);
+
+        assertEquals(
+                Arrays.asList(
+                        "parameter 40: 10241 = 9728",
+                        "define 40: 4x4 in 1 level(s)",
+                        "write 40: 4x4 at 0,0 of level 0 with 64 bytes of 58"),
+                mirror.events());
+        assertTrue(published.find(40).isPresent());
+    }
+
+    @Test
+    void aTextureTheGameDeletesLeavesTheMirrorEvenWithoutTexels() {
+        RecordingMirror mirror = new RecordingMirror(40);
+        textures.mirrorTo(mirror);
+
+        textures.delete(textures.generate());
+
+        assertEquals(Collections.singletonList("delete 40"), mirror.events());
+    }
+
+    @Test
+    void aNameTheMirrorHandsOutAgainStartsWithoutTheTextureThatHeldIt() {
+        textures.mirrorTo(new RecordingMirror(40, 40));
+        textures.bind(textures.generate());
+        textures.specify(TEXTURE_2D, 0, RGBA, 4, 4);
+        write(new TexelArea(0, 0, 0, 4, 4), RGBA, 4);
+
+        int reused = textures.generate();
+
+        assertEquals(40, reused);
+        assertFalse(published.find(reused).isPresent());
+        assertEquals(0, textures.bound());
+    }
+
+    @Test
+    void aMirrorIsRefusedOnceTheGameNamedATexture() {
+        textures.generate();
+
+        assertThrows(IllegalStateException.class, () -> textures.mirrorTo(new RecordingMirror(40)));
+    }
+
+    @Test
+    void namesContinueAboveTheMirroredOnesOnceTheMirrorIsGone() {
+        RecordingMirror mirror = new RecordingMirror(40);
+        textures.mirrorTo(mirror);
+        textures.generate();
+
+        textures.stopMirroring();
+        int unmirrored = textures.generate();
+        textures.delete(unmirrored);
+
+        assertEquals(41, unmirrored);
+        assertEquals(Collections.emptyList(), mirror.events());
+    }
+
     private int bindNewTexture() {
         int texture = textures.generate();
         textures.bind(texture);
@@ -228,5 +306,45 @@ class TextureObjectsTest {
         published.publishTexels(stream.scene(), new StreamBudget(32 * 1024, 16));
         published.publishDestructions(stream.scene(), definitions);
         return stream;
+    }
+
+    private static final class RecordingMirror implements TextureMirror {
+        private final Deque<Integer> names = new ArrayDeque<>();
+        private final List<String> events = new ArrayList<>();
+
+        private RecordingMirror(Integer... namesInOrder) {
+            names.addAll(Arrays.asList(namesInOrder));
+        }
+
+        @Override
+        public int generate() {
+            return names.remove();
+        }
+
+        @Override
+        public void define(int texture, TextureShape shape) {
+            events.add("define " + texture + ": " + shape.width() + "x" + shape.height() + " in " + shape.levels()
+                    + " level(s)");
+        }
+
+        @Override
+        public void write(int texture, TexelArea area, ByteBuffer rgba) {
+            events.add("write " + texture + ": " + area + " with " + rgba.remaining() + " bytes of "
+                    + rgba.get(rgba.position()));
+        }
+
+        @Override
+        public void setParameter(int texture, int parameter, int value) {
+            events.add("parameter " + texture + ": " + parameter + " = " + value);
+        }
+
+        @Override
+        public void delete(int texture) {
+            events.add("delete " + texture);
+        }
+
+        private List<String> events() {
+            return events;
+        }
     }
 }

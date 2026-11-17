@@ -9,7 +9,14 @@ java {
 }
 
 dependencies {
+    implementation(libs.asm)
     implementation(libs.jackson.databind)
+    implementation(project(":adapters:configuration"))
+    implementation(project(":adapters:events"))
+    implementation(project(":adapters:renderer-ownership"))
+    implementation(project(":adapters:shader-packs"))
+    implementation(project(":adapters:transformers"))
+    implementation(project(":compatibility:bridges"))
     implementation(project(":compatibility:contexts"))
     implementation(project(":compatibility:interop"))
     implementation(project(":compatibility:translation"))

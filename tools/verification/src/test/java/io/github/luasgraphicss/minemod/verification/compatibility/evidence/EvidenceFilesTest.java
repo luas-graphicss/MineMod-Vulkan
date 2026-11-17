@@ -19,6 +19,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 class EvidenceFilesTest {
     private static final String CAPTURE = "docs/compatibility/evidence/minimap.txt";
+    private static final String MISSING = "docs/compatibility/evidence/missing.txt";
     private static final String CAPTURE_SHA256 = "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad";
 
     @TempDir
@@ -54,6 +55,18 @@ class EvidenceFilesTest {
                 violationsOf(new Evidence("../minimap.txt", CAPTURE_SHA256)));
     }
 
+    @Test
+    void pinsACaseToTheEvidenceOnDiskAndKeepsThePinOfAMissingFile() throws IOException {
+        writeCapture("abc");
+        CompatibilityManifest stale = manifestOf(new Evidence(CAPTURE, "0".repeat(64)), new Evidence(MISSING, "f".repeat(64)));
+
+        CompatibilityManifest pinned = EvidenceFiles.pinnedToFiles(repositoryRoot, stale);
+
+        assertEquals(
+                List.of(new Evidence(CAPTURE, CAPTURE_SHA256), new Evidence(MISSING, "f".repeat(64))),
+                pinned.cases().get(0).evidence());
+    }
+
     private void writeCapture(String content) throws IOException {
         Path capture = repositoryRoot.resolve(CAPTURE);
         Files.createDirectories(capture.getParent());
@@ -61,6 +74,10 @@ class EvidenceFilesTest {
     }
 
     private List<String> violationsOf(Evidence evidence) throws IOException {
+        return EvidenceFiles.findViolations(repositoryRoot, manifestOf(evidence));
+    }
+
+    private static CompatibilityManifest manifestOf(Evidence... evidence) {
         CompatibilityCase entry = new CompatibilityCase(
                 "minimap",
                 "1.21.1",
@@ -72,8 +89,6 @@ class EvidenceFilesTest {
                 Outcome.VERIFIED,
                 "the minimap matched the reference capture",
                 List.of(evidence));
-        CompatibilityManifest manifest =
-                new CompatibilityManifest(CompatibilityManifest.SCHEMA_VERSION, List.of(entry));
-        return EvidenceFiles.findViolations(repositoryRoot, manifest);
+        return new CompatibilityManifest(CompatibilityManifest.SCHEMA_VERSION, List.of(entry));
     }
 }

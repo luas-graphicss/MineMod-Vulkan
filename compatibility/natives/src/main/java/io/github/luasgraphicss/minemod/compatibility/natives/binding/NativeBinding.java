@@ -50,6 +50,8 @@ public final class NativeBinding {
 
     public static native void writeByte(long address, byte value);
 
+    public static native void writeBytes(long address, byte[] source, int offset, int count);
+
     public static native void bindLwjgl2Lookup(Class<?> glContext, FunctionLookup lookup);
 
     public static native void unbindLwjgl2Lookup();
