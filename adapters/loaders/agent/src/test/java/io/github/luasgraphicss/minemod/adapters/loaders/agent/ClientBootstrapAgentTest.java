@@ -1,13 +1,16 @@
 package io.github.luasgraphicss.minemod.adapters.loaders.agent;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.github.luasgraphicss.minemod.adapters.loaders.launch.fixtures.FixtureGame;
 import io.github.luasgraphicss.minemod.adapters.loaders.launch.plan.PlanRefusedException;
+import io.github.luasgraphicss.minemod.adapters.presentation.fixtures.InstalledOwners;
 import io.github.luasgraphicss.minemod.adapters.presentation.glfw.GlfwPresentationHooks;
+import io.github.luasgraphicss.minemod.adapters.presentation.owner.PresentationOwners;
 import io.github.luasgraphicss.minemod.adapters.transformers.release.ReleasePlan;
 import io.github.luasgraphicss.minemod.adapters.transformers.release.ReleasePlanFile;
 import io.github.luasgraphicss.minemod.adapters.transformers.release.UnsupportedClientException;
@@ -29,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -41,6 +45,22 @@ class ClientBootstrapAgentTest {
 
     @TempDir
     Path directory;
+
+    @AfterEach
+    void releaseTheOwner() {
+        InstalledOwners.release();
+    }
+
+    @Test
+    void installsTheNativeOwnerOnceTheClientIsAccepted() throws IOException {
+        Path client = clientHolding("client.jar", FixtureGame.windowCalling(FixtureGame.SWAP_BUFFERS, 1));
+        assertFalse(PresentationOwners.isInstalled());
+
+        install(planPinnedTo(client), classPathOf(client));
+
+        assertTrue(PresentationOwners.isInstalled());
+        assertFalse(PresentationOwners.current().keepsOpenGlContext());
+    }
 
     @Test
     void redirectsThePinnedCallsOfTheClientOnTheClassPath() throws IOException, IllegalClassFormatException {
@@ -63,6 +83,7 @@ class ClientBootstrapAgentTest {
 
         assertThrows(UnsupportedClientException.class, () -> install(planPinnedTo(pinned), classPathOf(other)));
         assertTrue(transformers.isEmpty());
+        assertFalse(PresentationOwners.isInstalled());
     }
 
     @Test

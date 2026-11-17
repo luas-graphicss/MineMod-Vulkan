@@ -19,6 +19,7 @@ dependencies {
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly(libs.junit.platform.launcher)
     testImplementation(testFixtures(project(":adapters:loaders:launch")))
+    testImplementation(testFixtures(project(":adapters:presentation:core")))
     testImplementation(libs.asm)
     testImplementation(libs.asm.tree)
     testImplementation(libs.modlauncher11) { isTransitive = false }
