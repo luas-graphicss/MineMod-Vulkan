@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "machines": [
+    {
+      "id": "software-lavapipe",
+      "system": {
+        "family": "linux",
+        "description": "Amazon Linux 2023, x86-64, in a container"
+      },
+      "device": {
+        "name": "llvmpipe (LLVM 15.0.7, 256 bits)",
+        "type": "cpu",
+        "driver": "llvmpipe Mesa 24.2.6 (LLVM 15.0.7)",
+        "vulkanApi": "1.3.289"
+      },
+      "evidence": [
+        "native-presentation",
+        "window-presentation",
+        "shared-image-interop"
+      ]
+    }
+  ]
+}
