@@ -11,6 +11,7 @@ jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", ver
 lwjgl2-core = { module = "org.lwjgl.lwjgl:lwjgl", version.ref = "lwjgl2" }
 lwjgl2-platform = { module = "org.lwjgl.lwjgl:lwjgl-platform", version.ref = "lwjgl2" }
 lwjgl3-core = { module = "org.lwjgl:lwjgl", version.ref = "lwjgl3" }
+lwjgl3-glfw = { module = "org.lwjgl:lwjgl-glfw", version.ref = "lwjgl3" }
 lwjgl3-opengl = { module = "org.lwjgl:lwjgl-opengl", version.ref = "lwjgl3" }
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
