@@ -1,6 +1,6 @@
 # 5. Sharing images between the renderer and the OpenGL provider
 
-Status: proposed. `compatibility/interop` implements the negotiation, the handle ownership and the semaphore order, and `native/interop` exports the memory and hands the attachments over on the renderer's side. On lavapipe, Zink imported memory that another Vulkan device exported, and both sides drew on it in turn, ordered by finishing one side before the other drew. The semaphore round trip between the two devices has not run, and nothing has run on a hardware GPU or on Windows.
+Status: proposed. `compatibility/interop` implements the negotiation, the handle ownership and the semaphore order, and `native/interop` exports the memory and hands the attachments over on the renderer's side. On lavapipe, Zink imported memory that another Vulkan device exported, and both sides drew on it in turn, ordered by finishing one side before the other drew. The semaphore round trip between the two devices has not run, and nothing has run on a hardware GPU or on Windows. `manifests/reference-machines.json` lists the machines that ran the shared-scene suite, and `verification check --profile hardware` fails until a real GPU has run it on Linux and on Windows.
 
 ## Context
 
