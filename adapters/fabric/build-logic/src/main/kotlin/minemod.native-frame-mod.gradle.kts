@@ -1,5 +1,6 @@
 import io.github.luasgraphicss.minemod.buildlogic.nativeframe.MixinConfig
 import io.github.luasgraphicss.minemod.buildlogic.nativeframe.ReleaseTargets
+import io.github.luasgraphicss.minemod.buildlogic.nativeframe.names.GameNames
 import java.security.MessageDigest
 import java.util.Properties
 
@@ -11,7 +12,8 @@ val buildJdk = 21
 
 val release = projectDir.name.removePrefix("mc-")
 val repositoryRoot = projectDir.resolve("../../..")
-val target = ReleaseTargets.read(repositoryRoot.resolve("manifests/minecraft-targets.json")).of(release)
+val targets = ReleaseTargets.read(repositoryRoot.resolve("manifests/minecraft-targets.json"))
+val target = targets.of(release)
 val sharedSources = projectDir.resolve("../native-frame/src")
 val gameAdapter = project(":minecraft-adapter")
 evaluationDependsOn(gameAdapter.path)
@@ -59,7 +61,7 @@ val bundledRuntime = configurations.create("bundledRuntime") {
 
 dependencies {
     minecraft("com.mojang:minecraft:$release")
-    mappings(loom.officialMojangMappings())
+    mappings(GameNames(loom, targets).of(target))
     modImplementation(target.fabricLoader)
     implementation(project(path = gameAdapter.path, configuration = "namedElements"))
     implementation("minemod-vulkan.jvm:client-runtime")
