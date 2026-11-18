@@ -1,3 +1,3 @@
 plugins {
-    id("minemod.release-adapter")
+    id("minemod.native-frame-game")
 }
