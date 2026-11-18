@@ -8,8 +8,9 @@ A pinned-call adapter does not draw the game. Its entry point installs a native 
 
 - `adapters/minecraft/mc-<release>` holds the plan in the names of the client jar.
 - `adapters/forge`, `adapters/fabric`, `adapters/neoforge` and `adapters/bootstrap` hold, per release, the same plan in the names that loader runs, and build the jar a user installs.
-- `adapters/loaders` holds how each loader starts a plan. `launch` reads the plan from the jar and applies it to a class file or to an ASM tree; the other five modules are the entry points below.
+- `adapters/loaders` holds how each loader starts a plan. `launch` reads the plan from the jar and applies it to a class file or to an ASM tree; the other six modules are the entry points below.
 - `adapters/presentation` holds what the plans redirect to: `core` the contract of an owner, `glfw` and `display` the hooks and the native owners of LWJGL 3 and LWJGL 2, and `renderer` the presenter that starts the bundled renderer on a window surface.
+- `adapters/frame` holds what the frame plans of 1.12.2 to 1.13.2 hand the OpenGL calls of the game to: `core` the stand-ins and the fixed pipeline they keep, `display` and `glfw` the capabilities and the owner of each LWJGL generation.
 
 Both kinds of module have two files: a `build.gradle.kts` that applies `minemod.release-adapter` or `minemod.loader-adapter`, and `src/main/resources/META-INF/minemod/release-plan.properties`. `settings.gradle.kts` includes every directory whose build file is exactly that.
 
@@ -25,7 +26,7 @@ Both kinds of module have two files: a `build.gradle.kts` that applies `minemod.
 | Loader | Releases | Entry point | Where a mismatch stops the game |
 | --- | --- | --- | --- |
 | LaunchWrapper | Forge 1.12.2 | `TweakClass` in the manifest names `PinnedCallsTweaker`, which registers a class transformer | When the tweaker is injected, against the classes before any transformer; again when a pinned class is loaded |
-| ModLauncher 2 to 10 | Forge 1.13.2 to 1.21.1, NeoForge up to 20.4 | `PinnedCallsService` in `META-INF/services`, one class transformer per pinned class | When a pinned class is transformed |
+| ModLauncher 2 to 10 | Forge 1.13.2 to 1.21.1, NeoForge up to 20.4 | `PinnedCallsService` in `META-INF/services`, one class transformer per pinned class; on Forge 1.13.2 `PinnedFrameService`, which applies the frame plan too | When a pinned class is transformed |
 | ModLauncher 10.1 and 11 | NeoForge from 20.5 | the same service compiled against the typed targets of that API | When a pinned class is transformed |
 | Fabric Loader | Fabric 1.14 to 1.21 | `fabric.mod.json`, a Mixin configuration and `PinnedCallsPlugin`, which rewrites a class after every mixin was applied to it | When the mixins of a pinned class are applied; Fabric Loader refuses another release from `fabric.mod.json` |
 | None | 1.13 and 1.13.1 | a Java agent the launcher profile adds to the unmodified client | Before the game starts: the agent checks the SHA-1 of the client and every pinned call |
@@ -47,11 +48,36 @@ The renderer is the JNI library the jar bundles. Built with `-Pminemod.sceneLibr
 
 What the owner lacks:
 
-- The game goes on calling OpenGL after its window opens, and nothing in these releases sends those calls to the compatibility layer. A launch is expected to stop at the first of them; none has been tried.
+- Under the release plan alone, the game goes on calling OpenGL after its window opens, and nothing sends those calls to the compatibility layer. A launch is expected to stop at the first of them; none has been tried. 1.12.2 to 1.13.2 carry a frame plan for those calls, described in the next section.
 - The stand-in for `Display` is a window of 854 by 480 that answers none of the size, focus, fullscreen or input queries of LWJGL 2.
 - The Win32 half of the JAWT surface has never been compiled.
 
 On LaunchWrapper the tweaker excludes `io.github.luasgraphicss.minemod.` from the class loader of the game, so the hooks the transformed classes call are the classes the tweaker installed the owner in.
+
+## The frame of 1.12.2 to 1.13.2
+
+These four releases have no Fabric target, so no mixin reaches the code that draws them. Their adapters carry a second plan, `META-INF/minemod/frame-plan.properties`, next to the release plan. It pins every call the client makes to the fixed pipeline of OpenGL and names, for each, the class that answers it instead of LWJGL:
+
+| Stand-in | What it answers |
+| --- | --- |
+| `MatrixCalls`, `SwitchCalls`, `SurfaceCalls`, `FogCalls`, `LightCalls`, `TextureUnitCalls` | The matrix stacks, the enabled steps, blending, depth and alpha, fog, the lights and the active texture unit, kept in `FixedPipeline` |
+| `TextureCalls`, `BufferCalls` | The texture objects of `jvm/client-runtime`, which publish their texels to the renderer, and the vertex buffers of the game |
+| `ClientArrayCalls`, `ImmediateCalls`, `DisplayListCalls` | Draws from vertex arrays, vertices between `glBegin` and `glEnd`, and display lists, replayed each time the game calls them |
+| `ClearCalls`, `AnswerCalls` | Clears and the viewport; `glGetError`, `glGetString`, `glGetInteger` and `glReadPixels` from the last frame |
+| `LeftToTheSceneCalls` | State the scene renderer owns or does not model, accepted and ignored |
+| `ContextCalls` on LWJGL 2, `CapabilityCalls` and `AddressedTexelCalls` on LWJGL 3 | The capabilities the game reads, and texel uploads by address |
+
+A draw becomes a `CapturedDraw`: its vertices, the two matrices, the bound textures and the state of the pipeline at that call. `RecordedFrameRenderer` records it for the scene renderer and presents the recorded frame at the buffer swap. A draw the scene cannot take is left out and counted; nothing is approximated.
+
+The capabilities offer `OpenGL11` to `OpenGL15`, `OpenGL20` and `GL_NV_fog_distance`, and no framebuffer or shader extension, so the game is expected to keep to its fixed pipeline. The calls it only makes with those extensions stay with LWJGL; `docs/compatibility/reports/frame-plans.txt` lists them by class.
+
+`PinnedCallsTweaker`, the agent and, on Forge 1.13.2, `PinnedFrameService` apply the release plan and then one rewrite per stand-in, and install `DisplayFrameOwner` or `GlfwFrameOwner` in place of the native owner above. A loader adapter takes the frame entry point when its module has a frame plan, and `verifyLaunchEntries` fails a jar whose plan names a stand-in the jar lacks.
+
+What the frame lacks:
+
+- None of the four releases was launched. The stand-ins ran in tests against a scene that records draws, not against the renderer.
+- The plans pin the vanilla client. Forge patches classes and adds classes of its own that call OpenGL, its loading screen among them; none of those calls is handed over.
+- State in `LeftToTheSceneCalls` is ignored: polygon mode, logic operations, shade model, the texture environment and generated coordinates beyond their switch. What the game draws through them will look different.
 
 ## Releases without a loader
 
@@ -69,9 +95,10 @@ The profile inherits `1.13`, keeps its main class and its game arguments, adds `
 ```sh
 sh gradlew :tools:verification:run --args="hooks refresh"
 sh gradlew :tools:verification:run --args="adapters refresh"
+sh gradlew :tools:verification:run --args="frames refresh"
 ```
 
-The first rescans the clients and rewrites `manifests/presentation-hooks.json`. The second rewrites the plans of the 36 game adapters and the 72 loader adapters, downloading the name files from `maven.fabricmc.net` and `maven.minecraftforge.net`. A module with another build file is left alone.
+The first rescans the clients and rewrites `manifests/presentation-hooks.json`. The second rewrites the plans of the 36 game adapters and the 72 loader adapters, downloading the name files from `maven.fabricmc.net` and `maven.minecraftforge.net`. A module with another build file is left alone. The third rescans the clients of 1.12.2 to 1.13.2 and rewrites their eight frame plans; it stops when a client calls, on a class a stand-in answers, something no stand-in answers.
 
 ## What the checks cover
 
@@ -81,6 +108,7 @@ sh gradlew :tools:verification:run --args="check --profile adapters"
 sh gradlew :tools:verification:run --args="build-matrix --manifest manifests/minecraft-targets.json"
 sh gradlew :tools:verification:run --args="scenario production-transformers"
 sh gradlew :tools:verification:run --args="scenario vanilla-matrix"
+sh gradlew :tools:verification:run --args="scenario frame-plans"
 sh gradlew :adapters:bootstrap:mc-1.13:launcherInstall :adapters:bootstrap:mc-1.13.1:launcherInstall
 sh gradlew :tools:verification:run --args="scenario client-bootstrap"
 sh gradlew :adapters:presentation:glfw:check :adapters:presentation:display:check \
@@ -88,8 +116,9 @@ sh gradlew :adapters:presentation:glfw:check :adapters:presentation:display:chec
 ```
 
 - `gradlew check` builds the 108 modules and fails when the jar of a loader adapter lacks its plan, its hooks or what its loader starts it from. The entry points are tested against the API of each loader with a fixture class: a real `LaunchClassLoader`, the transformer interfaces of ModLauncher 2.1.5 and 11.0.5, the plugin interface of Fabric's Mixin and `java.lang.instrument`. Those tests run on Java 8, 16, 17 and 21, except the ModLauncher 11 ones, which need Java 21.
-- The `adapters` profile compares every committed plan with the hooks manifest, without the network.
+- The `adapters` profile compares every committed plan with the hooks manifest, without the network. For 1.12.2 to 1.13.2 it also checks the frame plans: both modules of a release carry one, pinned on the client of the manifest and written in the names of the release plan, and every call goes to the stand-in that answers it.
 - `production-transformers` downloads the 37 clients and applies each plan to its own client; `vanilla-matrix` renames the pinned classes of each client to the names of each loader and applies the plan of that loader. Both need the network. `docs/compatibility/reports/vanilla-matrix.txt` is what the second one reported.
+- `frame-plans` rescans the four clients without a mixin loader, compares the result with the committed frame plans, renames the pinned classes to the names of the loader and applies the plan as the loader reads it: every pinned call must reach its stand-in, as many times as pinned, and none may stay on a class a stand-in answers. `docs/compatibility/reports/frame-plans.txt` is what it reported.
 - `client-bootstrap` starts a JVM with the JVM arguments of each built profile and the production client on the class path, loads the pinned classes without running them and reads back what the JVM defined: every pinned call must go to the hooks, the client on disk must keep its SHA-1, and the same agent must stop the JVM on the client of another release. `docs/compatibility/reports/client-bootstrap.txt` is what it reported.
 - The last command needs a window system and the JNI library of the `linux-client` preset. `NativeGlfwOnWindowTest` and `NativeDisplayOnWindowTest` put that library in a jar, install the native owner over it, open a window through the pinned hooks, present four frames and close. Without the property or a display both are skipped, so `gradlew check` passes without them; the CI job `Compatibility layer on Mesa/Zink` runs them on Xvfb and lavapipe and fails when either was skipped. The tests of the LaunchWrapper, ModLauncher, Fabric and agent entry points check that each installs the owner, and the agent's that it installs none for a client it refuses. `client-bootstrap` runs `premain` in a child JVM and does not look at the owner.
 
@@ -97,5 +126,6 @@ What they leave out:
 
 - The native owner presented only outside the game, on lavapipe. `docs/development/reference-machines.md` says what a real GPU still has to run.
 - The clients of Forge and NeoForge are the vanilla client under the names those loaders run. Their binary patches are not applied, so a patch that adds or removes a pinned call would only be found when the game starts.
+- The frame of 1.12.2 to 1.13.2 was never drawn: no test sends a captured draw to the renderer, and no launch tried the stand-ins against the game or against the patches and classes of Forge.
 - No adapter was loaded by Forge, NeoForge, Fabric Loader or the launcher. How ModLauncher 9 and later place a service jar in their module layers is untested.
 - `client-bootstrap` loads classes in a JVM of the version that runs the tool, not in the Java 8 the two releases ship with, and never calls the game.
