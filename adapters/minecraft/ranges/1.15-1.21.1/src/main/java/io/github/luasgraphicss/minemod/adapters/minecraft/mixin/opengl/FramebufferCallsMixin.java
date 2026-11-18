@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(GlStateManager.class)
 abstract class FramebufferCallsMixin {
-    @Inject(method = {"glGenFramebuffers", "glGenRenderbuffers"}, at = @At("HEAD"), cancellable = true)
+    @Inject(method = "glGenFramebuffers", at = @At("HEAD"), cancellable = true)
     private static void minemod$nameAFramebuffer(CallbackInfoReturnable<Integer> callback) {
         if (ClientRendering.replacesOpenGl()) {
             callback.setReturnValue(ClientRendering.openGl().generateFramebuffer());
@@ -34,17 +34,7 @@ abstract class FramebufferCallsMixin {
     }
 
     @Inject(
-            method = {
-                "_glBlitFrameBuffer",
-                "_glBindRenderbuffer",
-                "_glDeleteRenderbuffers",
-                "_glDeleteFramebuffers",
-                "_glRenderbufferStorage",
-                "_glFramebufferRenderbuffer",
-                "_glFramebufferTexture2D",
-                "_readPixels*",
-                "_glDrawPixels"
-            },
+            method = {"_glDeleteFramebuffers", "_glFramebufferTexture2D", "_readPixels*"},
             at = @At("HEAD"),
             cancellable = true)
     private static void minemod$leaveFramebuffersToTheScene(CallbackInfo callback) {

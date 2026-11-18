@@ -11,9 +11,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(GlStateManager.class)
-abstract class BufferCallsMixin {
-    @Inject(method = {"_glGenBuffers", "_glGenVertexArrays"}, at = @At("HEAD"), cancellable = true)
-    private static void minemod$nameABuffer(CallbackInfoReturnable<Integer> callback) {
+abstract class CoreBufferCallsMixin {
+    @Inject(method = "_glGenVertexArrays", at = @At("HEAD"), cancellable = true)
+    private static void minemod$nameAVertexArray(CallbackInfoReturnable<Integer> callback) {
         if (ClientRendering.replacesOpenGl()) {
             callback.setReturnValue(ClientRendering.openGl().buffers().generate());
         }
@@ -43,21 +43,10 @@ abstract class BufferCallsMixin {
     }
 
     @Inject(
-            method = {
-                "_glBufferData(ILjava/nio/ByteBuffer;I)V",
-                "_glBindBuffer",
-                "_glBindVertexArray",
-                "_glUnmapBuffer",
-                "_glDeleteBuffers",
-                "_glDeleteVertexArrays",
-                "_vertexAttribPointer",
-                "_vertexAttribIPointer",
-                "_enableVertexAttribArray",
-                "_disableVertexAttribArray"
-            },
+            method = {"_glBindVertexArray", "_glUnmapBuffer", "_glDeleteVertexArrays", "_vertexAttribIPointer"},
             at = @At("HEAD"),
             cancellable = true)
-    private static void minemod$leaveBuffersToTheScene(CallbackInfo callback) {
+    private static void minemod$leaveVertexArraysToTheScene(CallbackInfo callback) {
         if (ClientRendering.replacesOpenGl()) {
             callback.cancel();
         }

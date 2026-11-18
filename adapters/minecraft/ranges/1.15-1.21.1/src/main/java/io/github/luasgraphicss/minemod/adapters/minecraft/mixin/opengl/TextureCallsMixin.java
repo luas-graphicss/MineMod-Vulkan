@@ -3,7 +3,6 @@ package io.github.luasgraphicss.minemod.adapters.minecraft.mixin.opengl;
 import com.mojang.blaze3d.platform.GlStateManager;
 import io.github.luasgraphicss.minemod.adapters.minecraft.bootstrap.ClientRendering;
 import io.github.luasgraphicss.minemod.adapters.minecraft.opengl.TexelUploads;
-import io.github.luasgraphicss.minemod.client.opengl.textures.TextureObjects;
 import io.github.luasgraphicss.minemod.client.textures.TexelArea;
 import java.nio.IntBuffer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,36 +20,12 @@ abstract class TextureCallsMixin {
         }
     }
 
-    @Inject(method = "_genTextures", at = @At("HEAD"), cancellable = true)
-    private static void minemod$nameTextures(int[] names, CallbackInfo callback) {
-        if (!ClientRendering.replacesOpenGl()) {
-            return;
-        }
-        TextureObjects textures = ClientRendering.openGl().textures();
-        for (int index = 0; index < names.length; index++) {
-            names[index] = textures.generate();
-        }
-        callback.cancel();
-    }
-
     @Inject(method = "_deleteTexture", at = @At("HEAD"), cancellable = true)
     private static void minemod$deleteATexture(int texture, CallbackInfo callback) {
         if (ClientRendering.replacesOpenGl()) {
             ClientRendering.openGl().textures().delete(texture);
             callback.cancel();
         }
-    }
-
-    @Inject(method = "_deleteTextures", at = @At("HEAD"), cancellable = true)
-    private static void minemod$deleteTextures(int[] deleted, CallbackInfo callback) {
-        if (!ClientRendering.replacesOpenGl()) {
-            return;
-        }
-        TextureObjects textures = ClientRendering.openGl().textures();
-        for (int texture : deleted) {
-            textures.delete(texture);
-        }
-        callback.cancel();
     }
 
     @Inject(method = "_bindTexture", at = @At("HEAD"), cancellable = true)
@@ -66,13 +41,6 @@ abstract class TextureCallsMixin {
         if (ClientRendering.replacesOpenGl()) {
             ClientRendering.openGl().textures().activate(unit);
             callback.cancel();
-        }
-    }
-
-    @Inject(method = "_getActiveTexture", at = @At("HEAD"), cancellable = true)
-    private static void minemod$tellTheActiveUnit(CallbackInfoReturnable<Integer> callback) {
-        if (ClientRendering.replacesOpenGl()) {
-            callback.setReturnValue(ClientRendering.openGl().textures().activeUnit());
         }
     }
 
@@ -146,7 +114,7 @@ abstract class TextureCallsMixin {
         }
     }
 
-    @Inject(method = {"_getTexImage", "_glCopyTexSubImage2D"}, at = @At("HEAD"), cancellable = true)
+    @Inject(method = "_getTexImage", at = @At("HEAD"), cancellable = true)
     private static void minemod$copyNoTexels(CallbackInfo callback) {
         if (ClientRendering.replacesOpenGl()) {
             callback.cancel();

@@ -3,7 +3,6 @@ package io.github.luasgraphicss.minemod.adapters.minecraft.mixin.opengl;
 import com.mojang.blaze3d.platform.GlStateManager;
 import io.github.luasgraphicss.minemod.adapters.minecraft.bootstrap.ClientRendering;
 import io.github.luasgraphicss.minemod.adapters.minecraft.opengl.OpenGlAnswers;
-import java.util.List;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,14 +22,6 @@ abstract class ProgramCallsMixin {
     private static void minemod$nameAProgram(CallbackInfoReturnable<Integer> callback) {
         if (ClientRendering.replacesOpenGl()) {
             callback.setReturnValue(ClientRendering.openGl().programs().createProgram());
-        }
-    }
-
-    @Inject(method = "glShaderSource", at = @At("HEAD"), cancellable = true)
-    private static void minemod$keepTheSource(int shader, List<String> source, CallbackInfo callback) {
-        if (ClientRendering.replacesOpenGl()) {
-            ClientRendering.openGl().programs().source(shader, source);
-            callback.cancel();
         }
     }
 
@@ -92,7 +83,6 @@ abstract class ProgramCallsMixin {
                 "glCompileShader",
                 "glLinkProgram",
                 "_glUseProgram",
-                "_glBindAttribLocation",
                 "_glUniform1*",
                 "_glUniform1i",
                 "_glUniform2*",

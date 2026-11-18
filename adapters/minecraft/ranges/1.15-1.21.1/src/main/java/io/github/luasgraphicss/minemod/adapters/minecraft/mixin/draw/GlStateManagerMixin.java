@@ -100,22 +100,6 @@ abstract class GlStateManagerMixin {
         minemod$keep(callback, state -> state.depthOffset(factor, units));
     }
 
-    @Inject(method = "_enableScissorTest", at = @At("HEAD"), cancellable = true)
-    private static void minemod$clip(CallbackInfo callback) {
-        minemod$keep(callback, GL11.GL_SCISSOR_TEST, true, state -> state.clip(true));
-    }
-
-    @Inject(method = "_disableScissorTest", at = @At("HEAD"), cancellable = true)
-    private static void minemod$stopClipping(CallbackInfo callback) {
-        minemod$keep(callback, GL11.GL_SCISSOR_TEST, false, state -> state.clip(false));
-    }
-
-    @Inject(method = "_scissorBox", at = @At("HEAD"), cancellable = true)
-    private static void minemod$keepTheClipBox(int left, int bottom, int width, int height, CallbackInfo callback) {
-        ModRendering.left(WrapperCall.SCISSOR_BOX, left, bottom, width, height);
-        minemod$keep(callback, state -> state.clipBox(left, bottom, width, height));
-    }
-
     @Inject(method = "_clearColor", at = @At("HEAD"), cancellable = true)
     private static void minemod$keepTheClearColor(
             float red, float green, float blue, float alpha, CallbackInfo callback) {

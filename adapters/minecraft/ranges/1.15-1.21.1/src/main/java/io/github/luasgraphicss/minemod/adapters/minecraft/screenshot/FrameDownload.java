@@ -5,7 +5,6 @@ import io.github.luasgraphicss.minemod.client.frame.FramePixels;
 import io.github.luasgraphicss.minemod.client.session.ClientRenderer;
 import java.nio.ByteBuffer;
 import java.util.Optional;
-import net.minecraft.client.Minecraft;
 import org.lwjgl.system.MemoryUtil;
 
 public final class FrameDownload {
@@ -33,7 +32,7 @@ public final class FrameDownload {
 
     private static boolean showsTheWindow() {
         int downloaded = ClientRendering.openGl().textures().bound();
-        return downloaded == Minecraft.getInstance().getMainRenderTarget().getColorTextureId();
+        return downloaded == WindowColorTexture.name();
     }
 
     private static Optional<FramePixels> lastFrame() {
