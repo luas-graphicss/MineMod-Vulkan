@@ -1,3 +1,3 @@
 plugins {
-    id("minemod.loader-adapter")
+    id("minemod.native-frame-mod")
 }
