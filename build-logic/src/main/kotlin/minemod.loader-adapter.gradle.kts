@@ -1,3 +1,5 @@
+import io.github.luasgraphicss.minemod.buildlogic.adapters.AdapterResources
+import io.github.luasgraphicss.minemod.buildlogic.adapters.FramePlanStandIns
 import io.github.luasgraphicss.minemod.buildlogic.adapters.LaunchIntegrations
 import io.github.luasgraphicss.minemod.buildlogic.adapters.LoaderAdapter
 import io.github.luasgraphicss.minemod.buildlogic.adapters.LoaderTarget
@@ -14,7 +16,8 @@ val bytecodeRelease = 8
 val family = project.parent!!.name
 val release = name.removePrefix("mc-")
 val target = LoaderTarget.read(rootDir.resolve("manifests/minecraft-targets.json"), family, release)
-val launch = LaunchIntegrations.of(target)
+val drawsFrame = layout.projectDirectory.file("src/main/resources/${AdapterResources.FRAME_PLAN}").asFile.isFile
+val launch = LaunchIntegrations.of(target, drawsFrame)
 val adapter = LoaderAdapter(
     target = target,
     launch = launch,
@@ -62,13 +65,17 @@ tasks.jar {
 
 val verifyLaunchEntries = tasks.register("verifyLaunchEntries") {
     group = LifecycleBasePlugin.VERIFICATION_GROUP
-    description = "Fails when the jar lacks the plan, the hooks or what its loader starts it from."
+    description = "Fails when the jar lacks a plan, the classes its calls go to or what its loader starts it from."
     val adapterJar = tasks.jar.flatMap { it.archiveFile }
     val requiredEntries = launch.requiredEntries
     inputs.file(adapterJar)
     inputs.property("requiredEntries", requiredEntries)
     doLast {
-        val missing = ZipFile(adapterJar.get().asFile).use { jar -> requiredEntries.filter { jar.getEntry(it) == null } }
+        val missing = ZipFile(adapterJar.get().asFile).use { jar ->
+            val framePlan = jar.getEntry(AdapterResources.FRAME_PLAN)
+            val standIns = framePlan?.let { jar.getInputStream(it).use(FramePlanStandIns::classEntriesOf) }.orEmpty()
+            (requiredEntries + standIns).filter { jar.getEntry(it) == null }
+        }
         if (missing.isNotEmpty()) {
             throw GradleException("${adapterJar.get().asFile.name} lacks $missing")
         }

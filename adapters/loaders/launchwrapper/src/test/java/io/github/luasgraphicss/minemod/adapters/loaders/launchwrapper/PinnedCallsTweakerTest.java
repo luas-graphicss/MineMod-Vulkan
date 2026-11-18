@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import io.github.luasgraphicss.minemod.adapters.frame.session.GameFrames;
 import io.github.luasgraphicss.minemod.adapters.loaders.launch.fixtures.FixtureGame;
 import io.github.luasgraphicss.minemod.adapters.loaders.launch.plan.PlanRefusedException;
 import io.github.luasgraphicss.minemod.adapters.presentation.display.DisplayPresentationHooks;
@@ -37,7 +38,7 @@ class PinnedCallsTweakerTest {
 
     @Test
     void registersItsTransformerOnTheGameThePlanWasPinnedOn() throws IOException {
-        FixtureGame.writeWindow(gameClasses, FixtureGame.windowCalling(FixtureGame.DISPLAY_UPDATE, 1));
+        FixtureGame.writeWindow(gameClasses, FixtureGame.windowCallingEach(FixtureGame.DISPLAY_UPDATE, FixtureGame.MATRIX_MODE));
         LaunchClassLoader classLoader = launchClassLoader();
 
         tweaker.injectIntoClassLoader(classLoader);
@@ -49,13 +50,14 @@ class PinnedCallsTweakerTest {
 
     @Test
     void installsTheNativeOwnerWhereTheClassesOfTheGameFindIt() throws IOException, ClassNotFoundException {
-        FixtureGame.writeWindow(gameClasses, FixtureGame.windowCalling(FixtureGame.DISPLAY_UPDATE, 1));
+        FixtureGame.writeWindow(gameClasses, FixtureGame.windowCallingEach(FixtureGame.DISPLAY_UPDATE, FixtureGame.MATRIX_MODE));
         LaunchClassLoader classLoader = launchClassLoader();
 
         tweaker.injectIntoClassLoader(classLoader);
 
         assertSame(PresentationOwners.class, classLoader.findClass(PresentationOwners.class.getName()));
         assertSame(DisplayPresentationHooks.class, classLoader.findClass(DisplayPresentationHooks.class.getName()));
+        assertSame(GameFrames.class, classLoader.findClass(GameFrames.class.getName()));
         assertTrue(PresentationOwners.isInstalled());
         assertFalse(PresentationOwners.current().keepsOpenGlContext());
     }

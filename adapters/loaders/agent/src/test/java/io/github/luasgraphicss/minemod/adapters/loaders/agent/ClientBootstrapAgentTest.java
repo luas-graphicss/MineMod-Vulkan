@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.github.luasgraphicss.minemod.adapters.loaders.launch.fixtures.FixtureGame;
+import io.github.luasgraphicss.minemod.adapters.loaders.launch.plan.FramePlan;
 import io.github.luasgraphicss.minemod.adapters.loaders.launch.plan.PlanRefusedException;
 import io.github.luasgraphicss.minemod.adapters.presentation.fixtures.InstalledOwners;
 import io.github.luasgraphicss.minemod.adapters.presentation.glfw.GlfwPresentationHooks;
@@ -53,10 +54,10 @@ class ClientBootstrapAgentTest {
 
     @Test
     void installsTheNativeOwnerOnceTheClientIsAccepted() throws IOException {
-        Path client = clientHolding("client.jar", FixtureGame.windowCalling(FixtureGame.SWAP_BUFFERS, 1));
+        Path client = clientHolding("client.jar", pinnedWindow());
         assertFalse(PresentationOwners.isInstalled());
 
-        install(planPinnedTo(client), classPathOf(client));
+        install(planPinnedTo(client), framePlanPinnedTo(client), classPathOf(client));
 
         assertTrue(PresentationOwners.isInstalled());
         assertFalse(PresentationOwners.current().keepsOpenGlContext());
@@ -64,24 +65,28 @@ class ClientBootstrapAgentTest {
 
     @Test
     void redirectsThePinnedCallsOfTheClientOnTheClassPath() throws IOException, IllegalClassFormatException {
-        byte[] window = FixtureGame.windowCalling(FixtureGame.SWAP_BUFFERS, 1);
+        byte[] window = pinnedWindow();
         Path client = clientHolding("client.jar", window);
 
-        install(planPinnedTo(client), classPathOf(client));
+        install(planPinnedTo(client), framePlanPinnedTo(client), classPathOf(client));
 
         byte[] rewritten = transformers.get(0).transform(null, FixtureGame.WINDOW, null, null, window);
         assertEquals(1, FixtureGame.callsTo(rewritten, GlfwPresentationHooks.INTERNAL_NAME));
         assertEquals(0, FixtureGame.callsTo(rewritten, FixtureGame.SWAP_BUFFERS.owner()));
+        assertEquals(1, FixtureGame.callsTo(rewritten, FixtureGame.STAND_IN));
+        assertEquals(0, FixtureGame.callsTo(rewritten, FixtureGame.MATRIX_MODE.owner()));
         assertNull(transformers.get(0).transform(null, "fixture/Screen", null, null, window));
         assertEquals(new ArrayList<>(), refusals);
     }
 
     @Test
     void refusesAClientThatIsNotThePinnedOne() throws IOException {
-        Path pinned = clientHolding("pinned.jar", FixtureGame.windowCalling(FixtureGame.SWAP_BUFFERS, 1));
-        Path other = clientHolding("other.jar", FixtureGame.windowCalling(FixtureGame.SWAP_BUFFERS, 2));
+        Path pinned = clientHolding("pinned.jar", pinnedWindow());
+        Path other = clientHolding("other.jar", windowSwappingTwice());
 
-        assertThrows(UnsupportedClientException.class, () -> install(planPinnedTo(pinned), classPathOf(other)));
+        assertThrows(
+                UnsupportedClientException.class,
+                () -> install(planPinnedTo(pinned), framePlanPinnedTo(pinned), classPathOf(other)));
         assertTrue(transformers.isEmpty());
         assertFalse(PresentationOwners.isInstalled());
     }
@@ -95,26 +100,27 @@ class ClientBootstrapAgentTest {
             archive.closeEntry();
         }
         ReleasePlan plan = FixtureGame.plan(FixtureGame.SWAP_BUFFERS);
+        FramePlan frame = framePlanOf(FixtureGame.UNPINNED_CLIENT);
 
         IllegalStateException refusal =
-                assertThrows(IllegalStateException.class, () -> install(plan, classPathOf(library)));
+                assertThrows(IllegalStateException.class, () -> install(plan, frame, classPathOf(library)));
 
         assertTrue(refusal.getMessage().contains("no Minecraft client"), refusal.getMessage());
     }
 
     @Test
     void reportsAClassThatChangedAfterTheClientWasChecked() throws IOException, IllegalClassFormatException {
-        byte[] window = FixtureGame.windowCalling(FixtureGame.SWAP_BUFFERS, 1);
+        byte[] window = pinnedWindow();
         Path client = clientHolding("client.jar", window);
-        install(planPinnedTo(client), classPathOf(client));
+        install(planPinnedTo(client), framePlanPinnedTo(client), classPathOf(client));
 
-        byte[] changed = FixtureGame.windowCalling(FixtureGame.SWAP_BUFFERS, 2);
+        byte[] changed = windowSwappingTwice();
 
         assertNull(transformers.get(0).transform(null, FixtureGame.WINDOW, null, null, changed));
         assertEquals(1, refusals.size());
     }
 
-    private void install(ReleasePlan plan, String classPath) throws IOException {
+    private void install(ReleasePlan plan, FramePlan frame, String classPath) throws IOException {
         Instrumentation instrumentation = (Instrumentation) Proxy.newProxyInstance(
                 Instrumentation.class.getClassLoader(),
                 new Class<?>[] {Instrumentation.class},
@@ -125,7 +131,7 @@ class ClientBootstrapAgentTest {
                     transformers.add((ClassFileTransformer) arguments[0]);
                     return null;
                 });
-        ClientBootstrapAgent.install(plan, classPath, instrumentation, refusals::add);
+        ClientBootstrapAgent.install(plan, frame, classPath, instrumentation, refusals::add);
     }
 
     private Path clientHolding(String name, byte[] window) throws IOException {
@@ -148,6 +154,24 @@ class ClientBootstrapAgentTest {
     private static ReleasePlan planPinnedTo(Path client) throws IOException {
         String text = FixtureGame.planText(FixtureGame.SWAP_BUFFERS, sha1Of(client));
         return ReleasePlanFile.read(new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    private static byte[] pinnedWindow() {
+        return FixtureGame.windowCallingEach(FixtureGame.SWAP_BUFFERS, FixtureGame.MATRIX_MODE);
+    }
+
+    private static byte[] windowSwappingTwice() {
+        return FixtureGame.windowCallingEach(
+                FixtureGame.SWAP_BUFFERS, FixtureGame.SWAP_BUFFERS, FixtureGame.MATRIX_MODE);
+    }
+
+    private static FramePlan framePlanPinnedTo(Path client) throws IOException {
+        return framePlanOf(sha1Of(client));
+    }
+
+    private static FramePlan framePlanOf(String clientSha1) throws IOException {
+        String text = FixtureGame.framePlanText(FixtureGame.MATRIX_MODE, clientSha1, FixtureGame.STAND_IN);
+        return FramePlan.read(new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8)));
     }
 
     private static String sha1Of(Path file) throws IOException {

@@ -10,6 +10,7 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -23,6 +24,8 @@ public final class FixtureGame {
     public static final String UNPINNED_CLIENT = "0123456789abcdef0123456789abcdef01234567";
     public static final MethodTarget SWAP_BUFFERS = MethodTarget.parse("org/lwjgl/glfw/GLFW.glfwSwapBuffers(J)V");
     public static final MethodTarget DISPLAY_UPDATE = MethodTarget.parse("org/lwjgl/opengl/Display.update()V");
+    public static final MethodTarget MATRIX_MODE = MethodTarget.parse("org/lwjgl/opengl/GL11.glMatrixMode(I)V");
+    public static final String STAND_IN = "fixture/StandIn";
 
     private static final String PRESENT = "present";
     private static final String PRESENT_DESCRIPTOR = "()V";
@@ -31,12 +34,18 @@ public final class FixtureGame {
     private FixtureGame() {}
 
     public static byte[] windowCalling(MethodTarget library, int calls) {
+        MethodTarget[] libraries = new MethodTarget[calls];
+        Arrays.fill(libraries, library);
+        return windowCallingEach(libraries);
+    }
+
+    public static byte[] windowCallingEach(MethodTarget... libraries) {
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
         writer.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, WINDOW, null, "java/lang/Object", null);
         MethodVisitor present = writer.visitMethod(
                 Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC, PRESENT, PRESENT_DESCRIPTOR, null, null);
         present.visitCode();
-        for (int call = 0; call < calls; call++) {
+        for (MethodTarget library : libraries) {
             for (Type argument : Type.getArgumentTypes(library.descriptor())) {
                 present.visitInsn(argument.getSize() == 2 ? Opcodes.LCONST_0 : Opcodes.ICONST_0);
             }
@@ -57,6 +66,10 @@ public final class FixtureGame {
                 + "point.present.callee=" + library + "\n"
                 + "point.present.within=" + WINDOW + "." + PRESENT + PRESENT_DESCRIPTOR + "\n"
                 + "point.present.matches=1\n";
+    }
+
+    public static String framePlanText(MethodTarget library, String clientSha1, String standIn) {
+        return planText(library, clientSha1) + "point.present.hook=" + standIn + "\n";
     }
 
     public static ReleasePlan plan(MethodTarget library) {

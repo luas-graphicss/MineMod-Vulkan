@@ -12,12 +12,13 @@ object LaunchIntegrations {
     private const val NEOFORGE = "net.neoforged:neoforge:"
     private val firstNeoForgeWithTypedTargets = listOf(20, 5)
 
-    fun of(target: LoaderTarget): LaunchIntegration = when (target.bootstrap) {
+    fun of(target: LoaderTarget, drawsFrame: Boolean): LaunchIntegration = when (target.bootstrap) {
         "client-bootstrap" -> LaunchIntegration(
             module = "agent",
             entryClass = "$LOADERS.agent.ClientBootstrapAgent",
             hooks = GLFW_HOOKS,
             manifestAttributes = mapOf("Premain-Class" to "$LOADERS.agent.ClientBootstrapAgent"),
+            metadataEntries = listOf(AdapterResources.FRAME_PLAN),
             packagingPlugin = "minemod.loader-adapter-launcher",
         )
         "launchwrapper" -> LaunchIntegration(
@@ -25,6 +26,7 @@ object LaunchIntegrations {
             entryClass = "$LOADERS.launchwrapper.PinnedCallsTweaker",
             hooks = DISPLAY_HOOKS,
             manifestAttributes = mapOf("TweakClass" to "$LOADERS.launchwrapper.PinnedCallsTweaker"),
+            metadataEntries = listOf(AdapterResources.FRAME_PLAN),
         )
         "fabric-knot" -> LaunchIntegration(
             module = "knot",
@@ -37,9 +39,17 @@ object LaunchIntegrations {
             ),
             packagingPlugin = "minemod.loader-adapter-fabric",
         )
-        "modlauncher" -> modLauncher(target.artifact)
+        "modlauncher" -> if (drawsFrame) modLauncherFrame() else modLauncher(target.artifact)
         else -> throw GradleException("no launch integration for the bootstrap ${target.bootstrap}")
     }
+
+    private fun modLauncherFrame() = LaunchIntegration(
+        module = "modlauncher-frame",
+        entryClass = "$LOADERS.modlauncher.frame.PinnedFrameService",
+        hooks = GLFW_HOOKS,
+        manifestAttributes = mapOf("Automatic-Module-Name" to AUTOMATIC_MODULE),
+        metadataEntries = listOf(TRANSFORMATION_SERVICES, AdapterResources.FRAME_PLAN),
+    )
 
     private fun modLauncher(artifact: String?): LaunchIntegration {
         val typedTargets = artifact != null && artifact.startsWith(NEOFORGE) && hasTypedTargets(artifact)

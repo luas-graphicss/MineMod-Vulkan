@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     api(project(":adapters:loaders:launch"))
-    api(project(":adapters:presentation:glfw"))
+    api(project(":adapters:frame:glfw"))
     compileOnly(libs.asm)
 
     testImplementation(testFixtures(project(":adapters:loaders:launch")))
