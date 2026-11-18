@@ -32,7 +32,7 @@ SharedBuffer::SharedBuffer(const renderer::Device& device, const SharedBufferDes
 
     const VkExternalMemoryBufferCreateInfo external_buffer{
         .sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO,
-        .handleTypes = shared_handle_type,
+        .handleTypes = static_cast<VkExternalMemoryHandleTypeFlags>(shared_handle_type),
     };
     const VkBufferCreateInfo create_info{
         .sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,

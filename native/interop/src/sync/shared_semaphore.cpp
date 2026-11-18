@@ -21,7 +21,7 @@ SharedSemaphore::SharedSemaphore(const renderer::Device& device) : semaphore_exp
 
     const VkExportSemaphoreCreateInfo exported{
         .sType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO,
-        .handleTypes = shared_semaphore_type,
+        .handleTypes = static_cast<VkExternalSemaphoreHandleTypeFlags>(shared_semaphore_type),
     };
     const VkSemaphoreCreateInfo create_info{
         .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
