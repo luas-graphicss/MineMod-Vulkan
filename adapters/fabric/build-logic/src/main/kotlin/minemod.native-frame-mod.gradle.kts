@@ -121,7 +121,7 @@ val stageNativeLibrary = tasks.register("stageNativeLibrary") {
 tasks.withType<JavaCompile>().configureEach {
     options.release = target.javaRuntime
     options.encoding = "UTF-8"
-    options.compilerArgs.addAll(listOf("-Xlint:all,-processing", "-Werror"))
+    options.compilerArgs.addAll(listOf("-Xlint:all,-processing,-options", "-Werror"))
 }
 
 tasks.compileTestJava {
