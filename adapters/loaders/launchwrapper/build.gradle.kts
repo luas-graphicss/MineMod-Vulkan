@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     api(project(":adapters:loaders:launch"))
-    api(project(":adapters:presentation:display"))
+    api(project(":adapters:frame:display"))
     compileOnly(libs.asm)
     compileOnly(libs.launchwrapper) { isTransitive = false }
 

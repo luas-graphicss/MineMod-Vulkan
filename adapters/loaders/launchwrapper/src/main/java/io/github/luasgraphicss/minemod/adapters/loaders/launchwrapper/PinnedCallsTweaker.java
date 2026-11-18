@@ -1,7 +1,7 @@
 package io.github.luasgraphicss.minemod.adapters.loaders.launchwrapper;
 
-import io.github.luasgraphicss.minemod.adapters.loaders.launch.apply.ClassFileApplication;
-import io.github.luasgraphicss.minemod.adapters.presentation.display.DisplayNativeOwner;
+import io.github.luasgraphicss.minemod.adapters.frame.display.DisplayFrameOwner;
+import io.github.luasgraphicss.minemod.adapters.loaders.launch.apply.ClassFileApplications;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -19,14 +19,14 @@ public final class PinnedCallsTweaker implements ITweaker {
 
     @Override
     public void injectIntoClassLoader(LaunchClassLoader classLoader) {
-        ClassFileApplication application = PinnedCallsTransformer.applicationOf(PinnedCallsTweaker.class);
+        ClassFileApplications applications = PinnedCallsTransformer.applicationsOf(PinnedCallsTweaker.class);
         try {
-            application.requireApplicableTo(className -> Optional.ofNullable(classLoader.getClassBytes(className)));
+            applications.requireApplicableTo(className -> Optional.ofNullable(classLoader.getClassBytes(className)));
         } catch (IOException unreadable) {
             throw new UncheckedIOException("the classes of the game cannot be read", unreadable);
         }
         classLoader.addClassLoaderExclusion(ADAPTER_PACKAGES);
-        DisplayNativeOwner.installFrom(PinnedCallsTweaker.class.getClassLoader());
+        DisplayFrameOwner.installFrom(PinnedCallsTweaker.class.getClassLoader());
         classLoader.registerTransformer(PinnedCallsTransformer.class.getName());
     }
 

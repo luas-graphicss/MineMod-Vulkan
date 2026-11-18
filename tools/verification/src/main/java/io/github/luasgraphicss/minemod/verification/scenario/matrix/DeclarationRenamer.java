@@ -8,10 +8,10 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-final class DeclarationRenamer {
+public final class DeclarationRenamer {
     private DeclarationRenamer() {}
 
-    static byte[] rename(byte[] classFile, String runtimeClass, Map<String, MethodTarget> runtimeMethods) {
+    public static byte[] rename(byte[] classFile, String runtimeClass, Map<String, MethodTarget> runtimeMethods) {
         ClassWriter renamed = new ClassWriter(0);
         new ClassReader(classFile)
                 .accept(

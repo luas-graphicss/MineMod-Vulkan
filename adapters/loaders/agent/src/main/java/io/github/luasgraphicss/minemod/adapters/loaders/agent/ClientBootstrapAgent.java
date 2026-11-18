@@ -1,9 +1,10 @@
 package io.github.luasgraphicss.minemod.adapters.loaders.agent;
 
-import io.github.luasgraphicss.minemod.adapters.loaders.launch.apply.ClassFileApplication;
+import io.github.luasgraphicss.minemod.adapters.frame.glfw.GlfwFrameOwner;
+import io.github.luasgraphicss.minemod.adapters.loaders.launch.apply.ClassFileApplications;
+import io.github.luasgraphicss.minemod.adapters.loaders.launch.plan.FramePlan;
 import io.github.luasgraphicss.minemod.adapters.loaders.launch.plan.PinnedPlan;
 import io.github.luasgraphicss.minemod.adapters.loaders.launch.plan.PlanRefusedException;
-import io.github.luasgraphicss.minemod.adapters.presentation.glfw.GlfwNativeOwner;
 import io.github.luasgraphicss.minemod.adapters.presentation.glfw.GlfwPresentationHooks;
 import io.github.luasgraphicss.minemod.adapters.transformers.release.ReleasePlan;
 import java.io.IOException;
@@ -17,8 +18,10 @@ public final class ClientBootstrapAgent {
     private ClientBootstrapAgent() {}
 
     public static void premain(String options, Instrumentation instrumentation) throws IOException {
+        ClassLoader adapter = ClientBootstrapAgent.class.getClassLoader();
         install(
-                PinnedPlan.of(ClientBootstrapAgent.class.getClassLoader()),
+                PinnedPlan.of(adapter),
+                FramePlan.of(adapter),
                 System.getProperty(CLASS_PATH),
                 instrumentation,
                 ClientBootstrapAgent::haltBecauseTheJvmIgnoresTransformerFailures);
@@ -26,18 +29,19 @@ public final class ClientBootstrapAgent {
 
     static void install(
             ReleasePlan plan,
+            FramePlan frame,
             String classPath,
             Instrumentation instrumentation,
             Consumer<PlanRefusedException> onRefusal)
             throws IOException {
         ClientJar client = ClientJar.onClassPath(classPath);
         client.requirePinnedBy(plan);
-        ClassFileApplication application = new ClassFileApplication(plan, GlfwPresentationHooks.INTERNAL_NAME);
+        ClassFileApplications applications = frame.classFilesAfter(plan, GlfwPresentationHooks.INTERNAL_NAME);
         try (ClientJar.Classes classes = client.openClasses()) {
-            application.requireApplicableTo(classes);
+            applications.requireApplicableTo(classes);
         }
-        instrumentation.addTransformer(new PinnedCallsTransformer(application, onRefusal));
-        GlfwNativeOwner.installFrom(ClientBootstrapAgent.class.getClassLoader());
+        instrumentation.addTransformer(new PinnedCallsTransformer(applications, onRefusal));
+        GlfwFrameOwner.installFrom(ClientBootstrapAgent.class.getClassLoader());
     }
 
     private static void haltBecauseTheJvmIgnoresTransformerFailures(PlanRefusedException refused) {

@@ -2,14 +2,14 @@
 1.13 CLIENT_BOOTSTRAP: 6 points redirect 6 calls of the client in official names
 1.13.1 CLIENT_BOOTSTRAP: 6 points redirect 6 calls of the client in official names
 1.13.2 FORGE: 6 points redirect 6 calls of the client in srg names
-1.14 FABRIC: 6 points redirect 6 calls of the client in intermediary names
-1.14.1 FABRIC: 6 points redirect 6 calls of the client in intermediary names
+1.14 FABRIC: adapters/fabric/mc-1.14 has a build of its own, outside the pinned calls
+1.14.1 FABRIC: adapters/fabric/mc-1.14.1 has a build of its own, outside the pinned calls
 1.14.2 FORGE: 6 points redirect 6 calls of the client in srg names
-1.14.2 FABRIC: 6 points redirect 6 calls of the client in intermediary names
+1.14.2 FABRIC: adapters/fabric/mc-1.14.2 has a build of its own, outside the pinned calls
 1.14.3 FORGE: 6 points redirect 6 calls of the client in srg names
-1.14.3 FABRIC: 6 points redirect 6 calls of the client in intermediary names
+1.14.3 FABRIC: adapters/fabric/mc-1.14.3 has a build of its own, outside the pinned calls
 1.14.4 FORGE: 6 points redirect 6 calls of the client in srg names
-1.14.4 FABRIC: 6 points redirect 6 calls of the client in intermediary names
+1.14.4 FABRIC: adapters/fabric/mc-1.14.4 has a build of its own, outside the pinned calls
 1.15 FORGE: 6 points redirect 6 calls of the client in srg names
 1.15 FABRIC: adapters/fabric/mc-1.15 has a build of its own, outside the pinned calls
 1.15.1 FORGE: 6 points redirect 6 calls of the client in srg names
@@ -71,5 +71,5 @@
 1.21.1 FORGE: 6 points redirect 6 calls of the client in mojang names
 1.21.1 FABRIC: adapters/fabric/mc-1.21.1 has a build of its own, outside the pinned calls
 1.21.1 NEOFORGE: 6 points redirect 6 calls of the client in mojang names
-pinned-call adapters verified on the production client: 3 in official names, 10 in mojang names, 5 in intermediary names, 27 in srg names; 28 target(s) with a build of their own
+pinned-call adapters verified on the production client: 3 in official names, 10 in mojang names, 27 in srg names; 33 target(s) with a build of their own
 the clients of forge and neoforge are the vanilla client under the names those loaders run; the binary patches of the loaders are not applied here

@@ -1,17 +1,17 @@
 package io.github.luasgraphicss.minemod.adapters.loaders.agent;
 
-import io.github.luasgraphicss.minemod.adapters.loaders.launch.apply.ClassFileApplication;
+import io.github.luasgraphicss.minemod.adapters.loaders.launch.apply.ClassFileApplications;
 import io.github.luasgraphicss.minemod.adapters.loaders.launch.plan.PlanRefusedException;
 import java.lang.instrument.ClassFileTransformer;
 import java.security.ProtectionDomain;
 import java.util.function.Consumer;
 
 final class PinnedCallsTransformer implements ClassFileTransformer {
-    private final ClassFileApplication application;
+    private final ClassFileApplications applications;
     private final Consumer<PlanRefusedException> onRefusal;
 
-    PinnedCallsTransformer(ClassFileApplication application, Consumer<PlanRefusedException> onRefusal) {
-        this.application = application;
+    PinnedCallsTransformer(ClassFileApplications applications, Consumer<PlanRefusedException> onRefusal) {
+        this.applications = applications;
         this.onRefusal = onRefusal;
     }
 
@@ -22,11 +22,11 @@ final class PinnedCallsTransformer implements ClassFileTransformer {
             Class<?> classBeingRedefined,
             ProtectionDomain protectionDomain,
             byte[] classFile) {
-        if (className == null || !application.rewrites(className)) {
+        if (className == null || !applications.rewrites(className)) {
             return null;
         }
         try {
-            return application.rewrite(className, classFile);
+            return applications.rewrite(className, classFile);
         } catch (PlanRefusedException refused) {
             onRefusal.accept(refused);
             return null;

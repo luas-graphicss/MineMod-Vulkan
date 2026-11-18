@@ -1,0 +1,28 @@
+package io.github.luasgraphicss.minemod.adapters.minecraft.mixin.lightmap;
+
+import com.mojang.blaze3d.platform.NativeImage;
+import io.github.luasgraphicss.minemod.adapters.minecraft.bootstrap.ClientRendering;
+import io.github.luasgraphicss.minemod.adapters.minecraft.lightmap.ConstantLight;
+import io.github.luasgraphicss.minemod.adapters.minecraft.lightmap.LightmapTexels;
+import net.minecraft.client.renderer.LightTexture;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+@Mixin(LightTexture.class)
+abstract class LightTextureMixin {
+    @Shadow
+    @Final
+    private NativeImage lightPixels;
+
+    @Inject(
+            method = "updateLightTexture",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/DynamicTexture;upload()V"))
+    private void minemod$publishTheUpdatedLightmap(float partialTicks, CallbackInfo callback) {
+        ConstantLight.lookUpIn(lightPixels);
+        ClientRendering.running().ifPresent(renderer -> renderer.lightmap().update(LightmapTexels.of(lightPixels)));
+    }
+}

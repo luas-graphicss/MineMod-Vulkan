@@ -128,6 +128,11 @@ jobs:
           sh ./gradlew :tools:verification:run --args="scenario vanilla-matrix --report docs/compatibility/reports/vanilla-matrix.txt"
           git diff --exit-code -- docs/compatibility/reports/vanilla-matrix.txt
 
+      - name: Hand the OpenGL calls of the clients without a mixin loader to their stand-ins
+        run: |
+          sh ./gradlew :tools:verification:run --args="scenario frame-plans --report docs/compatibility/reports/frame-plans.txt"
+          git diff --exit-code -- docs/compatibility/reports/frame-plans.txt
+
       - name: Start the clients without a loader through their agent
         run: |
           sh ./gradlew :adapters:bootstrap:mc-1.13:launcherInstall :adapters:bootstrap:mc-1.13.1:launcherInstall

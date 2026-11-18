@@ -1,6 +1,7 @@
 import io.github.luasgraphicss.minemod.buildlogic.nativeframe.MixinConfig
 import io.github.luasgraphicss.minemod.buildlogic.nativeframe.ReleaseTargets
 import io.github.luasgraphicss.minemod.buildlogic.nativeframe.SourceRanges
+import io.github.luasgraphicss.minemod.buildlogic.nativeframe.names.GameNames
 
 plugins {
     id("fabric-loom")
@@ -48,7 +49,7 @@ sourceSets.main {
 
 dependencies {
     minecraft("com.mojang:minecraft:$release")
-    mappings(loom.officialMojangMappings())
+    mappings(GameNames(loom, targets).of(target))
     modCompileOnly(target.fabricLoader)
     compileOnly(libs.findLibrary("errorprone-annotations").get())
     api("minemod-vulkan.jvm:client-runtime")
