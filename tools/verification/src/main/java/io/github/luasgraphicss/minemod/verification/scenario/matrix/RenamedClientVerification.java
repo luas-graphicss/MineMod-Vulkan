@@ -1,10 +1,8 @@
 package io.github.luasgraphicss.minemod.verification.scenario.matrix;
 
 import io.github.luasgraphicss.minemod.adapters.transformers.application.PointApplication;
-import io.github.luasgraphicss.minemod.adapters.transformers.callsite.CallSiteRedirect;
 import io.github.luasgraphicss.minemod.adapters.transformers.gate.TransformGate;
 import io.github.luasgraphicss.minemod.adapters.transformers.gate.TransformViolation;
-import io.github.luasgraphicss.minemod.adapters.transformers.point.MethodTarget;
 import io.github.luasgraphicss.minemod.adapters.transformers.preflight.ClassSource;
 import io.github.luasgraphicss.minemod.adapters.transformers.release.ReleasePlan;
 import io.github.luasgraphicss.minemod.adapters.transformers.rewrite.CallSiteRewriter;
@@ -13,10 +11,9 @@ import io.github.luasgraphicss.minemod.verification.hooks.catalog.PresentationCa
 import io.github.luasgraphicss.minemod.verification.hooks.model.ReleaseHooks;
 import io.github.luasgraphicss.minemod.verification.hooks.plan.ReleasePlans;
 import io.github.luasgraphicss.minemod.verification.hooks.scan.CallSiteScanner;
+import io.github.luasgraphicss.minemod.verification.scenario.matrix.ClassRenamings.Renaming;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,7 +24,7 @@ public final class RenamedClientVerification {
     public static List<String> findFailures(ReleaseHooks hooks, ReleasePlan runtimePlan, ClassSource client)
             throws IOException {
         List<String> failures = new ArrayList<>();
-        Map<String, Renaming> renamings = renamingsOf(ReleasePlans.planOf(hooks), runtimePlan, failures);
+        Map<String, Renaming> renamings = ClassRenamings.between(ReleasePlans.planOf(hooks), runtimePlan, failures);
         if (!failures.isEmpty()) {
             return failures;
         }
@@ -54,28 +51,4 @@ public final class RenamedClientVerification {
         }
         return failures;
     }
-
-    private static Map<String, Renaming> renamingsOf(ReleasePlan official, ReleasePlan runtime, List<String> failures) {
-        Map<String, MethodTarget> runtimeMethods = new HashMap<>();
-        for (CallSiteRedirect redirect : runtime.redirects()) {
-            runtimeMethods.put(redirect.point().id(), redirect.point().target());
-        }
-        Map<String, Renaming> renamings = new LinkedHashMap<>();
-        for (CallSiteRedirect redirect : official.redirects()) {
-            MethodTarget from = redirect.point().target();
-            MethodTarget to = runtimeMethods.get(redirect.point().id());
-            if (to == null) {
-                failures.add("the plan of the loader has no point " + redirect.point().id());
-                continue;
-            }
-            Renaming renaming = renamings.computeIfAbsent(from.owner(), owner -> new Renaming(to.owner(), new HashMap<>()));
-            if (!renaming.runtimeClass().equals(to.owner())) {
-                failures.add(from.owner() + " is named both " + renaming.runtimeClass() + " and " + to.owner());
-            }
-            renaming.methods().put(from.name() + from.descriptor(), to);
-        }
-        return renamings;
-    }
-
-    private record Renaming(String runtimeClass, Map<String, MethodTarget> methods) {}
 }

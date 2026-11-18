@@ -18,6 +18,7 @@ public final class VerificationCli {
               verification build-matrix --manifest <file> [--root <directory>]
               verification hooks refresh [--cache <directory>] [--root <directory>]
               verification adapters refresh [--cache <directory>] [--root <directory>]
+              verification frames refresh [--cache <directory>] [--root <directory>]
               verification evidence refresh [--root <directory>]
               verification scenario <name> [--target <loader>-<release>] [--cache <directory>] [--report <file>]
                   [--root <directory>]
@@ -47,6 +48,7 @@ public final class VerificationCli {
                 case "targets refresh" -> RefreshTargetsCommand.run(invocation, repositoryRoot, output);
                 case "hooks refresh" -> RefreshHooksCommand.run(invocation, repositoryRoot, output);
                 case "adapters refresh" -> RefreshAdaptersCommand.run(invocation, repositoryRoot, output);
+                case "frames refresh" -> RefreshFramesCommand.run(invocation, repositoryRoot, output);
                 case "evidence refresh" -> RefreshEvidenceCommand.run(invocation, repositoryRoot, output);
                 case "build-matrix" -> BuildMatrixCommand.run(invocation, repositoryRoot, output);
                 case "compare" -> CompareCommand.run(invocation, repositoryRoot, output);

@@ -2,6 +2,7 @@ package io.github.luasgraphicss.minemod.verification.scenario;
 
 import io.github.luasgraphicss.minemod.verification.ecosystem.EcosystemScenarios;
 import io.github.luasgraphicss.minemod.verification.scenario.bootstrap.ClientBootstrapScenario;
+import io.github.luasgraphicss.minemod.verification.scenario.frame.FramePlansScenario;
 import io.github.luasgraphicss.minemod.verification.scenario.matrix.VanillaMatrixScenario;
 import io.github.luasgraphicss.minemod.verification.scenario.transformers.ProductionTransformersScenario;
 import java.util.List;
@@ -13,6 +14,7 @@ public final class RepositoryScenarioCatalog {
                     Stream.of(
                             new ProductionTransformersScenario(),
                             new VanillaMatrixScenario(),
+                            new FramePlansScenario(),
                             new ClientBootstrapScenario()),
                     EcosystemScenarios.all().stream())
             .toList();
