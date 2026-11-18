@@ -28,6 +28,7 @@ public final class SimulatedProvider implements ProviderCalls, ProviderObjects, 
 
     private static final int NO_OBJECT = 0;
     private static final int GL_INVALID_ENUM = 0x0500;
+    private static final int GL_INVALID_VALUE = 0x0501;
     private static final int GL_INVALID_OPERATION = 0x0502;
     private static final int GL_COMPILE = 0x1300;
     private static final String ENABLE = "glEnable";
@@ -38,8 +39,12 @@ public final class SimulatedProvider implements ProviderCalls, ProviderObjects, 
     private static final String READ_PIXELS = "glReadPixels";
     private static final String NO_OBJECT_LABEL = "none";
     private static final String DEFAULT_FRAMEBUFFER_LABEL = "default";
-    private static final Set<ObjectKind> CREATED_BY_FIRST_USE =
-            EnumSet.of(ObjectKind.TEXTURE, ObjectKind.BUFFER, ObjectKind.DISPLAY_LIST);
+    private static final Set<ObjectKind> CREATED_BY_FIRST_USE = EnumSet.of(
+            ObjectKind.TEXTURE,
+            ObjectKind.BUFFER,
+            ObjectKind.RENDERBUFFER,
+            ObjectKind.FRAMEBUFFER,
+            ObjectKind.DISPLAY_LIST);
 
     private final CallCatalog catalog = CallCatalog.standard();
     private final ContextProfile profile;
@@ -75,7 +80,6 @@ public final class SimulatedProvider implements ProviderCalls, ProviderObjects, 
         Optional<CallDescription> description = catalog.describe(function);
         Optional<String[]> shown = describeArguments(function, description, arguments);
         if (shown.isEmpty()) {
-            raise(GL_INVALID_OPERATION);
             return 0;
         }
         followState(function, arguments);
@@ -100,6 +104,14 @@ public final class SimulatedProvider implements ProviderCalls, ProviderObjects, 
     @Override
     public void dispose(ObjectKind kind, int backing) {
         objectsOf(kind).remove(backing);
+    }
+
+    public void deleteNamed(ObjectKind kind, int object) {
+        if (isLive(kind, object)) {
+            dispose(kind, object);
+        } else if (object != NO_OBJECT && kind == ObjectKind.SHADER_OR_PROGRAM) {
+            raise(GL_INVALID_VALUE);
+        }
     }
 
     @Override
@@ -165,6 +177,7 @@ public final class SimulatedProvider implements ProviderCalls, ProviderObjects, 
         for (NameArgument argument : description.map(CallDescription::nameArguments).orElse(List.of())) {
             Optional<String> label = labelForUse(argument.kind(), (int) arguments[argument.index()]);
             if (label.isEmpty()) {
+                raise(argument.kind() == ObjectKind.SHADER_OR_PROGRAM ? GL_INVALID_VALUE : GL_INVALID_OPERATION);
                 return Optional.empty();
             }
             shown[argument.index()] = label.get();

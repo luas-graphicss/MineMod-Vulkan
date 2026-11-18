@@ -12,7 +12,7 @@ renderer::DeviceHandle<VkDeviceMemory> allocate_exportable_memory(
     const VkExportMemoryAllocateInfo exported{
         .sType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO,
         .pNext = &dedicated_to,
-        .handleTypes = shared_handle_type,
+        .handleTypes = static_cast<VkExternalMemoryHandleTypeFlags>(shared_handle_type),
     };
     const VkMemoryAllocateInfo allocation{
         .sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,

@@ -10,6 +10,7 @@ dependencies {
     compileOnly(libs.modlauncher) { isTransitive = false }
 
     testImplementation(testFixtures(project(":adapters:loaders:launch")))
+    testImplementation(testFixtures(project(":adapters:presentation:core")))
     testImplementation(libs.asm)
     testImplementation(libs.asm.tree)
     testImplementation(libs.modlauncher) { isTransitive = false }

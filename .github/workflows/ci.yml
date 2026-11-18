@@ -159,12 +159,13 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6.4.1
 
-      - name: Install Mesa with Zink, the lavapipe driver and the Vulkan toolchain
+      - name: Install Mesa with Zink, the lavapipe driver, the Vulkan toolchain and a virtual display
         run: |
           sudo apt-get update
           sudo apt-get install --yes --no-install-recommends \
-            glslang-tools libegl1 libegl-mesa0 libgl1-mesa-dri libvulkan-dev mesa-vulkan-drivers ninja-build \
-            vulkan-validationlayers
+            glslang-tools libegl1 libegl-mesa0 libgl1-mesa-dri libvulkan-dev libx11-dev libxcursor1 libxext6 \
+            libxi6 libxinerama1 libxrandr2 libxrender1 libxtst6 mesa-vulkan-drivers ninja-build \
+            vulkan-validationlayers xauth xvfb
 
       - name: Build the renderer and the stand-in that share their attachments
         run: |
@@ -184,6 +185,36 @@ jobs:
           -Pminemod.sceneLibrary="$GITHUB_WORKSPACE/build/linux-client/jni/libminemod_jni.so"
           -Porg.gradle.java.installations.auto-download=false
           -Porg.gradle.java.installations.fromEnv=JAVA_HOME_8_X64,JAVA_HOME_16_X64,JAVA_HOME_17_X64,JAVA_HOME_21_X64
+
+      - name: Compare the layer with the installed Mesa on generated scripts
+        run: >
+          sh ./gradlew
+          :tools:verification:test --tests '*.differential.provider.*'
+          :tools:verification:run
+          --args="compare --suite gl-differential --provider $SYSTEM_PROVIDER
+          --natives build/linux-client/jni/libminemod_gl_provider_jni.so"
+          -Pminemod.systemProvider="$SYSTEM_PROVIDER"
+          -Porg.gradle.java.installations.auto-download=false
+          -Porg.gradle.java.installations.fromEnv=JAVA_HOME_8_X64,JAVA_HOME_16_X64,JAVA_HOME_17_X64,JAVA_HOME_21_X64
+
+      - name: Present on the windows of a virtual display through the native owners
+        run: >
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x800x24"
+          sh ./gradlew
+          :adapters:presentation:glfw:check
+          :adapters:presentation:display:check
+          -Pminemod.sceneLibrary="$GITHUB_WORKSPACE/build/linux-client/jni/libminemod_jni.so"
+          -Porg.gradle.java.installations.auto-download=false
+          -Porg.gradle.java.installations.fromEnv=JAVA_HOME_8_X64,JAVA_HOME_16_X64,JAVA_HOME_17_X64,JAVA_HOME_21_X64
+
+      - name: Fail when a suite that opens a window was skipped
+        run: |
+          reports=$(find adapters/presentation -path '*/test-results/*' -name 'TEST-*OnWindowTest.xml')
+          echo "$reports"
+          test -n "$reports"
+          skipped=$(grep -L 'skipped="0"' $reports || true)
+          echo "skipped: ${skipped:-none}"
+          test -z "$skipped"
 
   provider-windows:
     name: OpenGL provider on Windows
@@ -208,3 +239,65 @@ jobs:
 
       - name: Test
         run: ctest --preset windows-provider
+
+  native-windows:
+    name: Native ${{ matrix.preset }}
+    runs-on: windows-2025
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        preset:
+          - windows-debug
+          - windows-release
+    env:
+      PRESET: ${{ matrix.preset }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Annotate the diagnostics of CMake, of MSVC and of the tests
+        run: |
+          echo "::add-matcher::.github/problem-matchers/cmake.json"
+          echo "::add-matcher::.github/problem-matchers/msvc.json"
+
+      - name: Install the Vulkan SDK and the Vulkan loader
+        uses: ./.github/actions/vulkan-sdk
+
+      - name: Configure
+        run: cmake --preset "$env:PRESET"
+
+      - name: Build
+        run: cmake --build --preset "$env:PRESET" --parallel
+
+      - name: Test what needs no Vulkan device
+        run: ctest --preset "$env:PRESET" --label-exclude vulkan-device
+
+  client-windows:
+    name: Client libraries on Windows
+    runs-on: windows-2025
+    timeout-minutes: 30
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Annotate the diagnostics of CMake and of MSVC
+        run: |
+          echo "::add-matcher::.github/problem-matchers/cmake.json"
+          echo "::add-matcher::.github/problem-matchers/msvc.json"
+
+      - name: Install the Vulkan SDK and the Vulkan loader
+        uses: ./.github/actions/vulkan-sdk
+
+      - name: Configure
+        run: cmake --preset windows-client
+
+      - name: Build the libraries that the client loads
+        run: cmake --build --preset windows-client --parallel
+
+      - name: Build the stand-in that shares the attachments of the renderer
+        run: cmake --build --preset windows-scene-host --parallel

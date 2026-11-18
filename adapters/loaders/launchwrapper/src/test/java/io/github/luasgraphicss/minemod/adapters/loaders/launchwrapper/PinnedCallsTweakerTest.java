@@ -1,11 +1,16 @@
 package io.github.luasgraphicss.minemod.adapters.loaders.launchwrapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.github.luasgraphicss.minemod.adapters.loaders.launch.fixtures.FixtureGame;
 import io.github.luasgraphicss.minemod.adapters.loaders.launch.plan.PlanRefusedException;
+import io.github.luasgraphicss.minemod.adapters.presentation.display.DisplayPresentationHooks;
+import io.github.luasgraphicss.minemod.adapters.presentation.fixtures.InstalledOwners;
+import io.github.luasgraphicss.minemod.adapters.presentation.owner.PresentationOwners;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -15,6 +20,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -23,6 +29,11 @@ class PinnedCallsTweakerTest {
 
     @TempDir
     Path gameClasses;
+
+    @AfterEach
+    void releaseTheOwner() {
+        InstalledOwners.release();
+    }
 
     @Test
     void registersItsTransformerOnTheGameThePlanWasPinnedOn() throws IOException {
@@ -37,12 +48,26 @@ class PinnedCallsTweakerTest {
     }
 
     @Test
+    void installsTheNativeOwnerWhereTheClassesOfTheGameFindIt() throws IOException, ClassNotFoundException {
+        FixtureGame.writeWindow(gameClasses, FixtureGame.windowCalling(FixtureGame.DISPLAY_UPDATE, 1));
+        LaunchClassLoader classLoader = launchClassLoader();
+
+        tweaker.injectIntoClassLoader(classLoader);
+
+        assertSame(PresentationOwners.class, classLoader.findClass(PresentationOwners.class.getName()));
+        assertSame(DisplayPresentationHooks.class, classLoader.findClass(DisplayPresentationHooks.class.getName()));
+        assertTrue(PresentationOwners.isInstalled());
+        assertFalse(PresentationOwners.current().keepsOpenGlContext());
+    }
+
+    @Test
     void refusesAGameWhoseClassesAreNotThePinnedOnes() throws IOException {
         FixtureGame.writeWindow(gameClasses, FixtureGame.windowCalling(FixtureGame.DISPLAY_UPDATE, 3));
         LaunchClassLoader classLoader = launchClassLoader();
 
         assertThrows(PlanRefusedException.class, () -> tweaker.injectIntoClassLoader(classLoader));
         assertTrue(classLoader.getTransformers().isEmpty());
+        assertFalse(PresentationOwners.isInstalled());
     }
 
     @Test

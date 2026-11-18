@@ -1,5 +1,6 @@
 plugins {
     application
+    id("minemod.provider-tests")
 }
 
 java {
@@ -19,6 +20,8 @@ dependencies {
     implementation(project(":compatibility:bridges"))
     implementation(project(":compatibility:contexts"))
     implementation(project(":compatibility:interop"))
+    implementation(project(":compatibility:runtime"))
+    implementation(testFixtures(project(":compatibility:runtime")))
     implementation(project(":compatibility:translation"))
 
     testImplementation(platform(libs.junit.bom))

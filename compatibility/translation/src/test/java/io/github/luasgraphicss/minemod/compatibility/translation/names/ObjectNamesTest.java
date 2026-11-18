@@ -60,6 +60,33 @@ class ObjectNamesTest {
     }
 
     @Test
+    void aCompatibilityContextCreatesARenderbufferOrAFramebufferWhenItIsFirstBound() {
+        compatibility.backingForUse(ObjectKind.RENDERBUFFER, 7);
+        compatibility.backingForUse(ObjectKind.FRAMEBUFFER, 7);
+
+        assertTrue(compatibility.isLive(ObjectKind.RENDERBUFFER, 7));
+        assertTrue(compatibility.isLive(ObjectKind.FRAMEBUFFER, 7));
+        assertEquals(0, fixture.errors.take());
+    }
+
+    @Test
+    void aNameThatIsNoShaderOrProgramIsAnInvalidValueWhenUsedOrDeleted() {
+        assertEquals(ObjectNames.REJECTED, core.backingForUse(ObjectKind.SHADER_OR_PROGRAM, 9));
+        assertEquals(GL_INVALID_VALUE, fixture.errors.take());
+
+        core.delete(ObjectKind.SHADER_OR_PROGRAM, new int[] {9});
+        assertEquals(GL_INVALID_VALUE, fixture.errors.take());
+    }
+
+    @Test
+    void deletingNameZeroOrAnUnusedNameOfAnotherKindRaisesNothing() {
+        core.delete(ObjectKind.SHADER_OR_PROGRAM, new int[] {0});
+        core.delete(ObjectKind.TEXTURE, new int[] {9});
+
+        assertEquals(0, fixture.errors.take());
+    }
+
+    @Test
     void aCoreContextRejectsANameItNeverGenerated() {
         assertEquals(ObjectNames.REJECTED, core.backingForUse(ObjectKind.TEXTURE, 9));
 

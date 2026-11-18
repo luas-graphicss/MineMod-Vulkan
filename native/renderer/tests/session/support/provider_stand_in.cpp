@@ -55,7 +55,7 @@ renderer::LayoutChange transfer_destination_to_handed_over(VkImageLayout handoff
 renderer::DeviceHandle<VkImage> create_image(const renderer::Device& device, const minemod_shared_attachment& color) {
     const VkExternalMemoryImageCreateInfo external_image{
         .sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO,
-        .handleTypes = interop::shared_handle_type,
+        .handleTypes = static_cast<VkExternalMemoryHandleTypeFlags>(interop::shared_handle_type),
     };
     const VkImageCreateInfo create_info{
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,

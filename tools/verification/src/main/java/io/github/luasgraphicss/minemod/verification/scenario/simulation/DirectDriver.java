@@ -38,7 +38,7 @@ public final class DirectDriver implements GlDriver {
     @Override
     public void delete(ObjectKind kind, int... names) {
         for (int name : names) {
-            provider.dispose(kind, name);
+            provider.deleteNamed(kind, name);
         }
     }
 

@@ -31,6 +31,8 @@ sh gradlew :compatibility:runtime:check :compatibility:lwjgl2:check :compatibili
     -Pminemod.systemProvider=/usr/lib64 \
     -Pminemod.sceneHost="$PWD/build/linux-client/jni/libminemod_scene_host_jni.so" \
     -Pminemod.sceneLibrary="$PWD/build/linux-client/jni/libminemod_jni.so"
+sh gradlew :tools:verification:run --args="compare --suite gl-differential \
+    --provider /usr/lib64 --natives build/linux-client/jni/libminemod_gl_provider_jni.so"
 ```
 
 `minemod.systemProvider` names the directory that holds `libEGL.so.1`, `libEGL_mesa.so.0` and `libgallium-*.so`: `/usr/lib64` on Fedora and Amazon Linux, `/usr/lib/x86_64-linux-gnu` on Debian and Ubuntu. Mesa ships that driver library since 24.2. The tests copy the libraries into a directory of their own, pin the digests of the copies and load them from there with Zink on a software device.
@@ -40,6 +42,8 @@ sh gradlew :compatibility:runtime:check :compatibility:lwjgl2:check :compatibili
 `minemod.sceneLibrary` is the JNI library with the renderer in it. With it the tests of `jvm/client-runtime` open a real scene session, share its attachments with Zink and hand its frames over.
 
 Without the first property every test of this group is skipped, without the second only the shared-scene tests are, and without the third the tests of `jvm/client-runtime` on a real session are, so `gradlew check` passes on a machine without Mesa. The CI job `Compatibility layer on Mesa/Zink` sets the three. The tests run on Java 8, 16, 17 and 21, except those of LWJGL 2, which run on Java 8, the runtime of the releases that ship it.
+
+`compare --suite gl-differential` takes the directory of `minemod.systemProvider` as `--provider` and the JNI library of the provider as `--natives`, and compares the layer with the Mesa it stages from them. Without the two options it compares with the simulated provider. The same CI job runs it after the tests.
 
 `capabilities` prints one row per call family and one column per class of support, then the operations a frame reported instead of answering:
 
@@ -117,7 +121,7 @@ The debug screen and crash reports show the driver, the OpenGL version and the M
 
 `synchronous-operations` compares a partial blit and two readbacks with pack alignments 1 and 4 against the reference, passes a failed compile, a failed link and a pending query through unchanged, and checks that a query or transform feedback that spans a native pass is reported and never answered from the provider.
 
-`gl-differential` plays 1,000 generated scripts through the layer and directly against the provider and compares the calls and the errors.
+`gl-differential` plays 1,000 generated scripts, 500 in each context profile, through the layer and directly against the provider. Against the simulated provider it compares the calls the provider receives and the errors. Against an installed Mesa every script runs in two contexts of the staged provider, one behind the layer and one that receives the calls as they are, and the suite compares what the script observes in each: the names it generated, whether a name is an object, the errors and the pixel it reads back.
 
 ## What the tests on Mesa/Zink cover
 
@@ -141,10 +145,13 @@ With `minemod.sceneLibrary` the tests of `jvm/client-runtime` put the renderer i
 
 `ctest` covers the native side: `gl_provider` loads a provider built for the test, and `interop_device` runs the handoff 200 times on lavapipe with the validation layers on.
 
+`ProviderComparisonTest` of `tools/verification` plays five fixed scripts on both sides. Three are the cases in which the layer and Mesa disagreed when `gl-differential` first ran against Mesa: a compatibility context creates a renderbuffer and a framebuffer on their first bind, a deleted program is `GL_INVALID_VALUE` when it is used or deleted again, and a core context refuses to draw once its bound vertex array is deleted. The other two bind a deleted texture and read a triangle back.
+
 ## Not verified
 
 - No Mesa build is pinned. The tests accept the Mesa of the machine, 24.2.6 on the machine this was written on, and the pin of `compatibility/provider` is filled from the staged copy.
 - Everything ran on lavapipe. No hardware GPU has drawn through the layer, so two drivers on one GPU, vendor behaviour and performance are untested.
+- `gl-differential` generates, binds and deletes objects, toggles capabilities, draws three vertices or an immediate-mode triangle and reads one pixel back. It uploads no texture, compiles no shader, attaches nothing to a framebuffer and starts no query, so on those calls the layer was compared with Mesa only by the tests above.
 - The semaphore handoff with the provider has not run. lavapipe exports no semaphore, so Zink offers neither `GL_EXT_semaphore` nor `GL_EXT_semaphore_fd` on it. The shared-scene tests order the two devices by finishing each side before the other draws. `ProviderHandoff` and `SplitSharingBackend`, which wait and signal through `GL_EXT_semaphore`, have no test, and the handoff of `native/interop` is tested with both semaphores on one device.
 - The game has not run with a provider. The 1.21.1 adapter compiles against the game, and the session it opens is the one the tests of `jvm/client-runtime` open over a scene session without a window. No mod has drawn through it, and the mixins that install the dispatch and tell the layer what the wrappers set have not executed.
 - The renderer exports its scene attachments only to tests on lavapipe, where the handoff blocks. `SemaphoreHandoffSource`, which hands a frame over through the semaphores a scene session exports, has not run.

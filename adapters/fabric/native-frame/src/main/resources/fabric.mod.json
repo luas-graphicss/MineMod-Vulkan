@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "minemod-vulkan",
+  "version": "${version}",
+  "name": "MineMod Vulkan",
+  "description": "Presents Minecraft through a native Vulkan renderer.",
+  "license": "GPL-3.0-only",
+  "environment": "client",
+  "entrypoints": {
+    "preLaunch": ["io.github.luasgraphicss.minemod.adapters.fabric.ownership.RendererOwnershipCheck"],
+    "client": ["io.github.luasgraphicss.minemod.adapters.fabric.MineModClient"]
+  },
+  "mixins": ["${mixinConfig}"],
+  "depends": {
+    "fabricloader": ">=${loaderVersion}",
+    "minecraft": "${minecraftVersion}",
+    "java": ">=${javaVersion}"
+  }
+}

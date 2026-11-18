@@ -39,7 +39,7 @@ SharedImage::SharedImage(const renderer::Device& device, const SharedImageDescri
 
     const VkExternalMemoryImageCreateInfo external_image{
         .sType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO,
-        .handleTypes = shared_handle_type,
+        .handleTypes = static_cast<VkExternalMemoryHandleTypeFlags>(shared_handle_type),
     };
     const VkImageCreateInfo create_info{
         .sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,

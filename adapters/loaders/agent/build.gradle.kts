@@ -8,5 +8,6 @@ dependencies {
     compileOnly(libs.asm)
 
     testImplementation(testFixtures(project(":adapters:loaders:launch")))
+    testImplementation(testFixtures(project(":adapters:presentation:core")))
     testImplementation(libs.asm)
 }

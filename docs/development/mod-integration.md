@@ -1,6 +1,6 @@
 # Mods next to the native renderer
 
-Five modules hold the rules a game adapter needs before mods take part in a native frame: which render events a loader is told about, which bridge may serve a mod, who owns each stage of the pipeline, how the passes of a shader pack are planned, and what happens to the settings after a launch that never drew. Only `tools/verification` calls them today. No game adapter does, so none of this has run inside Minecraft.
+Five modules hold the rules a game adapter needs before mods take part in a native frame: which render events a loader is told about, which bridge may serve a mod, who owns each stage of the pipeline, how the passes of a shader pack are planned, and what happens to the settings after a launch that never drew. `tools/verification` calls all five. The Fabric mod for 1.21.1 calls one, the ownership rules, before the game starts; no game adapter calls the other four.
 
 ## What each module decides
 
@@ -9,6 +9,20 @@ Five modules hold the rules a game adapter needs before mods take part in a nati
 - `adapters/renderer-ownership` reads the installed mods against `renderer-families.properties`, which lists canvas, embeddium, iris, oculus, optifabric, optifine, rubidium, sodium and vulkanmod with the stages each replaces. `WorldLoadGate.requireOpen()` throws `RendererConflictException` with a diagnosis when one of them claims a stage that no bridge serves for that exact version, or when two claim the same stage. Presentation and frame submission accept no bridge.
 - `adapters/shader-packs` reads a pack within limits of file count and size, expands its includes and plans a frame: shadows, geometry programs, deferred and composite passes, buffer flips, depth snapshots and buffers kept from one frame to the next. A pack that needs compute is refused when `PipelineCapabilities` has none, and a pack with problems returns them instead of a partial plan. `ShaderPipeline` runs the plan on a `PipelineBackend`.
 - `adapters/configuration` replaces the settings file through a staged file and keeps, in a journal, the phase each of the last eight launches reached. When the launches before the current one ended before the first frame, `RecoveryPolicy` starts safe mode: no shader pack, and the diagnostic overlay on.
+
+## What the Fabric mod for 1.21.1 asks
+
+`RendererOwnershipCheck` is the `preLaunch` entry point of the mod, so it runs before Fabric Loader starts the game. It reads the id and the version of every mod Fabric Loader found and negotiates them against `renderer-families.properties`, with no bridge. An id that a mod only declares in `provides` counts as installed, under a version that names the mod providing it, so a bridge written for the real renderer cannot serve its stand-in. When the gate stays closed, `requireOpen()` throws and Fabric Loader stops the launch with the diagnosis: no window opens, the two renderers never share a frame and neither is switched off.
+
+Fabric Loader 0.20.1 started the mod in the development environment of the Loom build, without the native libraries and the assets, next to one stand-in jar in `run/mods` at a time:
+
+```sh
+sh gradlew -p adapters/fabric/mc-1.21.1 :runClient -x configureNativeLibrary -x buildNativeLibrary -x stageNativeLibrary -x downloadAssets
+```
+
+- A jar whose `fabric.mod.json` declares only the id `sodium`: the launch stopped at `preLaunch` with `TERRAIN_GEOMETRY has no bridge for this exact renderer version, claimed by [sodium 0.5.11+mc1.21.1]` and the same for `TERRAIN_DRAW`.
+- A jar that provides `iris` under another id: it stopped with `SHADER_PIPELINE has no bridge for this exact renderer version, claimed by [iris 9.9.9 provided by standin-shader-loader]`.
+- A jar that names no renderer: the launch went on into the game, which stopped at the client entry point because that run bundles no native library.
 
 ## What the scenarios run
 
@@ -34,4 +48,6 @@ sh gradlew :tools:verification:run --args="evidence refresh"
 - No third-party mod and no shader pack ran. `verified` in the manifest means the fixtures passed, and each reason says so.
 - The event contracts are fixtures that model a priority bus and a callback array. No contract names the event classes of Forge, NeoForge or Fabric yet.
 - No pass reached a GPU: the backend of the shader scenario is symbolic.
-- No bridge for a published renderer exists, so every one of them keeps the world closed.
+- No bridge for a published renderer exists, so every one of them keeps the world closed and, on Fabric 1.21.1, stops the launch.
+- The check of the Fabric mod ran next to stand-in jars that carry nothing but a `fabric.mod.json`. It has not run next to a published renderer mod, nor from the jar a user installs.
+- No game adapter calls `adapters/events`, `adapters/shader-packs`, `adapters/configuration` or `compatibility/bridges`.

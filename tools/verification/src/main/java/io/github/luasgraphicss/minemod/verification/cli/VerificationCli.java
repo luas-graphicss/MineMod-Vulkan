@@ -19,9 +19,13 @@ public final class VerificationCli {
               verification hooks refresh [--cache <directory>] [--root <directory>]
               verification adapters refresh [--cache <directory>] [--root <directory>]
               verification evidence refresh [--root <directory>]
-              verification scenario <name> [--cache <directory>] [--report <file>] [--root <directory>]
-              verification compare --suite <name> [--root <directory>]
+              verification scenario <name> [--target <loader>-<release>] [--cache <directory>] [--report <file>]
+                  [--root <directory>]
+              verification compare --suite <name> [--provider <directory> --natives <library>] [--root <directory>]
+              verification compare --suite vanilla-visual [--cache <directory>] [--report <file>] [--root <directory>]
               verification capabilities [--context <compatibility|core>] [--root <directory>]
+              verification machines record --id <name> --harness <executable> [--results <directory>]
+                  [--system <description>] [--root <directory>]
             """;
 
     private VerificationCli() {}
@@ -45,8 +49,9 @@ public final class VerificationCli {
                 case "adapters refresh" -> RefreshAdaptersCommand.run(invocation, repositoryRoot, output);
                 case "evidence refresh" -> RefreshEvidenceCommand.run(invocation, repositoryRoot, output);
                 case "build-matrix" -> BuildMatrixCommand.run(invocation, repositoryRoot, output);
-                case "compare" -> CompareCommand.run(invocation, output);
+                case "compare" -> CompareCommand.run(invocation, repositoryRoot, output);
                 case "capabilities" -> CapabilitiesCommand.run(invocation, output);
+                case "machines record" -> MachinesCommand.run(invocation, repositoryRoot, output);
                 default -> throw new UsageException("unknown command: " + invocation.commandLine());
             };
         } catch (UsageException exception) {

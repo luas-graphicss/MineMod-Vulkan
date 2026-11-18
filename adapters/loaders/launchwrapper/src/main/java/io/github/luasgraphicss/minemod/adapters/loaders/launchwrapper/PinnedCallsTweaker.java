@@ -1,6 +1,7 @@
 package io.github.luasgraphicss.minemod.adapters.loaders.launchwrapper;
 
 import io.github.luasgraphicss.minemod.adapters.loaders.launch.apply.ClassFileApplication;
+import io.github.luasgraphicss.minemod.adapters.presentation.display.DisplayNativeOwner;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -11,6 +12,7 @@ import net.minecraft.launchwrapper.LaunchClassLoader;
 
 public final class PinnedCallsTweaker implements ITweaker {
     private static final String NO_LAUNCH_TARGET = "";
+    private static final String ADAPTER_PACKAGES = "io.github.luasgraphicss.minemod.";
 
     @Override
     public void acceptOptions(List<String> arguments, File gameDirectory, File assetsDirectory, String profile) {}
@@ -23,6 +25,8 @@ public final class PinnedCallsTweaker implements ITweaker {
         } catch (IOException unreadable) {
             throw new UncheckedIOException("the classes of the game cannot be read", unreadable);
         }
+        classLoader.addClassLoaderExclusion(ADAPTER_PACKAGES);
+        DisplayNativeOwner.installFrom(PinnedCallsTweaker.class.getClassLoader());
         classLoader.registerTransformer(PinnedCallsTransformer.class.getName());
     }
 

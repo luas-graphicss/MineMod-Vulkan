@@ -7,6 +7,6 @@ target_include_directories(minemod_interop_harness PUBLIC src)
 target_link_libraries(minemod_interop_harness PUBLIC minemod::interop)
 minemod_configure_vulkan_target(minemod_interop_harness)
 
-if(MINEMOD_BUILD_JNI_BRIDGE AND CMAKE_SYSTEM_NAME STREQUAL "Linux")
+if(MINEMOD_BUILD_JNI_BRIDGE)
     add_subdirectory(jni)
 endif()

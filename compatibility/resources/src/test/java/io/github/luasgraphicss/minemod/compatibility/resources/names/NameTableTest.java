@@ -90,6 +90,18 @@ class NameTableTest {
     }
 
     @Test
+    void disposesADeletedObjectOfOneContextAtOnceEvenWhenAFrameUsedIt() {
+        NameTable vertexArrays = new NameTable(ObjectKind.VERTEX_ARRAY, 4);
+        int name = vertexArrays.allocate(101);
+        vertexArrays.markUsed(name, 7);
+
+        vertexArrays.delete(name, disposer);
+
+        assertEquals(Collections.singletonList(101), disposed);
+        assertEquals(0, vertexArrays.retiringCount());
+    }
+
+    @Test
     void reusesADeletedNameWhileItsOldObjectStillWaits() {
         int name = textures.allocate(101);
         textures.markUsed(name, 3);

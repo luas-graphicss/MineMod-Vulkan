@@ -5,6 +5,7 @@ import java.util.zip.ZipFile
 
 plugins {
     `java-library`
+    id("minemod.bundled-renderer")
 }
 
 val buildJdk = 21

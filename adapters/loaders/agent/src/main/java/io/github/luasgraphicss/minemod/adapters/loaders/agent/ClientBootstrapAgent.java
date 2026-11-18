@@ -3,6 +3,7 @@ package io.github.luasgraphicss.minemod.adapters.loaders.agent;
 import io.github.luasgraphicss.minemod.adapters.loaders.launch.apply.ClassFileApplication;
 import io.github.luasgraphicss.minemod.adapters.loaders.launch.plan.PinnedPlan;
 import io.github.luasgraphicss.minemod.adapters.loaders.launch.plan.PlanRefusedException;
+import io.github.luasgraphicss.minemod.adapters.presentation.glfw.GlfwNativeOwner;
 import io.github.luasgraphicss.minemod.adapters.presentation.glfw.GlfwPresentationHooks;
 import io.github.luasgraphicss.minemod.adapters.transformers.release.ReleasePlan;
 import java.io.IOException;
@@ -36,6 +37,7 @@ public final class ClientBootstrapAgent {
             application.requireApplicableTo(classes);
         }
         instrumentation.addTransformer(new PinnedCallsTransformer(application, onRefusal));
+        GlfwNativeOwner.installFrom(ClientBootstrapAgent.class.getClassLoader());
     }
 
     private static void haltBecauseTheJvmIgnoresTransformerFailures(PlanRefusedException refused) {

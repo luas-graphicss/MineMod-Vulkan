@@ -1,6 +1,6 @@
 # 6. One owner for the main window across LWJGL 2 and 3
 
-Status: proposed. Only headless presentation has run.
+Status: proposed. Presentation has run headless and on windows opened outside the game, on a software rasterizer.
 
 ## Context
 
@@ -17,7 +17,9 @@ Minecraft 1.12.2 creates its window through `Display` in LWJGL 2, which also cre
 
 `minemod_harness` creates a swapchain on a `VK_EXT_headless_surface` surface and presents frames with zero validation messages. That exercises acquire, blit and present. It involves no window, no input and no game.
 
-Every release has the calls with which the game opens, presents, paces and closes its window pinned and redirected to one owner, in the names each loader runs. For 1.13 and 1.13.1 a Java agent does it in memory from a launcher profile that inherits the unmodified version: a child JVM started with that profile redirected every pinned call of both production clients and left the client jars untouched. `docs/development/release-adapters.md` says what those checks leave out. No owner other than the windowing library of the game is installed outside 1.21.1.
+Every release has the calls with which the game opens, presents, paces and closes its window pinned and redirected to one owner, in the names each loader runs. For 1.13 and 1.13.1 a Java agent does it in memory from a launcher profile that inherits the unmodified version: a child JVM started with that profile redirected every pinned call of both production clients and left the client jars untouched. `docs/development/release-adapters.md` says what those checks leave out.
+
+Every entry point of `adapters/loaders` installs a native owner before the game opens its window. On LWJGL 3 it presents the GLFW window of the game, created without a client API. On 1.12.2 it opens an AWT window in place of `Display` and hands the core the native handles JAWT gives for its canvas, so no OpenGL context is created and no second windowing library is loaded. Outside the game, on lavapipe and an Xvfb display, both owners opened their window through the pinned hooks, presented cleared frames with the renderer a jar bundles and closed, on Java 8, 16, 17 and 21. The stand-in keeps nothing yet of what the game observes through `Display`, `Keyboard` and `Mouse`, and no game has been started with either owner.
 
 ## Needed before acceptance
 
